@@ -5,7 +5,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.example.gitobserverapp.R
+import com.example.gitobserverapp.adapter.SearchAdapter
 import com.example.gitobserverapp.databinding.FragmentMainBinding
 
 class MainFragment : Fragment() {

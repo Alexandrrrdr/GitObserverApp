@@ -5,12 +5,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gitobserverapp.databinding.RecItemBinding
-import com.example.gitobserverapp.response.RepoListExample
+import com.example.gitobserverapp.response.RepositoriesResponse
 
-class SearchAdapter(private val repoList: List<RepoListExample>): RecyclerView.Adapter<SearchAdapter.SearchHolder>() {
+class SearchAdapter(private val repoList: List<RepositoriesResponse>): RecyclerView.Adapter<SearchAdapter.SearchHolder>() {
 
     inner class SearchHolder(view: View): RecyclerView.ViewHolder(view){
-        fun bind(repoItem: RepoListExample){
+        fun bind(repoItem: RepositoriesResponse){
             //TODO after will be created Model for response
         }
     }
