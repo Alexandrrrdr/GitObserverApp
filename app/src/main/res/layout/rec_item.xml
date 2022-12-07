@@ -33,12 +33,12 @@
             tools:text="Repository name" />
 
         <TextView
-            android:id="@+id/txtRepoDescription"
+            android:id="@+id/txtRepoOwner"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:textColor="@color/black"
-            tools:text="Repository description"
+            tools:text="Repository owner"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/imgRepo"
             app:layout_constraintTop_toBottomOf="@+id/txtRepoName" />
@@ -48,12 +48,12 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:src="@drawable/ic_rate"
-            app:layout_constraintEnd_toStartOf="@+id/txtRepoRateQuantity"
+            app:layout_constraintEnd_toStartOf="@+id/txtRepoRateCounter"
             app:layout_constraintStart_toEndOf="@+id/imgRepo"
-            app:layout_constraintTop_toBottomOf="@+id/txtRepoDescription" />
+            app:layout_constraintTop_toBottomOf="@+id/txtRepoOwner" />
 
         <TextView
-            android:id="@+id/txtRepoRateQuantity"
+            android:id="@+id/txtRepoRateCounter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
