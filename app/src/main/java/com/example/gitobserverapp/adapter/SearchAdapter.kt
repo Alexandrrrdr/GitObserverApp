@@ -19,7 +19,7 @@ class SearchAdapter(): RecyclerView.Adapter<SearchAdapter.SearchHolder>() {
 
     private lateinit var binding: RecItemBinding
     private lateinit var context: Context
-    private val scope = CoroutineScope(Dispatchers.IO)
+    private val scope = CoroutineScope(Dispatchers.Main)
 
     inner class SearchHolder(view: View): RecyclerView.ViewHolder(view){
         fun bind(item: Item){
