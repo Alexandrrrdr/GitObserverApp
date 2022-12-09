@@ -49,8 +49,6 @@ class SearchAdapter(): RecyclerView.Adapter<SearchAdapter.SearchHolder>() {
         fun bind(item: Item){
                 Glide.with(context)
                     .load(item.owner.avatar_url)
-                    .placeholder(R.drawable.ic_place_holder)
-                    .error(R.drawable.ic_no_image)
                     .into(binding.imgRepo)
             binding.txtRepoName.text = item.name
             binding.txtRepoOwner.text = item.owner.login
