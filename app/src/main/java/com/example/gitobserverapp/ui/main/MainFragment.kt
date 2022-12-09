@@ -7,13 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.gitobserverapp.adapter.SearchAdapter
+import com.example.gitobserverapp.adapter.RepoSearchAdapter
 import com.example.gitobserverapp.api.RetrofitInstance
 import com.example.gitobserverapp.api.ApiService
 import com.example.gitobserverapp.api.model.GetRepos
 import com.example.gitobserverapp.databinding.FragmentMainBinding
-import com.example.gitobserverapp.utils.Constants.ORDER_BY
-import com.example.gitobserverapp.utils.Constants.SORT_BY_RATE
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -24,9 +22,10 @@ class MainFragment : Fragment() {
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
 
-    private val searchAdapter: SearchAdapter by lazy {
-        SearchAdapter()
+    private val repoSearchAdapter: RepoSearchAdapter by lazy {
+        RepoSearchAdapter()
     }
+
     private val apiService: ApiService by lazy {
         RetrofitInstance.getRetrofitClient().create()
     }
@@ -43,10 +42,11 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnSearch.setOnClickListener {
+
             val searchWords: String = getText()
             binding.progBarMain.visibility = View.VISIBLE
 
-            val getRepos = apiService.getRepos(searchWords, SORT_BY_RATE, ORDER_BY, 10)
+            val getRepos = apiService.getRepos(searchWords)
             getRepos.enqueue(object : Callback<GetRepos>{
                 override fun onResponse(call: Call<GetRepos>, response: Response<GetRepos>) {
                     binding.progBarMain.visibility = View.GONE
@@ -55,9 +55,9 @@ class MainFragment : Fragment() {
                             Log.d("mylog", "${response.code()}")
                             response.body()?.let { get_repos ->
                                 get_repos.items.let { list ->
-                                    searchAdapter.differ.submitList(list)
+                                    repoSearchAdapter.fillRepoList(list as ArrayList)
                                     binding.recView.layoutManager = LinearLayoutManager(requireContext())
-                                    binding.recView.adapter = searchAdapter
+                                    binding.recView.adapter = repoSearchAdapter
                                 }
                             }
                         }
