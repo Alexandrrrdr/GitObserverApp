@@ -19,22 +19,6 @@ class SearchAdapter(): RecyclerView.Adapter<SearchAdapter.SearchHolder>() {
 
     private lateinit var binding: RecItemBinding
     private lateinit var context: Context
-    private val scope = CoroutineScope(Dispatchers.Main)
-
-    inner class SearchHolder(view: View): RecyclerView.ViewHolder(view){
-        fun bind(item: Item){
-            scope.launch {
-                Glide.with(context)
-                    .load(item.owner.avatar_url)
-                    .placeholder(R.drawable.ic_place_holder)
-                    .error(R.drawable.ic_no_image)
-                    .into(binding.imgRepo)
-            }
-            binding.txtRepoName.text = item.name
-            binding.txtRepoOwner.text = item.owner.login
-            binding.txtRepoRateCounter.text = item.stargazers_count.toString()
-        }
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchHolder {
         binding = RecItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -59,4 +43,18 @@ class SearchAdapter(): RecyclerView.Adapter<SearchAdapter.SearchHolder>() {
         }
     }
     val differ = AsyncListDiffer(this, diffUtils)
+
+
+    inner class SearchHolder(view: View): RecyclerView.ViewHolder(view){
+        fun bind(item: Item){
+                Glide.with(context)
+                    .load(item.owner.avatar_url)
+                    .placeholder(R.drawable.ic_place_holder)
+                    .error(R.drawable.ic_no_image)
+                    .into(binding.imgRepo)
+            binding.txtRepoName.text = item.name
+            binding.txtRepoOwner.text = item.owner.login
+            binding.txtRepoRateCounter.text = item.stargazers_count.toString()
+        }
+    }
 }

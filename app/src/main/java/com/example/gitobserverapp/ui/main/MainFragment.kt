@@ -1,4 +1,4 @@
-package com.example.gitobserverapp.ui
+package com.example.gitobserverapp.ui.main
 
 import android.os.Bundle
 import android.util.Log
@@ -8,15 +8,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gitobserverapp.adapter.SearchAdapter
-import com.example.gitobserverapp.api.ApiClient
+import com.example.gitobserverapp.api.RetrofitInstance
 import com.example.gitobserverapp.api.ApiService
 import com.example.gitobserverapp.api.model.GetRepos
 import com.example.gitobserverapp.databinding.FragmentMainBinding
 import com.example.gitobserverapp.utils.Constants.ORDER_BY
-import com.example.gitobserverapp.utils.Constants.SORT_BY
+import com.example.gitobserverapp.utils.Constants.SORT_BY_RATE
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.create
 
 class MainFragment : Fragment() {
 
@@ -26,8 +27,8 @@ class MainFragment : Fragment() {
     private val searchAdapter: SearchAdapter by lazy {
         SearchAdapter()
     }
-    private val api: ApiService by lazy {
-        ApiClient().getRetrofitClient().create(ApiService::class.java)
+    private val apiService: ApiService by lazy {
+        RetrofitInstance.getRetrofitClient().create()
     }
 
     override fun onCreateView(
@@ -42,9 +43,10 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnSearch.setOnClickListener {
-            val searchWords: String = getRepos()
+            val searchWords: String = getText()
             binding.progBarMain.visibility = View.VISIBLE
-            val getRepos = api.getRepos(searchWords, SORT_BY, ORDER_BY)
+
+            val getRepos = apiService.getRepos(searchWords, SORT_BY_RATE, ORDER_BY, 10)
             getRepos.enqueue(object : Callback<GetRepos>{
                 override fun onResponse(call: Call<GetRepos>, response: Response<GetRepos>) {
                     binding.progBarMain.visibility = View.GONE
@@ -78,7 +80,7 @@ class MainFragment : Fragment() {
             })
         }
     }
-    private fun getRepos(): String {
+    private fun getText(): String {
         return binding.edtTxtInput.text.toString()
     }
 

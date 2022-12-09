@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.gitobserverapp.R
 import com.example.gitobserverapp.databinding.ActivityMainBinding
+import com.example.gitobserverapp.ui.main.MainFragment
 
 class MainActivity : AppCompatActivity() {
 
