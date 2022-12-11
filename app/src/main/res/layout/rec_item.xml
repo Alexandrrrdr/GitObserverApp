@@ -4,12 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="4dp"
+    android:layout_margin="2dp"
+    android:padding="6dp"
     app:cardCornerRadius="10dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="#B4E4EA"
         android:padding="6dp">
 
         <ImageView
@@ -18,20 +20,20 @@
             android:layout_height="80dp"
             android:layout_margin="10dp"
             android:src="@drawable/ic_no_image"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/txtRepoName"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/txtRepoName"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:gravity="center_horizontal"
+            android:gravity="start"
             android:textColor="@color/black"
             android:textSize="20sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/txtRepoOwner"
-            app:layout_constraintStart_toEndOf="@+id/imgRepo"
+            app:layout_constraintBottom_toTopOf="@+id/imgRepo"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.636"
             tools:text="Repository name" />
@@ -44,9 +46,8 @@
             android:gravity="center_horizontal"
             android:textColor="@color/black"
             android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="@+id/imgRepo"
             app:layout_constraintStart_toEndOf="@+id/imgRepo"
-            app:layout_constraintTop_toBottomOf="@+id/txtRepoName"
+            app:layout_constraintTop_toTopOf="@+id/imgRepo"
             tools:text="Repository owner" />
 
 
@@ -57,22 +58,21 @@
             android:textColor="@color/purple_500"
             android:textSize="16sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/imgRepoRate"
-            app:layout_constraintEnd_toEndOf="@+id/txtRepoRateCounter"
-            app:layout_constraintStart_toStartOf="@+id/imgRepoRate"
-            app:layout_constraintTop_toBottomOf="@+id/txtRepoName"
+            android:layout_marginEnd="10dp"
+            app:layout_constraintBottom_toBottomOf="@+id/imgRepoRate"
+            app:layout_constraintEnd_toStartOf="@+id/imgRepoRate"
+            app:layout_constraintTop_toTopOf="@+id/imgRepoRate"
             tools:text="Kotlin" />
 
         <ImageView
             android:id="@+id/imgRepoRate"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_marginStart="30dp"
+            android:layout_marginEnd="15dp"
             android:src="@drawable/ic_rate"
-            app:layout_constraintBottom_toBottomOf="@+id/txtRepoOwner"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/txtRepoRateCounter"
-            app:layout_constraintStart_toEndOf="@+id/txtRepoOwner"
-            app:layout_constraintTop_toBottomOf="@+id/txtLanguage" />
+            app:layout_constraintTop_toBottomOf="@+id/txtRepoOwner" />
 
         <TextView
             android:id="@+id/txtRepoRateCounter"
@@ -81,9 +81,9 @@
             android:layout_marginStart="16dp"
             android:textColor="@color/black"
             android:textSize="16sp"
+            android:layout_marginEnd="10dp"
             app:layout_constraintBottom_toBottomOf="@+id/imgRepoRate"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/imgRepoRate"
             app:layout_constraintTop_toTopOf="@+id/imgRepoRate"
             tools:text="1.000" />
 

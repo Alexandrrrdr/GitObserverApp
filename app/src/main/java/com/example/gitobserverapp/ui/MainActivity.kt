@@ -16,7 +16,7 @@ class MainActivity : AppCompatActivity() {
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_holder, MainFragment()).commit()
+
     }
 
     override fun onDestroy() {

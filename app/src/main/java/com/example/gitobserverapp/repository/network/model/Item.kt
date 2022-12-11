@@ -1,7 +1,6 @@
-package com.example.gitobserverapp.api.model
+package com.example.gitobserverapp.repository.network.model
 
 data class Item(
-    val allow_forking: Boolean,
     val archive_url: String,
     val archived: Boolean,
     val assignees_url: String,
@@ -30,7 +29,6 @@ data class Item(
     val git_refs_url: String,
     val git_tags_url: String,
     val git_url: String,
-    val has_discussions: Boolean,
     val has_downloads: Boolean,
     val has_issues: Boolean,
     val has_pages: Boolean,
@@ -40,7 +38,6 @@ data class Item(
     val hooks_url: String,
     val html_url: String,
     val id: Int,
-    val is_template: Boolean,
     val issue_comment_url: String,
     val issue_events_url: String,
     val issues_url: String,
@@ -48,9 +45,10 @@ data class Item(
     val labels_url: String,
     val language: String,
     val languages_url: String,
+    val master_branch: String,
     val merges_url: String,
     val milestones_url: String,
-    val mirror_url: Any,
+    val mirror_url: String,
     val name: String,
     val node_id: String,
     val notifications_url: String,
@@ -61,7 +59,7 @@ data class Item(
     val pulls_url: String,
     val pushed_at: String,
     val releases_url: String,
-    val score: Double,
+    val score: Int,
     val size: Int,
     val ssh_url: String,
     val stargazers_count: Int,
@@ -72,12 +70,10 @@ data class Item(
     val svn_url: String,
     val tags_url: String,
     val teams_url: String,
-    val topics: List<String>,
     val trees_url: String,
     val updated_at: String,
     val url: String,
     val visibility: String,
     val watchers: Int,
-    val watchers_count: Int,
-    val web_commit_signoff_required: Boolean
+    val watchers_count: Int
 )
