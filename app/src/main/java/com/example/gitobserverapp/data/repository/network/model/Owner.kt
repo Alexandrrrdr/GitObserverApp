@@ -1,4 +1,4 @@
-package com.example.gitobserverapp.repository.network.model
+package com.example.gitobserverapp.data.repository.network.model
 
 data class Owner(
     val avatar_url: String,

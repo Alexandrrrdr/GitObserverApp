@@ -1,4 +1,4 @@
-package com.example.gitobserverapp.repository.network
+package com.example.gitobserverapp.data.repository.network
 
 import com.example.gitobserverapp.utils.Constants.API_BASE_URL
 import retrofit2.Retrofit

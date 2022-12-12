@@ -1,4 +1,4 @@
-package com.example.gitobserverapp.ui.main
+package com.example.gitobserverapp.presentation.ui.main
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.gitobserverapp.R
-import com.example.gitobserverapp.repository.network.model.Item
 import com.example.gitobserverapp.databinding.RecItemBinding
 
 class RepoSearchAdapter(private val listener: Listener): RecyclerView.Adapter<RepoSearchAdapter.ViewHolder>() {
@@ -26,28 +25,25 @@ class RepoSearchAdapter(private val listener: Listener): RecyclerView.Adapter<Re
     override fun getItemCount(): Int = differ.currentList.size
 
     inner class ViewHolder(private val binding: RecItemBinding): RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: Item, listener: Listener){
+        fun bind(item: MainModel, listener: Listener){
             Glide.with(itemView)
-                .load(item.owner.avatar_url)
+                .load(item.repoImageUrl)
                 .into(binding.imgRepo)
-            binding.txtRepoName.text = item.full_name
-            binding.txtRepoOwner.text = item.owner.login
-            binding.txtRepoRateCounter.text = item.stargazers_count.toString()
+            binding.txtRepoName.text = item.repoName
+            binding.txtRepoOwner.text = item.repoOwnerName
+            binding.txtRepoRateCounter.text = item.repoStarAmount.toString()
             itemView.setOnClickListener {
                 listener.onClick(item = item)
-                val repoId = item.node_id
-                val bundle = bundleOf("user_id" to repoId)
-                itemView.findNavController().navigate(R.id.action_mainFragment_to_chartFragment, bundle)
             }
         }
     }
 
-    private val difUtil = object : DiffUtil.ItemCallback<Item>(){
-        override fun areItemsTheSame(oldItem: Item, newItem: Item): Boolean {
-            return oldItem.id == newItem.id
+    private val difUtil = object : DiffUtil.ItemCallback<MainModel>(){
+        override fun areItemsTheSame(oldItem: MainModel, newItem: MainModel): Boolean {
+            return oldItem.repoId == newItem.repoId
         }
 
-        override fun areContentsTheSame(oldItem: Item, newItem: Item): Boolean {
+        override fun areContentsTheSame(oldItem: MainModel, newItem: MainModel): Boolean {
             return oldItem == newItem
         }
     }
@@ -55,6 +51,6 @@ class RepoSearchAdapter(private val listener: Listener): RecyclerView.Adapter<Re
     val differ = AsyncListDiffer(this, difUtil)
 
     interface Listener{
-        fun onClick(item: Item)
+        fun onClick(item: MainModel)
     }
 }

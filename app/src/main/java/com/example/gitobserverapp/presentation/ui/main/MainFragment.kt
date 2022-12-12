@@ -1,4 +1,4 @@
-package com.example.gitobserverapp.ui.main
+package com.example.gitobserverapp.presentation.ui.main
 
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
@@ -12,7 +12,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gitobserverapp.R
-import com.example.gitobserverapp.repository.network.model.Item
 import com.example.gitobserverapp.databinding.FragmentMainBinding
 import com.google.android.material.snackbar.Snackbar
 
@@ -58,7 +57,7 @@ class MainFragment : Fragment(), RepoSearchAdapter.Listener {
         mainViewModel.reposLiveData.observe(viewLifecycleOwner) { gitResponse ->
             binding.progBarMain.visibility = View.GONE
             if (gitResponse != null){
-                repoSearchAdapter.differ.submitList(gitResponse.items)
+                repoSearchAdapter.differ.submitList(gitResponse)
             } else {
                 Snackbar.make(binding.root, "No data from gitHub", Snackbar.LENGTH_LONG).show()
             }
@@ -75,9 +74,13 @@ class MainFragment : Fragment(), RepoSearchAdapter.Listener {
         _binding = null
     }
 
-    override fun onClick(item: Item) {
-        val item = item.id
-        val bundle = bundleOf("repo_id" to item)
+    override fun onClick(item: MainModel) {
+        val repoId: Int = item.repoId
+        val repoName: String = item.repoName
+        val bundle = bundleOf("user_id" to repoId, "repo_name" to repoName)
+//                itemView.findNavController().navigate(R.id.action_mainFragment_to_chartFragment)
         findNavController().navigate(R.id.action_mainFragment_to_chartFragment, bundle)
     }
+
+
 }

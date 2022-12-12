@@ -1,6 +1,6 @@
-package com.example.gitobserverapp.repository.network
+package com.example.gitobserverapp.data.repository.network
 
-import com.example.gitobserverapp.repository.network.model.GitHubRepoResult
+import com.example.gitobserverapp.data.repository.network.model.GitHubRepoResult
 import com.example.gitobserverapp.utils.Constants.API_GET_REPOS
 import retrofit2.Call
 import retrofit2.http.GET
