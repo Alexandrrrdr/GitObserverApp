@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.example.gitobserverapp.repository.network.RetrofitInstance
 import com.example.gitobserverapp.repository.network.model.GitHubRepoResult
 import com.example.gitobserverapp.utils.Constants
+import com.example.gitobserverapp.utils.Constants.SORT_BY
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -22,7 +23,7 @@ class MainViewModel(): ViewModel() {
 
     fun getRepos(searchWord: String){
 
-        val retrofit = RetrofitInstance.retrofitInstance.getRepos(searchWord, Constants.SORT_BY_RATE)
+        val retrofit = RetrofitInstance.retrofitInstance.getRepos(searchWord, SORT_BY)
         retrofit.enqueue(object : Callback<GitHubRepoResult> {
             override fun onResponse(call: Call<GitHubRepoResult>, response: Response<GitHubRepoResult>) {
                 when (response.code()) {

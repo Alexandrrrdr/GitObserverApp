@@ -1,22 +1,22 @@
-package com.example.gitobserverapp.adapter
+package com.example.gitobserverapp.ui.main
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.gitobserverapp.R
 import com.example.gitobserverapp.repository.network.model.Item
 import com.example.gitobserverapp.databinding.RecItemBinding
 
 class RepoSearchAdapter(private val listener: Listener): RecyclerView.Adapter<RepoSearchAdapter.ViewHolder>() {
 
-    private lateinit var binding: RecItemBinding
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        binding = let { RecItemBinding.inflate(LayoutInflater.from(parent.context), parent, false) }
-        return ViewHolder(binding.root)
+        val binding = let { RecItemBinding.inflate(LayoutInflater.from(parent.context), parent, false) }
+        return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -25,7 +25,7 @@ class RepoSearchAdapter(private val listener: Listener): RecyclerView.Adapter<Re
 
     override fun getItemCount(): Int = differ.currentList.size
 
-    inner class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
+    inner class ViewHolder(private val binding: RecItemBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Item, listener: Listener){
             Glide.with(itemView)
                 .load(item.owner.avatar_url)
@@ -35,6 +35,9 @@ class RepoSearchAdapter(private val listener: Listener): RecyclerView.Adapter<Re
             binding.txtRepoRateCounter.text = item.stargazers_count.toString()
             itemView.setOnClickListener {
                 listener.onClick(item = item)
+                val repoId = item.node_id
+                val bundle = bundleOf("user_id" to repoId)
+                itemView.findNavController().navigate(R.id.action_mainFragment_to_chartFragment, bundle)
             }
         }
     }

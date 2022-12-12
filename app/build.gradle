@@ -33,8 +33,14 @@ android {
 
 dependencies {
 
+    //safe args
+//    implementation "androidx.navigation:navigation-safe-args-gradle-plugin:2.5.3"
+
+    //Charts
+//    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+
     //ViewModel
-    implementation 'androidx.fragment:fragment-ktx:1.5.4'
+    implementation 'androidx.fragment:fragment-ktx:1.5.5'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
     implementation 'androidx.lifecycle:lifecycle-livedata-core:2.5.1'
 
@@ -43,7 +49,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-moshi:2.9.0'
 
     //Client
-    implementation 'com.squareup.okhttp3:okhttp:4.9.1'
+    implementation 'com.squareup.okhttp3:okhttp:4.10.0'
 
     //Coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'

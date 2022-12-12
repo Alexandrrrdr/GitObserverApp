@@ -22,5 +22,9 @@
         <action
             android:id="@+id/action_chartFragment_to_mainFragment"
             app:destination="@id/mainFragment" />
+        <argument
+            android:name="repo_data"
+            app:argType="integer"
+            android:defaultValue="1" />
     </fragment>
 </navigation>

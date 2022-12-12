@@ -7,11 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gitobserverapp.R
-import com.example.gitobserverapp.adapter.RepoSearchAdapter
 import com.example.gitobserverapp.repository.network.model.Item
 import com.example.gitobserverapp.databinding.FragmentMainBinding
 import com.google.android.material.snackbar.Snackbar
@@ -44,7 +44,6 @@ class MainFragment : Fragment(), RepoSearchAdapter.Listener {
         binding.btnSearch.setOnClickListener {
             hideKeyboard(it)
             binding.progBarMain.visibility = View.VISIBLE
-
             mainViewModel.getRepos(binding.edtTxtInput.text.toString())
         }
     }
@@ -77,6 +76,8 @@ class MainFragment : Fragment(), RepoSearchAdapter.Listener {
     }
 
     override fun onClick(item: Item) {
-        findNavController().navigate(R.id.action_mainFragment_to_chartFragment)
+        val item = item.id
+        val bundle = bundleOf("repo_id" to item)
+        findNavController().navigate(R.id.action_mainFragment_to_chartFragment, bundle)
     }
 }
