@@ -1,4 +1,4 @@
-package com.example.gitobserverapp.data.repository.network.model
+package com.example.gitobserverapp.data.repository.network.model.repo
 
 data class Item(
     val archive_url: String,

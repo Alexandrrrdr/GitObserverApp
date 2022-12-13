@@ -38,7 +38,7 @@ dependencies {
 //    implementation "androidx.navigation:navigation-safe-args-gradle-plugin:2.5.3"
 
     //Charts
-//    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
     //ViewModel
     implementation 'androidx.fragment:fragment-ktx:1.5.5'

@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.gitobserverapp.data.repository.network.RetrofitInstance
-import com.example.gitobserverapp.data.repository.network.model.GitHubRepoResult
+import com.example.gitobserverapp.data.repository.network.model.repo.GitHubRepoResult
 import com.example.gitobserverapp.utils.Constants.SORT_BY
 import retrofit2.Call
 import retrofit2.Callback
@@ -26,9 +26,8 @@ class MainViewModel(): ViewModel() {
                 repoImageUrl = list.items[i].owner.avatar_url,
                 repoOwnerName = list.items[i].owner.login,
                 repoStarAmount = list.items[i].stargazers_count,
-                stargazers_url = list.items[i].stargazers_url,
                 subscribers_url = list.items[i].subscribers_url,
-                subscription_url = list.items[i].subscription_url
+                repoCreated = list.items[i].created_at
             )
             reposItems.add(repoModel)
         }

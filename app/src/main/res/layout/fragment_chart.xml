@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/sandy_tan"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".presentation.ui.chart.ChartFragment">
 
@@ -13,13 +14,21 @@
         android:layout_height="wrap_content"
         android:textColor="@color/black"
         tools:text="Repository's name"
-        android:text="Repositorie name stars chart"
         android:textAppearance="@style/TextAppearance.AppCompat.Headline"
         android:textStyle="bold"
         android:layout_gravity="center_horizontal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/repoCreatedAt"
+        android:textColor="@color/black"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:layout_gravity="center_horizontal"
+        tools:text="13.12.2022"/>
 
 
 

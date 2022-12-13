@@ -76,11 +76,9 @@ class MainFragment : Fragment(), RepoSearchAdapter.Listener {
 
     override fun onClick(item: MainModel) {
         val repoId: Int = item.repoId
+        val repoOwnerLogin: String = item.repoOwnerName
         val repoName: String = item.repoName
-        val bundle = bundleOf("user_id" to repoId, "repo_name" to repoName)
-//                itemView.findNavController().navigate(R.id.action_mainFragment_to_chartFragment)
+        val bundle = bundleOf("repo_id" to repoId, "repo_name" to repoName, "owner_name" to repoOwnerLogin)
         findNavController().navigate(R.id.action_mainFragment_to_chartFragment, bundle)
     }
-
-
 }
