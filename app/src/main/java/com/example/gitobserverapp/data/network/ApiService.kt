@@ -1,8 +1,8 @@
-package com.example.gitobserverapp.data.repository.network
+package com.example.gitobserverapp.data.network
 
-import com.example.gitobserverapp.data.repository.network.model.repo.GitHubRepoResult
-import com.example.gitobserverapp.data.repository.network.model.starred.StarredModel
-import com.example.gitobserverapp.data.repository.network.model.starred.StarredModelItem
+import com.example.gitobserverapp.data.network.model.repo.GitHubRepoResult
+import com.example.gitobserverapp.data.network.model.starred.StarredModel
+import com.example.gitobserverapp.data.network.model.starred.StarredModelItem
 import com.example.gitobserverapp.utils.Constants.API_GET_REPOS
 import retrofit2.Call
 import retrofit2.http.GET
@@ -21,5 +21,5 @@ interface ApiService {
     @GET("/repos/{owner_login}/{repo_name}/stargazers")
     fun getStarredData(
         @Path("owner_login") owner_login: String,
-        @Path("repo_name") repo_name: String) : Call<ArrayList<StarredModelItem>>
+        @Path("repo_name") repo_name: String) : Call<List<StarredModelItem>>
 }

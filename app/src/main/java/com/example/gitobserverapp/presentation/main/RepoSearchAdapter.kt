@@ -1,14 +1,11 @@
-package com.example.gitobserverapp.presentation.ui.main
+package com.example.gitobserverapp.presentation.main
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.gitobserverapp.R
 import com.example.gitobserverapp.databinding.RecItemBinding
 
 class RepoSearchAdapter(private val listener: Listener): RecyclerView.Adapter<RepoSearchAdapter.ViewHolder>() {

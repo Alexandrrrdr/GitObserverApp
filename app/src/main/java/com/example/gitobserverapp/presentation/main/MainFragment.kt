@@ -1,4 +1,4 @@
-package com.example.gitobserverapp.presentation.ui.main
+package com.example.gitobserverapp.presentation.main
 
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle

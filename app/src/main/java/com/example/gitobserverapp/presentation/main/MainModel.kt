@@ -1,4 +1,4 @@
-package com.example.gitobserverapp.presentation.ui.main
+package com.example.gitobserverapp.presentation.main
 
 data class MainModel(
     val repoName: String,

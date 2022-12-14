@@ -1,11 +1,11 @@
-package com.example.gitobserverapp.presentation.ui.main
+package com.example.gitobserverapp.presentation.main
 
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.gitobserverapp.data.repository.network.RetrofitInstance
-import com.example.gitobserverapp.data.repository.network.model.repo.GitHubRepoResult
+import com.example.gitobserverapp.data.network.RetrofitInstance
+import com.example.gitobserverapp.data.network.model.repo.GitHubRepoResult
 import com.example.gitobserverapp.utils.Constants.SORT_BY
 import retrofit2.Call
 import retrofit2.Callback

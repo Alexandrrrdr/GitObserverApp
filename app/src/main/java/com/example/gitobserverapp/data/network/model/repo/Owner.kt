@@ -1,6 +1,6 @@
-package com.example.gitobserverapp.data.repository.network.model.starred
+package com.example.gitobserverapp.data.network.model.repo
 
-data class User(
+data class Owner(
     val avatar_url: String,
     val events_url: String,
     val followers_url: String,
