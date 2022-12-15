@@ -69,10 +69,10 @@ class ChartViewModel : ViewModel() {
         val starModel: StarParsedModel? = null
         val delimeterDephise = "-"
         val delimeterLetter = "T"
-        for (i in starredDateList.indices){
-            tmpList.addAll(starredDateList[i].starredAt.split(delimeterDephise, delimeterLetter, ignoreCase = true))
-            starModel = StarParsedModel(year = tmpList[i].toInt(), )
-        }
+//        for (i in starredDateList.indices){
+//            tmpList.addAll(starredDateList[i].starredAt.split(delimeterDephise, delimeterLetter, ignoreCase = true))
+//            starModel = StarParsedModel(year = tmpList[i].toInt(), )
+//        }
     }
 
 }
