@@ -44,7 +44,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:text="Day's"
+                android:text="Per 1 month"
                 android:layout_weight="0.33"/>
 
             <com.google.android.material.radiobutton.MaterialRadioButton
@@ -52,7 +52,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:text="Month's"
+                android:text="Per 1 year"
                 android:layout_weight="0.33"/>
 
             <com.google.android.material.radiobutton.MaterialRadioButton
@@ -60,7 +60,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:text="Year's"
+                android:text="Per years"
                 android:layout_weight="0.33"/>
 
         </RadioGroup>

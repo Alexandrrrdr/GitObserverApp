@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.example.gitobserverapp.databinding.FragmentChartBinding
+import com.example.gitobserverapp.presentation.chart.model.ChartModel
+import com.example.gitobserverapp.presentation.chart.model.StarParsedModel
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
@@ -43,16 +45,20 @@ class ChartFragment : Fragment() {
         val repoName: String? = arguments?.getString("repo_name", "No repo name")
         binding.repoName.text = "$repoName"
 
-        let { viewModel.getStarGazersData(repoOwnerName = repoOwnerLogin!!, repoName = repoName!!) }
+        let { viewModel.getStarInfo(repoOwnerName = repoOwnerLogin!!, repoName = repoName!!) }
         renderUi()
 
     }
 
     private fun renderUi(){
-        viewModel.chartData.observe(viewLifecycleOwner){ list ->
+        viewModel.chartLiveData.observe(viewLifecycleOwner){ list ->
             //TODO fill data to Chart
-            initBarChart(list as ArrayList<ChartModel> /* = java.util.ArrayList<com.example.gitobserverapp.presentation.chart.ChartModel> */)
-            Log.d("chart", list.size.toString())
+//            initBarChart(list as ArrayList<ChartModel> /* = java.util.ArrayList<com.example.gitobserverapp.presentation.chart.model.ChartModel> */)
+//            Log.d("chart", "size is ${list.size.toString()}")
+            viewModel.parseStarredData(list)
+        }
+        viewModel.starParsedLiveData.observe(viewLifecycleOwner){
+            Log.d("chart", it[0].date.toString())
         }
     }
 
@@ -68,17 +74,22 @@ class ChartFragment : Fragment() {
     }
 
     private fun getBarChartData(list: ArrayList<ChartModel>) {
-        barEntriesList = ArrayList()
+//        barEntriesList = ArrayList()
 
         // on below line we are adding data
         // to our bar entries list
-        for (i in list.indices){
-            barEntriesList.add(BarEntry(i.toFloat(), generateRandomDouble()))
-        }
+//        for (i in list.indices){
+//            var value = list[i].starredAt
+//            barEntriesList.add(BarEntry(i.toFloat(), generateRandomDouble()))
+//        }
     }
 
     private fun generateRandomDouble(): Float {
         return Random.nextInt(10).toFloat()
+    }
+
+    private fun generateRandomChartColor(): Float{
+        return Random.nextInt(256).toFloat()
     }
 
     override fun onDestroy() {

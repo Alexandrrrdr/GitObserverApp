@@ -17,7 +17,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gitobserverapp.R
 import com.example.gitobserverapp.databinding.FragmentMainBinding
-import com.example.gitobserverapp.utils.ViewState
+import com.example.gitobserverapp.presentation.helper.ViewState
 
 class MainFragment : Fragment(), RepoSearchAdapter.Listener {
 

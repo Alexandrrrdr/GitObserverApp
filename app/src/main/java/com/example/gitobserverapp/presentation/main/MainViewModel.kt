@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.example.gitobserverapp.data.network.RetrofitInstance
 import com.example.gitobserverapp.data.network.model.repo.GitHubRepoResult
 import com.example.gitobserverapp.utils.Constants.SORT_BY
-import com.example.gitobserverapp.utils.ViewState
+import com.example.gitobserverapp.presentation.helper.ViewState
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

@@ -1,4 +1,4 @@
-package com.example.gitobserverapp.presentation.chart
+package com.example.gitobserverapp.presentation.chart.model
 
 data class StarParsedModel(
     val year: Int,
