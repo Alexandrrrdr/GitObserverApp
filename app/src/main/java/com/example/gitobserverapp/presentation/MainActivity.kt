@@ -13,7 +13,7 @@ class MainActivity : AppCompatActivity() {
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val key = "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"
 
+        val key="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"
     }
 }
