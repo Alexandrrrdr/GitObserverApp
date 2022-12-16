@@ -4,10 +4,13 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.gitobserverapp.data.network.RetrofitInstance
 import com.example.gitobserverapp.data.network.model.repo.GitHubRepoResult
 import com.example.gitobserverapp.utils.Constants.SORT_BY
 import com.example.gitobserverapp.presentation.helper.ViewState
+import com.example.gitobserverapp.utils.Constants
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -44,30 +47,29 @@ class MainViewModel(): ViewModel() {
 
     fun getRepos(searchWord: String){
         _viewStateLiveData.postValue(ViewState.Loading)
-        val retrofit = RetrofitInstance.retrofitInstance.getRepos(searchWord, SORT_BY)
-        retrofit.enqueue(object : Callback<GitHubRepoResult> {
-            override fun onResponse(call: Call<GitHubRepoResult>, response: Response<GitHubRepoResult>) {
-                when (response.code()) {
+
+        viewModelScope.launch{
+            val retrofit = RetrofitInstance.retrofitInstance.getRepos(searchWord, SORT_BY, Constants.PER_PAGE)
+
+            if (retrofit.isSuccessful && retrofit.body() != null){
+                when (retrofit.code()) {
                     in 200..303 -> {
-                        response.body()?.let { get_repos ->
+                        retrofit.body()?.let { get_repos ->
                             _viewStateLiveData.postValue(ViewState.ViewContent(get_repos))
                         }
                     }
                     in 304..421 -> {
-                        _viewStateLiveData.postValue(ViewState.Error(response.message().toString()))
+                        _viewStateLiveData.postValue(ViewState.Error(retrofit.message().toString()))
                     }
                     in 422..502 -> {
-                        _viewStateLiveData.postValue(ViewState.Error(response.message().toString()))
+                        _viewStateLiveData.postValue(ViewState.Error(retrofit.message().toString()))
                     }
                     in 503..599 -> {
-                        _viewStateLiveData.postValue(ViewState.Error(response.message().toString()))
+                        _viewStateLiveData.postValue(ViewState.Error(retrofit.message().toString()))
                     }
                 }
             }
-            override fun onFailure(call: Call<GitHubRepoResult>, t: Throwable) {
-                Log.d("mylog", t.message.toString())
-            }
-        })
+        }
     }
 
     fun setStatement(error: String){

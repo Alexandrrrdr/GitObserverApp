@@ -1,11 +1,13 @@
 package com.example.gitobserverapp.presentation.chart
 
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.example.gitobserverapp.databinding.FragmentChartBinding
@@ -38,6 +40,7 @@ class ChartFragment : Fragment() {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -50,30 +53,29 @@ class ChartFragment : Fragment() {
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun renderUi(){
         viewModel.chartLiveData.observe(viewLifecycleOwner){ list ->
+            viewModel.parseStarredData(list)
             //TODO fill data to Chart
 //            initBarChart(list as ArrayList<ChartModel> /* = java.util.ArrayList<com.example.gitobserverapp.presentation.chart.model.ChartModel> */)
 //            Log.d("chart", "size is ${list.size.toString()}")
-            viewModel.parseStarredData(list)
-        }
-        viewModel.starParsedLiveData.observe(viewLifecycleOwner){
-            Log.d("chart", it[0].date.toString())
+
         }
     }
 
-    private fun initBarChart(list: ArrayList<ChartModel>) {
-        barChart = binding.barChart
-        getBarChartData(list)
-        barDataSet = BarDataSet(barEntriesList, "Test")
-        barData = BarData(barDataSet)
-        barChart.data = barData
-        barDataSet.valueTextColor = Color.BLACK
-        barDataSet.valueTextSize = 10f
-        barDataSet.color = Color.MAGENTA
-    }
+//    private fun initBarChart() {
+//        barChart = binding.barChart
+//        getBarChartData()
+//        barDataSet = BarDataSet(barEntriesList, "Test")
+//        barData = BarData(barDataSet)
+//        barChart.data = barData
+//        barDataSet.valueTextColor = Color.BLACK
+//        barDataSet.valueTextSize = 10f
+//        barDataSet.color = Color.MAGENTA
+//    }
 
-    private fun getBarChartData(list: ArrayList<ChartModel>) {
+    private fun getBarChartData() {
 //        barEntriesList = ArrayList()
 
         // on below line we are adding data

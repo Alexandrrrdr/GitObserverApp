@@ -1,8 +1,8 @@
 package com.example.gitobserverapp.presentation.chart.model
 
+import java.time.LocalDate
+
 data class StarParsedModel(
-    val year: Int,
-    val month: Int,
-    val day: Int,
+    val starred_at: LocalDate,
     val repoOwnerName: String
 )
