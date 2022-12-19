@@ -17,6 +17,9 @@ import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
+import com.google.android.material.snackbar.Snackbar
+import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.random.Random
 
 class ChartFragment : Fragment() {
@@ -61,36 +64,33 @@ class ChartFragment : Fragment() {
         }
 
         viewModel.starredLiveData.observe(viewLifecycleOwner){ list ->
+            Snackbar.make(binding.root, "Size of list is ${list.size}", Snackbar.LENGTH_LONG).show()
             initBarChart(list = list)
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun initBarChart(list: List<StarParsedModel>) {
         barChart = binding.barChart
-        getBarChartData(list)
-        barDataSet = BarDataSet(barEntriesList, "Test")
+        barChart.setVisibleXRangeMaximum(8f)
+        val value = getBarChartData(list)
+        barDataSet = BarDataSet(value, "By years")
         barData = BarData(barDataSet)
         barChart.data = barData
         barDataSet.valueTextColor = Color.BLACK
         barDataSet.valueTextSize = 10f
-        barDataSet.color = Color.MAGENTA
+        barDataSet.color = Color.DKGRAY
     }
 
-    private fun getBarChartData(list: List<StarParsedModel>) {
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun getBarChartData(list: List<StarParsedModel>): ArrayList<BarEntry> {
         barEntriesList = arrayListOf()
 
-//        for (i in list.indices){
-//            var value = list[i].starredAt
-//            barEntriesList.add(BarEntry(i.toFloat(), generateRandomDouble()))
-//        }
-    }
-
-    private fun generateRandomDouble(): Float {
-        return Random.nextInt(10).toFloat()
-    }
-
-    private fun generateRandomChartColor(): Float{
-        return Random.nextInt(256).toFloat()
+        for (i in list.indices){
+            val value = list[i].starred_at.year
+            barEntriesList.add(BarEntry(i.toFloat(), value.toFloat()))
+        }
+        return barEntriesList
     }
 
     override fun onDestroy() {
