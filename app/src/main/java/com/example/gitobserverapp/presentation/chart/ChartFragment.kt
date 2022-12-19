@@ -49,6 +49,7 @@ class ChartFragment : Fragment() {
         binding.repoName.text = "$repoName"
 
         let { viewModel.getStarInfo(repoOwnerName = repoOwnerLogin!!, repoName = repoName!!) }
+
         renderUi()
 
     }
@@ -57,29 +58,27 @@ class ChartFragment : Fragment() {
     private fun renderUi(){
         viewModel.chartLiveData.observe(viewLifecycleOwner){ list ->
             viewModel.parseStarredData(list)
-            //TODO fill data to Chart
-//            initBarChart(list as ArrayList<ChartModel> /* = java.util.ArrayList<com.example.gitobserverapp.presentation.chart.model.ChartModel> */)
-//            Log.d("chart", "size is ${list.size.toString()}")
+        }
 
+        viewModel.starredLiveData.observe(viewLifecycleOwner){ list ->
+            initBarChart(list = list)
         }
     }
 
-//    private fun initBarChart() {
-//        barChart = binding.barChart
-//        getBarChartData()
-//        barDataSet = BarDataSet(barEntriesList, "Test")
-//        barData = BarData(barDataSet)
-//        barChart.data = barData
-//        barDataSet.valueTextColor = Color.BLACK
-//        barDataSet.valueTextSize = 10f
-//        barDataSet.color = Color.MAGENTA
-//    }
+    private fun initBarChart(list: List<StarParsedModel>) {
+        barChart = binding.barChart
+        getBarChartData(list)
+        barDataSet = BarDataSet(barEntriesList, "Test")
+        barData = BarData(barDataSet)
+        barChart.data = barData
+        barDataSet.valueTextColor = Color.BLACK
+        barDataSet.valueTextSize = 10f
+        barDataSet.color = Color.MAGENTA
+    }
 
-    private fun getBarChartData() {
-//        barEntriesList = ArrayList()
+    private fun getBarChartData(list: List<StarParsedModel>) {
+        barEntriesList = arrayListOf()
 
-        // on below line we are adding data
-        // to our bar entries list
 //        for (i in list.indices){
 //            var value = list[i].starredAt
 //            barEntriesList.add(BarEntry(i.toFloat(), generateRandomDouble()))

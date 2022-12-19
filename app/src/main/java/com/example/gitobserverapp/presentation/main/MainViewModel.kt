@@ -1,6 +1,5 @@
 package com.example.gitobserverapp.presentation.main
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,9 +10,6 @@ import com.example.gitobserverapp.utils.Constants.SORT_BY
 import com.example.gitobserverapp.presentation.helper.ViewState
 import com.example.gitobserverapp.utils.Constants
 import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class MainViewModel(): ViewModel() {
 
@@ -55,7 +51,7 @@ class MainViewModel(): ViewModel() {
                 when (retrofit.code()) {
                     in 200..303 -> {
                         retrofit.body()?.let { get_repos ->
-                            _viewStateLiveData.postValue(ViewState.ViewContent(get_repos))
+                            _viewStateLiveData.postValue(ViewState.ViewContentMain(get_repos))
                         }
                     }
                     in 304..421 -> {

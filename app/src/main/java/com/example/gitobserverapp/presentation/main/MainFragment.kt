@@ -80,7 +80,7 @@ class MainFragment : Fragment(), RepoSearchAdapter.Listener {
                     binding.progBarMain.visibility = View.VISIBLE
                     binding.txtError.visibility = View.GONE
                 }
-                is ViewState.ViewContent -> {
+                is ViewState.ViewContentMain -> {
                     binding.progBarMain.visibility = View.GONE
                     binding.txtError.visibility = View.GONE
                     mainViewModel.setReposList(viewState.result)

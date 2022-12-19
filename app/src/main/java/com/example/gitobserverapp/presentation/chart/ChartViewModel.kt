@@ -14,7 +14,7 @@ import com.example.gitobserverapp.presentation.chart.model.StarParsedModel
 import com.example.gitobserverapp.presentation.helper.ViewState
 import com.example.gitobserverapp.utils.Constants
 import kotlinx.coroutines.launch
-import java.time.LocalDate
+import java.time.*
 import java.time.format.DateTimeFormatter
 import java.util.*
 
@@ -25,6 +25,9 @@ class ChartViewModel : ViewModel() {
 
     private var _viewStateLiveData: MutableLiveData<ViewState> = MutableLiveData<ViewState>()
     val viewStateLiveData get() = _viewStateLiveData
+
+    private var _starredLiveData = MutableLiveData<List<StarParsedModel>>()
+    val starredLiveData: LiveData<List<StarParsedModel>> get() = _starredLiveData
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun setData(starLis: List<StarredModelItem>) {
@@ -53,7 +56,7 @@ class ChartViewModel : ViewModel() {
                 when (retroRequest.code()) {
                     in 200..421 -> {
                         retroRequest.body().let { list ->
-                            if (list !=null && list.isNotEmpty()){
+                            if (list != null && list.isNotEmpty()) {
                                 setData(list)
                             } else {
                                 Log.d("charts", "No data to show you")
@@ -68,29 +71,24 @@ class ChartViewModel : ViewModel() {
         }
     }
 
-    private var _starredLiveData = MutableLiveData <List<StarParsedModel>>()
-    val starredLiveData: LiveData<List<StarParsedModel>> get() = _starredLiveData
-
     @RequiresApi(Build.VERSION_CODES.O)
     fun parseStarredData(starredDateList: List<ChartModel>) {
 
         val starParsedList = mutableListOf<StarParsedModel>()
+        var starredModel: StarParsedModel
 
         for (i in starredDateList.indices) {
-            println(starredDateList[i].starredAt)
+            val instance = Instant.parse(starredDateList[i].starredAt)
+            val result = LocalDateTime.ofInstant(instance, ZoneId.of(ZoneOffset.UTC.id))
 
-//            val inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-d'T'hh:mm:ss.SSS'Z'")
-//            val localDate = LocalDate.parse(starredDateList[i].starredAt, inputFormatter)
-//            starredModel = StarParsedModel(starred_at = localDate, repoOwnerName = starredDateList[i].repoOwnerName)
-//            starParsedList.add(i, starredModel)
+            starredModel = StarParsedModel(
+                starred_at = result.toLocalDate(),
+                repoOwnerName = starredDateList[i].repoOwnerName
+            )
 
-//            val outputFormatter = DateTimeFormatter.ofPattern("dd-MM-yyy", Locale.ENGLISH)
-//            val starDate = LocalDate.parse("2018-04-10T04:00:00.000Z", inputFormatter)
-//            println(starredDateList.size.toString())
-//            var localDate = LocalDate.parse(starredDateList[i].starredAt, DateTimeFormatter.ISO_OFFSET_DATE_TIME)
-//            println(starredDateList[i].starredAt)
+            println(starredModel.starred_at.toString())
+            starParsedList.add(i, starredModel)
         }
-
         _starredLiveData.postValue(starParsedList)
-        }
+    }
 }
