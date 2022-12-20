@@ -32,7 +32,6 @@ class MainViewModel(): ViewModel() {
                     repoImageUrl = list.items[i].owner.avatar_url,
                     repoOwnerName = list.items[i].owner.login,
                     repoStarAmount = list.items[i].stargazers_count,
-                    subscribers_url = list.items[i].subscribers_url,
                     repoCreated = list.items[i].created_at
                 )
                 reposItems.add(repoModel)

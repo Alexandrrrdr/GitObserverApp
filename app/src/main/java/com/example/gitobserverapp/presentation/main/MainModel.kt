@@ -6,6 +6,5 @@ data class MainModel(
     val repoImageUrl: String,
     val repoOwnerName: String,
     val repoStarAmount: Int,
-    val subscribers_url: String,
     val repoCreated: String
 )

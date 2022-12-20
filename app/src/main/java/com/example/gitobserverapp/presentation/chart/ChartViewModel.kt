@@ -10,41 +10,21 @@ import androidx.lifecycle.viewModelScope
 import com.example.gitobserverapp.data.network.RetrofitInstance
 import com.example.gitobserverapp.data.network.model.starred.StarredModelItem
 import com.example.gitobserverapp.presentation.chart.model.ChartModel
-import com.example.gitobserverapp.presentation.chart.model.StarParsedModel
-import com.example.gitobserverapp.presentation.helper.ViewState
+import com.example.gitobserverapp.presentation.chart.model.ComparedList
 import com.example.gitobserverapp.utils.Constants
 import kotlinx.coroutines.launch
 import java.time.*
-import java.time.format.DateTimeFormatter
-import java.util.*
 
 class ChartViewModel : ViewModel() {
 
-    private var _chartLiveData: MutableLiveData<List<ChartModel>> = MutableLiveData<List<ChartModel>>()
-    val chartLiveData: LiveData<List<ChartModel>> get() = _chartLiveData
+    private var _starredUsersLiveData = MutableLiveData<List<ChartModel>>()
+    val starredUsersLiveData: LiveData<List<ChartModel>> get() = _starredUsersLiveData
 
-    private var _viewStateLiveData: MutableLiveData<ViewState> = MutableLiveData<ViewState>()
-    val viewStateLiveData get() = _viewStateLiveData
-
-    private var _starredLiveData = MutableLiveData<List<StarParsedModel>>()
-    val starredLiveData: LiveData<List<StarParsedModel>> get() = _starredLiveData
+//    private var _barChartLiveData = MutableLiveData<List<ComparedList>>()
+//    val barChartLiveData: LiveData<List<ComparedList>> get() = _barChartLiveData
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun setData(starLis: List<StarredModelItem>) {
-        val tmpStarList: ArrayList<ChartModel> = arrayListOf()
-        var tmpModel: ChartModel?
-        for (i in starLis.indices) {
-            tmpModel = ChartModel(
-                repoOwnerName = starLis[i].user.login,
-                starredAt = starLis[i].starred_at
-            )
-            tmpStarList.add(tmpModel)
-        }
-        _chartLiveData.postValue(tmpStarList as List<ChartModel>)
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun getStarInfo(repoOwnerName: String, repoName: String) {
+    fun getStarInfo(repoOwnerName: String, repoName: String, createdAt: String) {
 
         viewModelScope.launch {
             val retroRequest = RetrofitInstance.retrofitInstance.getStarredData(
@@ -57,7 +37,7 @@ class ChartViewModel : ViewModel() {
                     in 200..421 -> {
                         retroRequest.body().let { list ->
                             if (list != null && list.isNotEmpty()) {
-                                setData(list)
+                                parseChartData(list, createdAt)
                             } else {
                                 Log.d("charts", "No data to show you")
                             }
@@ -72,23 +52,55 @@ class ChartViewModel : ViewModel() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun parseStarredData(starredDateList: List<ChartModel>) {
+    fun parseChartData(starredDateList: List<StarredModelItem>, created: String) {
 
-        val starParsedList = mutableListOf<StarParsedModel>()
-        var starredModel: StarParsedModel
+        val starParsedList = mutableListOf<ChartModel>()
+        var starredModel: ChartModel
+        val date = dateConverter(created)
 
         for (i in starredDateList.indices) {
-            val instance = Instant.parse(starredDateList[i].starredAt)
-            val result = LocalDateTime.ofInstant(instance, ZoneId.of(ZoneOffset.UTC.id))
 
-            starredModel = StarParsedModel(
-                starred_at = result.toLocalDate(),
-                repoOwnerName = starredDateList[i].repoOwnerName
+            val localDate = dateConverter(starredDateList[i].starred_at)
+            starredModel = ChartModel(
+                users = starredDateList[i].user,
+                starredAt = localDate,
+                createdAt = date
             )
-
-            println(starredModel.starred_at.toString())
             starParsedList.add(i, starredModel)
         }
-        _starredLiveData.postValue(starParsedList)
+        _starredUsersLiveData.postValue(starParsedList)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun dateConverter(value: String): LocalDate {
+        val instant = Instant.parse(value)
+        return LocalDateTime.ofInstant(instant, ZoneId.of(ZoneOffset.UTC.id)).toLocalDate()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun dateComparator(list: List<ChartModel>, searchValue: LocalDate, key: Int): Int{
+
+        val startDate = list[0].createdAt
+        val currentDate = LocalDate.now()
+        var counter = 0
+        val compareList = arrayListOf<ComparedList>()
+
+        when(key){
+            //years
+            0 -> {
+                for (i in list.indices){
+                    if (list[i].starredAt.year == list[i+1].starredAt.year){
+
+                    }
+                }
+            }
+            1 -> {
+
+            }
+            2 -> {
+
+            }
+        }
+        return 0
     }
 }
