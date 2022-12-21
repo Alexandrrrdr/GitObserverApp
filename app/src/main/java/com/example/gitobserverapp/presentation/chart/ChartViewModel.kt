@@ -10,8 +10,13 @@ import androidx.lifecycle.viewModelScope
 import com.example.gitobserverapp.data.network.RetrofitInstance
 import com.example.gitobserverapp.data.network.model.starred.StarredModelItem
 import com.example.gitobserverapp.presentation.chart.model.ChartModel
-import com.example.gitobserverapp.presentation.chart.model.ComparedList
+import com.example.gitobserverapp.presentation.chart.model.ComparedModel
+import com.example.gitobserverapp.presentation.chart.model.RadioButtonModel
 import com.example.gitobserverapp.utils.Constants
+import com.github.mikephil.charting.data.BarDataSet
+import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineDataSet
 import kotlinx.coroutines.launch
 import java.time.*
 
@@ -20,11 +25,15 @@ class ChartViewModel : ViewModel() {
     private var _starredUsersLiveData = MutableLiveData<List<ChartModel>>()
     val starredUsersLiveData: LiveData<List<ChartModel>> get() = _starredUsersLiveData
 
-//    private var _barChartLiveData = MutableLiveData<List<ComparedList>>()
-//    val barChartLiveData: LiveData<List<ComparedList>> get() = _barChartLiveData
+    private var _barChartYearsLiveData = MutableLiveData<List<ComparedModel>>()
+    val barChartYearsLiveData: LiveData<List<ComparedModel>> get() = _barChartYearsLiveData
+
+    private var _radioCheckedLiveData = MutableLiveData<RadioButtonModel>()
+    val radioCheckedLiveData: LiveData<RadioButtonModel> get() = _radioCheckedLiveData
+
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun getStarInfo(repoOwnerName: String, repoName: String, createdAt: String) {
+    fun getDataFromGitHub(repoOwnerName: String, repoName: String, createdAt: String) {
 
         viewModelScope.launch {
             val retroRequest = RetrofitInstance.retrofitInstance.getStarredData(
@@ -37,7 +46,11 @@ class ChartViewModel : ViewModel() {
                     in 200..421 -> {
                         retroRequest.body().let { list ->
                             if (list != null && list.isNotEmpty()) {
-                                parseChartData(list, createdAt)
+                                parseChartData(
+                                    starredDateList = list,
+                                    created = createdAt,
+                                    repoName = repoName
+                                )
                             } else {
                                 Log.d("charts", "No data to show you")
                             }
@@ -52,8 +65,7 @@ class ChartViewModel : ViewModel() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun parseChartData(starredDateList: List<StarredModelItem>, created: String) {
-
+    fun parseChartData(starredDateList: List<StarredModelItem>, created: String, repoName: String) {
         val starParsedList = mutableListOf<ChartModel>()
         var starredModel: ChartModel
         val date = dateConverter(created)
@@ -64,7 +76,8 @@ class ChartViewModel : ViewModel() {
             starredModel = ChartModel(
                 users = starredDateList[i].user,
                 starredAt = localDate,
-                createdAt = date
+                createdAt = date,
+                repoName = repoName
             )
             starParsedList.add(i, starredModel)
         }
@@ -77,22 +90,37 @@ class ChartViewModel : ViewModel() {
         return LocalDateTime.ofInstant(instant, ZoneId.of(ZoneOffset.UTC.id)).toLocalDate()
     }
 
+    fun setCheckedRadioButton(radioId: Int){
+        _radioCheckedLiveData.postValue(RadioButtonModel(radioId))
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun dateComparator(list: List<ChartModel>, searchValue: LocalDate, key: Int): Int{
+    fun dateComparator(list: List<ChartModel>, keyValue: Int) {
 
         val startDate = list[0].createdAt
         val currentDate = LocalDate.now()
         var counter = 0
-        val compareList = arrayListOf<ComparedList>()
+        val compareList = arrayListOf<ComparedModel>()
 
-        when(key){
+        when (keyValue) {
             //years
             0 -> {
-                for (i in list.indices){
-                    if (list[i].starredAt.year == list[i+1].starredAt.year){
-
+                for (i in startDate.year..currentDate.year) {
+                    for (y in list.indices) {
+                        if (i == list[y].starredAt.year) {
+                            counter++
+                            compareList.add(
+                                ComparedModel(
+                                    item = i,
+                                    amount = counter,
+                                    userInfo = list[y].users
+                                )
+                            )
+                        }
                     }
                 }
+                Log.d("chart", "${compareList.size}")
+                _barChartYearsLiveData.postValue(compareList)
             }
             1 -> {
 
@@ -101,6 +129,17 @@ class ChartViewModel : ViewModel() {
 
             }
         }
-        return 0
+    }
+
+    private val yearsData = mutableListOf<BarEntry>()
+    private val _barDataSet = MutableLiveData(BarDataSet(yearsData, "Years"))
+    val barDataSet: LiveData<BarDataSet> get() = _barDataSet
+
+    fun initBarChart(list: List<ComparedModel>){
+        for (i in list.indices){
+            yearsData.add(BarEntry(list[i].item.toFloat(), list[i].amount.toFloat()))
+        }
+        _barDataSet.value = BarDataSet(yearsData, "Years")
+
     }
 }

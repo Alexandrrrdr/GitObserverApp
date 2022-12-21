@@ -3,4 +3,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="main_search_field">Saerch</string>
     <string name="main_submit_button">Submit</string>
+    <string name="for_years">For years</string>
+    <string name="for_months">For months</string>
+    <string name="for_weeks">For weeks</string>
 </resources>

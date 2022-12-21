@@ -40,27 +40,27 @@
             android:orientation="horizontal">
 
             <com.google.android.material.radiobutton.MaterialRadioButton
-                android:id="@+id/daysRadioBtn"
+                android:id="@+id/radioBtnYears"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:text="Per 1 month"
+                android:text="@string/for_years"
                 android:layout_weight="0.33"/>
 
             <com.google.android.material.radiobutton.MaterialRadioButton
-                android:id="@+id/monthsRadioBtn"
+                android:id="@+id/radioBtnMonths"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:text="Per 1 year"
+                android:text="@string/for_months"
                 android:layout_weight="0.33"/>
 
             <com.google.android.material.radiobutton.MaterialRadioButton
-                android:id="@+id/yearsRadioBtn"
+                android:id="@+id/radioBtnWeeks"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:text="Per years"
+                android:text="@string/for_weeks"
                 android:layout_weight="0.33"/>
 
         </RadioGroup>
