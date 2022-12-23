@@ -1,13 +1,13 @@
 package com.example.gitobserverapp.presentation.chart
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.gitobserverapp.data.network.RetrofitInstance
-import com.example.gitobserverapp.data.network.model.starred.StarredModel
 import com.example.gitobserverapp.data.network.model.starred.StarredModelItem
 import com.example.gitobserverapp.presentation.chart.chart_helper.ChartState
 import com.example.gitobserverapp.presentation.chart.model.UserModel
@@ -24,8 +24,8 @@ class ChartViewModel : ViewModel() {
     private var _starredUsersLiveData = MutableLiveData<List<UserModel>>()
     val starredUsersLiveData: LiveData<List<UserModel>> get() = _starredUsersLiveData
 
-    private var _barChartYearsLiveData = MutableLiveData<List<BarChartModel>>()
-    val barChartYearsLiveData: LiveData<List<BarChartModel>> get() = _barChartYearsLiveData
+    private var _barChartListLiveData = MutableLiveData<List<BarChartModel>>()
+    val barChartListLiveData: LiveData<List<BarChartModel>> get() = _barChartListLiveData
 
     private var _barChartMonthsLiveData = MutableLiveData<List<BarChartModel>>()
     val barChartMonthsLiveData: LiveData<List<BarChartModel>> get() = _barChartMonthsLiveData
@@ -107,14 +107,14 @@ class ChartViewModel : ViewModel() {
     }
 
     fun setBarChartYearsData(list: List<BarChartModel>){
-        _barChartYearsLiveData.postValue(list)
+        _barChartListLiveData.postValue(list)
     }
 
-    fun setCharState(error: String){
-        _chartState.postValue(ChartState.Error(error = error))
+    fun setCharState(error: String?){
+        _chartState.postValue(error?.let { ChartState.Error(error = it) })
     }
 
-    fun setBarChartData(years: List<BarEntry>){
-        _barDataSet.value = BarDataSet(years, "Years")
+    fun setBarChartData(value: List<BarEntry>){
+        _barDataSet.value = BarDataSet(value, "List")
     }
 }

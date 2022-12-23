@@ -15,4 +15,7 @@ object Constants {
     const val BAR_SPACE = 0.1f
     const val BAR_WIDTH = 0.8f
 
+    const val LOAD_DATA = "LOAD_DATA"
+    const val SET_CONTENT = "SET_CONTENT"
+
 }
