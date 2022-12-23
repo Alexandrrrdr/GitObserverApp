@@ -1,10 +1,6 @@
 package com.example.gitobserverapp.presentation.main
 
-import android.content.Context
 import android.content.Context.INPUT_METHOD_SERVICE
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
-import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -17,12 +13,14 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gitobserverapp.R
 import com.example.gitobserverapp.databinding.FragmentMainBinding
-import com.example.gitobserverapp.presentation.helper.ViewState
+import com.example.gitobserverapp.presentation.InternetConnection
+import com.example.gitobserverapp.presentation.main.main_helper.ViewState
 
 class MainFragment : Fragment(), RepoSearchAdapter.Listener {
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
+    private val internet = InternetConnection()
 
     private val repoSearchAdapter: RepoSearchAdapter by lazy {
         RepoSearchAdapter(this)
@@ -44,9 +42,12 @@ class MainFragment : Fragment(), RepoSearchAdapter.Listener {
         recyclerViewInit()
         renderUi()
         initViewStatement()
+        checkInternet()
+    }
 
+    private fun checkInternet(){
         binding.btnSearch.setOnClickListener {
-            if (checkInternetConnection()) {
+            if (internet.checkInternetConnection(requireContext())) {
                 hideKeyboard(it)
                 binding.progBarMain.visibility = View.VISIBLE
                 if (binding.edtTxtInput.text.isNullOrEmpty()) {
@@ -101,25 +102,25 @@ class MainFragment : Fragment(), RepoSearchAdapter.Listener {
         hk.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
-    private fun checkInternetConnection(): Boolean {
-        val connectionManager =
-            requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val network = connectionManager.activeNetwork ?: return false
-            val activeNetwork = connectionManager.getNetworkCapabilities(network) ?: return false
-            return when {
-                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
-                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
-                else -> false
-            }
-        } else {
-            @Suppress("DEPRECATION")
-            val networkInfo = connectionManager.activeNetworkInfo ?: return false
-            @Suppress("DEPRECATION")
-            return networkInfo.isConnected
-        }
-    }
+//    private fun checkInternetConnection(): Boolean {
+//        val connectionManager =
+//            requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+//
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            val network = connectionManager.activeNetwork ?: return false
+//            val activeNetwork = connectionManager.getNetworkCapabilities(network) ?: return false
+//            return when {
+//                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+//                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+//                else -> false
+//            }
+//        } else {
+//            @Suppress("DEPRECATION")
+//            val networkInfo = connectionManager.activeNetworkInfo ?: return false
+//            @Suppress("DEPRECATION")
+//            return networkInfo.isConnected
+//        }
+//    }
 
     override fun onClick(item: MainModel) {
         val repoCreatedAt: String = item.repoCreated

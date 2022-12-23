@@ -6,18 +6,23 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.example.gitobserverapp.R
 import com.example.gitobserverapp.data.network.model.starred.User
 import com.example.gitobserverapp.databinding.FragmentChartBinding
+import com.example.gitobserverapp.presentation.InternetConnection
+import com.example.gitobserverapp.presentation.chart.chart_helper.ChartState
 import com.example.gitobserverapp.presentation.chart.model.UserModel
 import com.example.gitobserverapp.presentation.chart.model.BarChartModel
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
+import com.google.android.material.snackbar.Snackbar
+import java.time.LocalDate
 
 class ChartFragment : Fragment() {
 
@@ -25,7 +30,8 @@ class ChartFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: ChartViewModel by activityViewModels()
-
+    private val internet = InternetConnection()
+    private var listUserModel = mutableListOf<UserModel>()
     //Start creating barCharts
     private lateinit var barChart: BarChart
     private lateinit var barDataSet: BarDataSet
@@ -50,32 +56,63 @@ class ChartFragment : Fragment() {
         val repoName: String? = arguments?.getString("repo_name", "No repo name")
         val repoCreatedAt: String? = arguments?.getString("created_at", "1970-12-20")
 
-        let { viewModel.getDataFromGitHub(repoOwnerName = repoOwnerLogin!!, repoName = repoName!!, repoCreatedAt!!) }
+        if (internet.checkInternetConnection(requireContext())){
+            let { viewModel.getDataFromGitHub(repoOwnerName = repoOwnerLogin!!, repoName = repoName!!, repoCreatedAt!!) }
+        } else {
+            viewModel.setCharState("Check internet connection")
+        }
+        radioButtonClick()
         renderUi()
+    }
+
+    private fun radioButtonClick() {
+        binding.radioButtonGroup.setOnCheckedChangeListener { radioGroup, isChecked ->
+            val checkButton = radioGroup.checkedRadioButtonId
+            viewModel.setCheckedRadioButton(checkButton)
+            Log.d("button", "Button check is $checkButton")
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun renderUi(){
-        viewModel.starredUsersLiveData.observe(viewLifecycleOwner){ chartModel ->
-            binding.repoName.text = chartModel[0].repoName
-            compareYearsModel(chartModel)
-        }
-
-        viewModel.barDataSet.observe(viewLifecycleOwner){ barDataSet ->
-
-        }
-
-        viewModel.radioCheckedLiveData.observe(viewLifecycleOwner){ button ->
-            when(button.radioButton) {
-                R.id.radioBtnYears -> {
-                    initBarChart(tmpList)
+        viewModel.chartState.observe(viewLifecycleOwner){ state ->
+            when(state){
+                is ChartState.Error -> {
+                    binding.txtInfo.visibility = View.VISIBLE
+                    binding.txtInfo.text = state.error
+                    binding.progBarChart.visibility = View.GONE
+                }
+                ChartState.Loading -> {
+                    binding.txtInfo.visibility = View.GONE
+                    binding.progBarChart.visibility = View.VISIBLE
+                }
+                is ChartState.ViewContentMain -> {
+                    binding.txtInfo.visibility = View.GONE
+                    binding.progBarChart.visibility = View.GONE
                 }
             }
         }
 
-        viewModel.barChartYearsLiveData.observe(viewLifecycleOwner){ barChartModel ->
-            tmpList.addAll(barChartModel)
+        viewModel.starredUsersLiveData.observe(viewLifecycleOwner){ userModel ->
+            listUserModel.addAll(userModel)
         }
+
+        viewModel.radioCheckedLiveData.observe(viewLifecycleOwner){ radioModel ->
+            radioModel.let {
+                when(it.radioButton){
+                    R.id.radioBtnYears -> {
+                        compareYearsModel(let { listUserModel })
+                    }
+                    R.id.radioBtnMonths -> {
+
+                    }
+                    R.id.radioBtnWeeks -> {
+
+                    }
+                }
+            }
+        }
+
     }
 
     private fun initBarChart(list: List<BarChartModel>) {
@@ -98,23 +135,28 @@ class ChartFragment : Fragment() {
         val tmpList = mutableListOf<BarChartModel>()
         val tmpUsers = mutableListOf<User>()
 
-        val findMinStarredDate = list.minWith(Comparator.comparingInt { it.starredAt.year })
-        val findMaxStarredDate = list.maxWith(Comparator.comparingInt { it.starredAt.year })
+        val findMinStarredDate = list.minWith(Comparator.comparingInt { it.createdAt.year })
+        val findMaxStarredDate = LocalDate.now().year
         var startDate = findMinStarredDate.starredAt.year
+        var tmpCounter = 0
 
         //TODO not correctly counting amount
-                while (startDate <= findMaxStarredDate.starredAt.year) {
-                    val filtered = list.filter { it.createdAt.year == startDate }
-                    for (i in filtered.indices){
-                        tmpUsers.add(filtered[i].users)
+                while (startDate <= findMaxStarredDate) {
+                    val filtered = list.filter { e -> e.createdAt.year == startDate }
+                    if (filtered.isNotEmpty()){
+                        tmpCounter = filtered.size
+                        for (i in filtered.indices){
+                            tmpUsers.add(filtered[i].users)
+                            tmpCounter = filtered.size
+                        }
                     }
-                    tmpList.add(BarChartModel(item = startDate, amount = filtered.size, userInfo = tmpUsers))
-                    tmpUsers.clear()
+                    tmpList.add(BarChartModel(item = startDate, amount = tmpCounter, userInfo = tmpUsers))
                     startDate++
+                    tmpCounter = 0
                 }
-
+        Log.d("chart", tmpList.size.toString())
         viewModel.setBarChartYearsData(tmpList)
-        Log.d("chart", "size of barchart list is ${tmpList.size}")
+        tmpList.clear()
     }
 
     override fun onDestroy() {

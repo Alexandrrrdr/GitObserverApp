@@ -88,11 +88,13 @@
         app:layout_constraintBottom_toBottomOf="parent"/>
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/txtInfo"
-        tools:text="Some addition information"
+        tools:text="Internet status"
+        android:background="#F8594D"
         android:textColor="@color/black"
+        android:gravity="center_horizontal"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

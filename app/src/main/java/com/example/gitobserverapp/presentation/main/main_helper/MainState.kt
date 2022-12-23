@@ -1,4 +1,4 @@
-package com.example.gitobserverapp.presentation.helper
+package com.example.gitobserverapp.presentation.main.main_helper
 
 import com.example.gitobserverapp.data.network.model.repo.GitHubRepoResult
 

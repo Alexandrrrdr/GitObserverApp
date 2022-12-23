@@ -1,14 +1,15 @@
 package com.example.gitobserverapp.presentation.chart
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.gitobserverapp.data.network.RetrofitInstance
+import com.example.gitobserverapp.data.network.model.starred.StarredModel
 import com.example.gitobserverapp.data.network.model.starred.StarredModelItem
+import com.example.gitobserverapp.presentation.chart.chart_helper.ChartState
 import com.example.gitobserverapp.presentation.chart.model.UserModel
 import com.example.gitobserverapp.presentation.chart.model.BarChartModel
 import com.example.gitobserverapp.presentation.chart.model.RadioButtonModel
@@ -35,6 +36,9 @@ class ChartViewModel : ViewModel() {
     private var _radioCheckedLiveData = MutableLiveData<RadioButtonModel>()
     val radioCheckedLiveData: LiveData<RadioButtonModel> get() = _radioCheckedLiveData
 
+    private var _chartState = MutableLiveData<ChartState>()
+    val chartState: LiveData<ChartState> get() = _chartState
+
     private val _barDataSet = MutableLiveData<BarDataSet>()
     val barDataSet: LiveData<BarDataSet> get() = _barDataSet
 
@@ -42,6 +46,7 @@ class ChartViewModel : ViewModel() {
     fun getDataFromGitHub(repoOwnerName: String, repoName: String, createdAt: String) {
 
         viewModelScope.launch {
+            _chartState.postValue(ChartState.Loading)
             val retroRequest = RetrofitInstance.retrofitInstance.getStarredData(
                 owner_login = repoOwnerName,
                 repo_name = repoName,
@@ -52,18 +57,19 @@ class ChartViewModel : ViewModel() {
                     in 200..421 -> {
                         retroRequest.body().let { list ->
                             if (list != null && list.isNotEmpty()) {
+                                _chartState.postValue(ChartState.ViewContentMain(list))
                                 parseChartData(
                                     starredDateList = list,
                                     created = createdAt,
                                     repoName = repoName
                                 )
                             } else {
-                                Log.d("charts", "No data to show you")
+                                _chartState.postValue(ChartState.Error("No data to show you"))
                             }
                         }
                     }
                     in 422..500 -> {
-                        Log.d("charts", "${retroRequest.code()}")
+                        _chartState.postValue(ChartState.Error("No server response"))
                     }
                 }
             }
@@ -101,10 +107,12 @@ class ChartViewModel : ViewModel() {
     }
 
     fun setBarChartYearsData(list: List<BarChartModel>){
-        _barChartYearsLiveData.value = list
+        _barChartYearsLiveData.postValue(list)
     }
 
-
+    fun setCharState(error: String){
+        _chartState.postValue(ChartState.Error(error = error))
+    }
 
     fun setBarChartData(years: List<BarEntry>){
         _barDataSet.value = BarDataSet(years, "Years")

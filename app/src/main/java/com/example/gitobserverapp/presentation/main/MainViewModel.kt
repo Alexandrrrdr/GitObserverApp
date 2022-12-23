@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.gitobserverapp.data.network.RetrofitInstance
 import com.example.gitobserverapp.data.network.model.repo.GitHubRepoResult
 import com.example.gitobserverapp.utils.Constants.SORT_BY
-import com.example.gitobserverapp.presentation.helper.ViewState
+import com.example.gitobserverapp.presentation.main.main_helper.ViewState
 import com.example.gitobserverapp.utils.Constants
 import kotlinx.coroutines.launch
 
