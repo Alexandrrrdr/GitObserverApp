@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'androidx.navigation.safeargs.kotlin'
 }
 
 android {
@@ -36,7 +37,6 @@ dependencies {
 
     //safe args
 //    implementation "androidx.navigation:navigation-safe-args-gradle-plugin:2.5.3"
-
     //Charts
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 

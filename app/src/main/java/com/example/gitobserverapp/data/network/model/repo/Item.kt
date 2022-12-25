@@ -6,7 +6,6 @@ data class Item(
     val id: Int,
     val language: String,
     val name: String,
-    val node_id: String,
     val owner: Owner,
     val stargazers_count: Int
 )

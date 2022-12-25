@@ -1,7 +1,6 @@
 package com.example.gitobserverapp.presentation.chart
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -15,7 +14,6 @@ import com.example.gitobserverapp.presentation.chart.model.BarChartModel
 import com.example.gitobserverapp.presentation.chart.model.RadioButtonModel
 import com.example.gitobserverapp.utils.Constants
 import com.github.mikephil.charting.data.BarDataSet
-import com.github.mikephil.charting.data.BarEntry
 import kotlinx.coroutines.launch
 import java.time.*
 
@@ -33,11 +31,11 @@ class ChartViewModel : ViewModel() {
     private var _barChartWeeksLiveData = MutableLiveData<List<BarChartModel>>()
     val barChartWeeksLiveData: LiveData<List<BarChartModel>> get() = _barChartWeeksLiveData
 
-    private var _radioCheckedLiveData = MutableLiveData<RadioButtonModel>()
-    val radioCheckedLiveData: LiveData<RadioButtonModel> get() = _radioCheckedLiveData
+    private var _radioButtonCheckedLiveData = MutableLiveData<RadioButtonModel>()
+    val radioButtonCheckedLiveData: LiveData<RadioButtonModel> get() = _radioButtonCheckedLiveData
 
-    private var _chartState = MutableLiveData<ChartState>()
-    val chartState: LiveData<ChartState> get() = _chartState
+    private var _chartScreenState = MutableLiveData<ChartState>()
+    val chartScreenState: LiveData<ChartState> get() = _chartScreenState
 
     private val _barDataSet = MutableLiveData<BarDataSet>()
     val barDataSet: LiveData<BarDataSet> get() = _barDataSet
@@ -46,7 +44,7 @@ class ChartViewModel : ViewModel() {
     fun getDataFromGitHub(repoOwnerName: String, repoName: String, createdAt: String) {
 
         viewModelScope.launch {
-            _chartState.postValue(ChartState.Loading)
+            _chartScreenState.postValue(ChartState.Loading)
             val retroRequest = RetrofitInstance.retrofitInstance.getStarredData(
                 owner_login = repoOwnerName,
                 repo_name = repoName,
@@ -57,19 +55,19 @@ class ChartViewModel : ViewModel() {
                     in 200..421 -> {
                         retroRequest.body().let { list ->
                             if (list != null && list.isNotEmpty()) {
-                                _chartState.postValue(ChartState.ViewContentMain(list))
+                                _chartScreenState.postValue(ChartState.ViewContentMain(list))
                                 parseChartData(
                                     starredDateList = list,
                                     created = createdAt,
                                     repoName = repoName
                                 )
                             } else {
-                                _chartState.postValue(ChartState.Error("No data to show you"))
+                                _chartScreenState.postValue(ChartState.Error("No data to show you"))
                             }
                         }
                     }
                     in 422..500 -> {
-                        _chartState.postValue(ChartState.Error("No server response"))
+                        _chartScreenState.postValue(ChartState.Error("No server response"))
                     }
                 }
             }
@@ -103,18 +101,14 @@ class ChartViewModel : ViewModel() {
     }
 
     fun setCheckedRadioButton(radioId: Int){
-        _radioCheckedLiveData.postValue(RadioButtonModel(radioId))
+        _radioButtonCheckedLiveData.postValue(RadioButtonModel(radioId))
     }
 
     fun setBarChartYearsData(list: List<BarChartModel>){
         _barChartListLiveData.postValue(list)
     }
 
-    fun setCharState(error: String?){
-        _chartState.postValue(error?.let { ChartState.Error(error = it) })
-    }
-
-    fun setBarChartData(value: List<BarEntry>){
-        _barDataSet.value = BarDataSet(value, "List")
+    fun setErrorState(error: String?){
+        _chartScreenState.postValue(error?.let { ChartState.Error(error = it) })
     }
 }

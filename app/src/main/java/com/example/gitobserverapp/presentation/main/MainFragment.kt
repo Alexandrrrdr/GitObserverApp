@@ -102,33 +102,13 @@ class MainFragment : Fragment(), RepoSearchAdapter.Listener {
         hk.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
-//    private fun checkInternetConnection(): Boolean {
-//        val connectionManager =
-//            requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-//
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            val network = connectionManager.activeNetwork ?: return false
-//            val activeNetwork = connectionManager.getNetworkCapabilities(network) ?: return false
-//            return when {
-//                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
-//                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
-//                else -> false
-//            }
-//        } else {
-//            @Suppress("DEPRECATION")
-//            val networkInfo = connectionManager.activeNetworkInfo ?: return false
-//            @Suppress("DEPRECATION")
-//            return networkInfo.isConnected
-//        }
-//    }
-
     override fun onClick(item: MainModel) {
         val repoCreatedAt: String = item.repoCreated
         val repoOwnerLogin: String = item.repoOwnerName
         val repoName: String = item.repoName
-        val bundle =
-            bundleOf("created_at" to repoCreatedAt, "repo_name" to repoName, "owner_name" to repoOwnerLogin)
-        findNavController().navigate(R.id.action_mainFragment_to_chartFragment, bundle)
+        val direction = MainFragmentDirections.actionMainFragmentToChartFragment(repoName = repoName, repoOwnerName = repoOwnerLogin, repoCreated = repoCreatedAt)
+
+        findNavController().navigate(directions = direction)
     }
 
     override fun onDestroy() {

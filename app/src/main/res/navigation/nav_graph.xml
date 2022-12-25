@@ -23,8 +23,13 @@
             android:id="@+id/action_chartFragment_to_mainFragment"
             app:destination="@id/mainFragment" />
         <argument
-            android:name="repo_data"
-            app:argType="integer"
-            android:defaultValue="1" />
+            android:name="repoName"
+            app:argType="string" />
+        <argument
+            android:name="repoOwnerName"
+            app:argType="string" />
+        <argument
+            android:name="repoCreated"
+            app:argType="string" />
     </fragment>
 </navigation>

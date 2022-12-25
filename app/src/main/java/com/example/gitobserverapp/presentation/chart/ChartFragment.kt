@@ -3,18 +3,17 @@ package com.example.gitobserverapp.presentation.chart
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.navArgs
 import com.example.gitobserverapp.R
 import com.example.gitobserverapp.data.network.model.starred.User
 import com.example.gitobserverapp.databinding.FragmentChartBinding
 import com.example.gitobserverapp.presentation.InternetConnection
-import com.example.gitobserverapp.presentation.MyXAxiasValueFormatter
 import com.example.gitobserverapp.presentation.chart.chart_helper.ChartState
 import com.example.gitobserverapp.presentation.chart.model.BarChartModel
 import com.example.gitobserverapp.presentation.chart.model.UserModel
@@ -24,7 +23,8 @@ import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
-import com.github.mikephil.charting.formatter.StackedValueFormatter
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
+import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
 import java.time.LocalDate
 
@@ -35,9 +35,14 @@ class ChartFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: ChartViewModel by activityViewModels()
+    //safeArgs from main fragment
+    private val args: ChartFragmentArgs by navArgs()
+    private var repoName = ""
+    private var repoOwnerName = ""
+    private var repoCreatedAt = ""
+
     private val internet = InternetConnection()
     private var listUserModel = mutableListOf<UserModel>()
-    private var listOfDates = mutableListOf<BarChartModel>()
 
     //Start creating barCharts
     private lateinit var barChart: BarChart
@@ -55,20 +60,20 @@ class ChartFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val repoOwnerLogin: String? = arguments?.getString("owner_name", "No owner name")
-        val repoName: String? = arguments?.getString("repo_name", "No repo name")
-        val repoCreatedAt: String? = arguments?.getString("created_at", "1970-12-20")
+        repoName = args.repoName
+        repoOwnerName = args.repoOwnerName
+        repoCreatedAt = args.repoCreated
 
         if (internet.checkInternetConnection(requireContext())) {
             let {
                 viewModel.getDataFromGitHub(
-                    repoOwnerName = repoOwnerLogin!!,
-                    repoName = repoName!!,
-                    repoCreatedAt!!
+                    repoOwnerName = repoOwnerName,
+                    repoName = repoName,
+                    createdAt = repoCreatedAt
                 )
             }
         } else {
-            viewModel.setCharState("Check the internet connection")
+            viewModel.setErrorState("Check the internet connection")
         }
         radioButtonClick()
         renderUi()
@@ -78,13 +83,12 @@ class ChartFragment : Fragment() {
         binding.radioButtonGroup.setOnCheckedChangeListener { radioGroup, isChecked ->
             val checkButton = radioGroup.checkedRadioButtonId
             viewModel.setCheckedRadioButton(checkButton)
-            Log.d("button", "Button check is $checkButton")
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun renderUi() {
-        viewModel.chartState.observe(viewLifecycleOwner) { state ->
+        viewModel.chartScreenState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is ChartState.Error -> {
                     binding.txtInfo.visibility = View.VISIBLE
@@ -108,31 +112,24 @@ class ChartFragment : Fragment() {
             compareYearsModel(let { listUserModel })
         }
 
-        viewModel.radioCheckedLiveData.observe(viewLifecycleOwner) { radioModel ->
+        viewModel.radioButtonCheckedLiveData.observe(viewLifecycleOwner) { radioModel ->
             when (radioModel.radioButton) {
-                R.id.radioBtnYears -> {
-
-                }
-                R.id.radioBtnMonths -> {
-
-                }
-                R.id.radioBtnWeeks -> {
-
-                }
+                R.id.radioBtnYears -> binding.radioBtnYears.isChecked
+                R.id.radioBtnMonths -> binding.radioBtnMonths.isChecked
+                R.id.radioBtnWeeks -> binding.radioBtnWeeks.isChecked
             }
         }
 
-        viewModel.barChartListLiveData.observe(viewLifecycleOwner) { barChartList ->
+        viewModel.barChartListLiveData.observe(viewLifecycleOwner) { barChartModelList ->
 
             //TODO start thinking from here
-            initBarChart(barChartList)
+            initBarChart(barChartModelList)
         }
     }
 
     private fun initBarChart(list: List<BarChartModel>) {
 
         //TODO make configuration
-        viewModel.setBarChartData(barEntryList)
         barChart = binding.barChart
         val data = createBarChartData(list = list)
         barChartConfiguration()
@@ -146,6 +143,7 @@ class ChartFragment : Fragment() {
     }
 
     private fun createBarChartData(list: List<BarChartModel>): BarData {
+        barEntryList.clear()
         for (i in list.indices) {
             barEntryList.add(
                 BarEntry(
@@ -158,39 +156,40 @@ class ChartFragment : Fragment() {
         val barDataSet = BarDataSet(barEntryList, "Test")
 
 //        barDataSet.valueFormatter = StackedValueFormatter()
-        barDataSet.setColors(ColorTemplate.VORDIPLOM_COLORS, 200)
-        return BarData(barDataSet)
+        barDataSet.setColors(ColorTemplate.JOYFUL_COLORS, 200)
+        val barData = BarData(barDataSet)
+        barData.barWidth = 0.5f
+        return barData
     }
 
     private fun barChartConfiguration() {
+
         barChart.description.isEnabled = false
         barChart.axisRight.isEnabled = false
 
-        barChart.setDrawValueAboveBar(false)
-        barChart.setDrawGridBackground(false)
-        barChart.setDrawBarShadow(false)
-
-
-        barChart.animateY(1000)
-        barChart.animateX(1000)
+        barChart.isDragEnabled = true
+        barChart.setVisibleXRangeMaximum(4f)
+//        barChart.animateY(1000)
+//        barChart.animateX(1000)
 
         val xAxis: XAxis = barChart.xAxis
         xAxis.textColor = Color.BLACK
-        xAxis.textSize = 10f
+        xAxis.textSize = 12f
+        xAxis.setCenterAxisLabels(false)
+        xAxis.granularity = 1f
+        xAxis.isGranularityEnabled = true
 
-        xAxis.spaceMin = 0.5f
-        xAxis.spaceMax = 0.5f
+
         xAxis.labelCount = 0
-        xAxis.isEnabled = true
-        xAxis.position = XAxis.XAxisPosition.TOP_INSIDE
+        xAxis.position = XAxis.XAxisPosition.BOTTOM
         xAxis.setDrawGridLines(false)
 
         val axisLeft: YAxis = barChart.axisLeft
-        axisLeft.granularity = 10f
+        axisLeft.granularity = 1f
         axisLeft.axisMinimum = 0f
 
         val axisRight: YAxis = barChart.axisRight
-        axisRight.granularity = 10f
+        axisRight.granularity = 1f
         axisRight.axisMinimum = 0f
     }
 
