@@ -23,8 +23,6 @@ import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
-import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
-import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
 import java.time.LocalDate
 
@@ -35,6 +33,7 @@ class ChartFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: ChartViewModel by activityViewModels()
+
     //safeArgs from main fragment
     private val args: ChartFragmentArgs by navArgs()
     private var repoName = ""
@@ -62,7 +61,7 @@ class ChartFragment : Fragment() {
 
         repoName = args.repoName
         repoOwnerName = args.repoOwnerName
-        repoCreatedAt = args.repoCreated
+        repoCreatedAt = args.repoCreatedAt
 
         if (internet.checkInternetConnection(requireContext())) {
             let {
@@ -121,15 +120,11 @@ class ChartFragment : Fragment() {
         }
 
         viewModel.barChartListLiveData.observe(viewLifecycleOwner) { barChartModelList ->
-
-            //TODO start thinking from here
             initBarChart(barChartModelList)
         }
     }
 
     private fun initBarChart(list: List<BarChartModel>) {
-
-        //TODO make configuration
         barChart = binding.barChart
         val data = createBarChartData(list = list)
         barChartConfiguration()
@@ -169,8 +164,8 @@ class ChartFragment : Fragment() {
 
         barChart.isDragEnabled = true
         barChart.setVisibleXRangeMaximum(4f)
-//        barChart.animateY(1000)
-//        barChart.animateX(1000)
+        barChart.animateY(1000)
+        barChart.animateX(1000)
 
         val xAxis: XAxis = barChart.xAxis
         xAxis.textColor = Color.BLACK
@@ -179,13 +174,11 @@ class ChartFragment : Fragment() {
         xAxis.granularity = 1f
         xAxis.isGranularityEnabled = true
 
-
-        xAxis.labelCount = 0
         xAxis.position = XAxis.XAxisPosition.BOTTOM
         xAxis.setDrawGridLines(false)
 
         val axisLeft: YAxis = barChart.axisLeft
-        axisLeft.granularity = 1f
+        axisLeft.granularity = 5f
         axisLeft.axisMinimum = 0f
 
         val axisRight: YAxis = barChart.axisRight
@@ -196,7 +189,7 @@ class ChartFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun compareYearsModel(list: List<UserModel>) {
 
-        val tmpList = mutableListOf<BarChartModel>()
+        val tmpMatchedList = mutableListOf<BarChartModel>()
         val tmpUsers = mutableListOf<User>()
 
         val findMinStarredDate = list.minWith(Comparator.comparingInt { it.createdAt.year })
@@ -204,16 +197,22 @@ class ChartFragment : Fragment() {
         var startDate = findMinStarredDate.starredAt.year
 
         while (startDate <= findMaxStarredDate) {
-            val filtered = list.filter { e -> e.createdAt.year == startDate }
-            for (i in filtered.indices){
-                tmpUsers.add(filtered[i].users)
+            val (match, rest) = list.partition { it.starredAt.year == startDate }
+            for (i in match.indices) {
+                tmpUsers.add(match[i].users)
             }
-            tmpList.add(element = BarChartModel(item = startDate, amount = filtered.size, userInfo = tmpUsers))
+            tmpMatchedList.add(
+                element = BarChartModel(
+                    item = startDate,
+                    amount = match.size,
+                    userInfo = tmpUsers
+                )
+            )
+
             tmpUsers.clear()
             startDate++
         }
-        println(tmpList.size)
-        viewModel.setBarChartYearsData(tmpList)
+        viewModel.setBarChartYearsData(tmpMatchedList)
     }
 
     override fun onDestroy() {

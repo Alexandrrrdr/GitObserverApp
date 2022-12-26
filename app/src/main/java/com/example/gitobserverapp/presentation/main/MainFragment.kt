@@ -106,7 +106,7 @@ class MainFragment : Fragment(), RepoSearchAdapter.Listener {
         val repoCreatedAt: String = item.repoCreated
         val repoOwnerLogin: String = item.repoOwnerName
         val repoName: String = item.repoName
-        val direction = MainFragmentDirections.actionMainFragmentToChartFragment(repoName = repoName, repoOwnerName = repoOwnerLogin, repoCreated = repoCreatedAt)
+        val direction = MainFragmentDirections.actionMainFragmentToChartFragment(repoName = repoName, repoOwnerName = repoOwnerLogin, repoCreatedAt = repoCreatedAt)
 
         findNavController().navigate(directions = direction)
     }

@@ -29,7 +29,7 @@
             android:name="repoOwnerName"
             app:argType="string" />
         <argument
-            android:name="repoCreated"
+            android:name="repoCreatedAt"
             app:argType="string" />
     </fragment>
 </navigation>

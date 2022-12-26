@@ -12,8 +12,5 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-
-        val key="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"
     }
 }
