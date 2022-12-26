@@ -23,8 +23,13 @@ import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.formatter.ValueFormatter
+import com.github.mikephil.charting.highlight.Highlight
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.github.mikephil.charting.utils.ColorTemplate
 import java.time.LocalDate
+import java.util.*
 
 
 class ChartFragment : Fragment() {
@@ -44,6 +49,7 @@ class ChartFragment : Fragment() {
     private var listUserModel = mutableListOf<UserModel>()
 
     //Start creating barCharts
+    private lateinit var barDataSet: BarDataSet
     private lateinit var barChart: BarChart
     private var barEntryList = mutableListOf<BarEntry>()
 
@@ -120,6 +126,7 @@ class ChartFragment : Fragment() {
         }
 
         viewModel.barChartListLiveData.observe(viewLifecycleOwner) { barChartModelList ->
+
             initBarChart(barChartModelList)
         }
     }
@@ -148,12 +155,21 @@ class ChartFragment : Fragment() {
                 )
             )
         }
-        val barDataSet = BarDataSet(barEntryList, "Test")
-
-//        barDataSet.valueFormatter = StackedValueFormatter()
-        barDataSet.setColors(ColorTemplate.JOYFUL_COLORS, 200)
+        barDataSet = BarDataSet(barEntryList, "Test")
+        barDataSet.setColors(ColorTemplate.JOYFUL_COLORS, 250)
         val barData = BarData(barDataSet)
-        barData.barWidth = 0.5f
+
+        //Hide unnecessary labels if no data in AXis
+        barData.setValueFormatter(object : ValueFormatter() {
+            override fun getFormattedValue(value: Float): String {
+                return if (value > 0) {
+                    super.getFormattedValue(value)
+                } else {
+                    ""
+                }
+            }
+        })
+        barData.barWidth = 0.6f
         return barData
     }
 
@@ -163,9 +179,20 @@ class ChartFragment : Fragment() {
         barChart.axisRight.isEnabled = false
 
         barChart.isDragEnabled = true
-        barChart.setVisibleXRangeMaximum(4f)
+        barChart.setVisibleXRangeMaximum(5f)
         barChart.animateY(1000)
         barChart.animateX(1000)
+        barChart.setOnChartValueSelectedListener(object: OnChartValueSelectedListener{
+            override fun onValueSelected(e: Entry?, h: Highlight?) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onNothingSelected() {
+                TODO("Not yet implemented")
+            }
+
+        })
+//        barChart.setViewPortOffsets(60f, 0f, 50f, 60f);
 
         val xAxis: XAxis = barChart.xAxis
         xAxis.textColor = Color.BLACK
@@ -173,14 +200,12 @@ class ChartFragment : Fragment() {
         xAxis.setCenterAxisLabels(false)
         xAxis.granularity = 1f
         xAxis.isGranularityEnabled = true
-
+        xAxis.textColor = Color.BLACK
         xAxis.position = XAxis.XAxisPosition.BOTTOM
-        xAxis.setDrawGridLines(false)
-
+        xAxis.setDrawGridLines(true)
         val axisLeft: YAxis = barChart.axisLeft
         axisLeft.granularity = 5f
         axisLeft.axisMinimum = 0f
-
         val axisRight: YAxis = barChart.axisRight
         axisRight.granularity = 1f
         axisRight.axisMinimum = 0f
@@ -197,7 +222,7 @@ class ChartFragment : Fragment() {
         var startDate = findMinStarredDate.starredAt.year
 
         while (startDate <= findMaxStarredDate) {
-            val (match, rest) = list.partition { it.starredAt.year == startDate }
+            val (match, _) = list.partition { it.starredAt.year == startDate }
             for (i in match.indices) {
                 tmpUsers.add(match[i].users)
             }

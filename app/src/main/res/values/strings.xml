@@ -6,4 +6,6 @@
     <string name="for_years">For years</string>
     <string name="for_months">For months</string>
     <string name="for_weeks">For weeks</string>
+    <string name="user_name">User name:</string>
+    <string name="user_id">User id:</string>
 </resources>
