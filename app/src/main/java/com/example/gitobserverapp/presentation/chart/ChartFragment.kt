@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.gitobserverapp.R
 import com.example.gitobserverapp.data.network.model.starred.User
@@ -184,7 +185,7 @@ class ChartFragment : Fragment() {
         barChart.animateX(1000)
         barChart.setOnChartValueSelectedListener(object: OnChartValueSelectedListener{
             override fun onValueSelected(e: Entry?, h: Highlight?) {
-                TODO("Not yet implemented")
+                findNavController().navigate(R.id.action_chartFragment_to_detailsFragment)
             }
 
             override fun onNothingSelected() {
@@ -192,8 +193,6 @@ class ChartFragment : Fragment() {
             }
 
         })
-//        barChart.setViewPortOffsets(60f, 0f, 50f, 60f);
-
         val xAxis: XAxis = barChart.xAxis
         xAxis.textColor = Color.BLACK
         xAxis.textSize = 12f
@@ -216,7 +215,6 @@ class ChartFragment : Fragment() {
 
         val tmpMatchedList = mutableListOf<BarChartModel>()
         val tmpUsers = mutableListOf<User>()
-
         val findMinStarredDate = list.minWith(Comparator.comparingInt { it.createdAt.year })
         val findMaxStarredDate = LocalDate.now().year
         var startDate = findMinStarredDate.starredAt.year
