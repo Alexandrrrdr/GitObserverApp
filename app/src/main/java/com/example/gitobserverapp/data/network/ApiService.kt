@@ -18,8 +18,6 @@ interface ApiService {
         @Query("per_page") per_page: Int
     ): Response<GitHubRepoResult>
 
-    //TODO check api request!!! Postman
-
     @Headers("Accept: application/vnd.github.star+json")
     @GET("/repos/{owner_login}/{repo_name}/stargazers")
     suspend fun getStarredData(

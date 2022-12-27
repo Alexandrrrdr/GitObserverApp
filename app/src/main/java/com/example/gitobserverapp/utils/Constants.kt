@@ -6,6 +6,7 @@ object Constants {
     const val API_BASE_URL = "https://api.github.com"
     const val API_GET_REPOS = "/search/repositories"
     const val SORT_BY = "stars"
+    const val ORDER = "asc"
     const val PER_PAGE = 100
 
     const val MAX_X_VALUE = 13

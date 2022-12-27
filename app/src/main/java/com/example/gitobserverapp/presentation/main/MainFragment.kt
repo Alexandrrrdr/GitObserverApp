@@ -7,14 +7,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.gitobserverapp.R
+import com.example.gitobserverapp.data.network.model.repo.Item
+import com.example.gitobserverapp.data.repository.ApiRepository
 import com.example.gitobserverapp.databinding.FragmentMainBinding
 import com.example.gitobserverapp.presentation.InternetConnection
 import com.example.gitobserverapp.presentation.main.main_helper.ViewState
+import com.example.gitobserverapp.utils.Extensions.appComponent
+import javax.inject.Inject
 
 class MainFragment : Fragment(), RepoSearchAdapter.Listener {
 
@@ -22,11 +26,20 @@ class MainFragment : Fragment(), RepoSearchAdapter.Listener {
     private val binding get() = _binding!!
     private val internet = InternetConnection()
 
+    @Inject
+    lateinit var apiRepository: ApiRepository
+
+
     private val repoSearchAdapter: RepoSearchAdapter by lazy {
         RepoSearchAdapter(this)
     }
 
-    private val mainViewModel: MainViewModel by activityViewModels()
+    private lateinit var mainViewModel: MainViewModel
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        requireContext().appComponent().inject(this)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,8 +52,9 @@ class MainFragment : Fragment(), RepoSearchAdapter.Listener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        mainViewModel = ViewModelProvider(this@MainFragment, (MainViewModelFactory(apiRepository, binding.edtTxtInput.text.toString())))[MainViewModel::class.java]
+
         recyclerViewInit()
-        renderUi()
         initViewStatement()
         checkInternet()
     }
@@ -54,7 +68,11 @@ class MainFragment : Fragment(), RepoSearchAdapter.Listener {
                     mainViewModel.setStatement("Search field is empty")
                     mainViewModel.setReposList(null)
                 } else {
-                    mainViewModel.getRepos(binding.edtTxtInput.text.toString())
+                    lifecycleScope.launchWhenCreated {
+                        mainViewModel.repoList.collect(){
+                            repoSearchAdapter.submitData(it)
+                        }
+                    }
                 }
             } else {
                 mainViewModel.setStatement("Check Internet connection")
@@ -90,29 +108,25 @@ class MainFragment : Fragment(), RepoSearchAdapter.Listener {
         }
     }
 
-    private fun renderUi() {
-        mainViewModel.reposLiveData.observe(viewLifecycleOwner) { gitResponse ->
-            binding.progBarMain.visibility = View.GONE
-            repoSearchAdapter.differ.submitList(gitResponse)
-        }
-    }
-
     private fun hideKeyboard(view: View) {
         val hk = requireContext().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         hk.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
-    override fun onClick(item: MainModel) {
-        val repoCreatedAt: String = item.repoCreated
-        val repoOwnerLogin: String = item.repoOwnerName
-        val repoName: String = item.repoName
-        val direction = MainFragmentDirections.actionMainFragmentToChartFragment(repoName = repoName, repoOwnerName = repoOwnerLogin, repoCreatedAt = repoCreatedAt)
-
-        findNavController().navigate(directions = direction)
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    override fun onClick(item: Item) {
+        val repoCreatedAt: String = item.created_at
+        val repoOwnerLogin: String = item.owner.login
+        val repoName: String = item.name
+        val direction = MainFragmentDirections.actionMainFragmentToChartFragment(
+            repoName = repoName,
+            repoOwnerName = repoOwnerLogin,
+            repoCreatedAt = repoCreatedAt
+        )
+        findNavController().navigate(directions = direction)
     }
 }

@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'androidx.navigation.safeargs.kotlin'
+    id 'kotlin-kapt'
 }
 
 android {
@@ -35,8 +36,14 @@ android {
 
 dependencies {
 
-    //safe args
-//    implementation "androidx.navigation:navigation-safe-args-gradle-plugin:2.5.3"
+    //Dagger
+    kapt "com.google.dagger:dagger-compiler:2.44"
+    implementation "com.google.dagger:dagger:2.44"
+
+    //Pagination
+    implementation 'androidx.paging:paging-common-ktx:3.1.1'
+    implementation 'androidx.paging:paging-runtime-ktx:3.1.1'
+
     //Charts
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
