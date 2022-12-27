@@ -11,7 +11,7 @@ import com.bumptech.glide.Glide
 import com.example.gitobserverapp.data.network.model.repo.Item
 import com.example.gitobserverapp.databinding.RecItemBinding
 
-class RepoSearchAdapter(private val listener: Listener): PagingDataAdapter<Item, RepoSearchAdapter.ViewHolder>(difUtil) {
+class RepoSearchAdapter(private val listener: Listener): RecyclerView.Adapter<RepoSearchAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = let { RecItemBinding.inflate(LayoutInflater.from(parent.context), parent, false) }
@@ -19,7 +19,7 @@ class RepoSearchAdapter(private val listener: Listener): PagingDataAdapter<Item,
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(item = getItem(position)!!, listener = listener)
+        holder.bind(item = differ.currentList[position], listener = listener)
     }
 
     inner class ViewHolder(private val binding: RecItemBinding): RecyclerView.ViewHolder(binding.root) {
@@ -36,19 +36,33 @@ class RepoSearchAdapter(private val listener: Listener): PagingDataAdapter<Item,
         }
     }
 
+    override fun getItemCount() = differ.currentList.size
+
+    private val difUtil = object : DiffUtil.ItemCallback<Item>(){
+        override fun areItemsTheSame(oldItem: Item, newItem: Item): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(oldItem: Item, newItem: Item): Boolean {
+            return oldItem == newItem
+        }
+    }
+
+    val differ = AsyncListDiffer(this, difUtil)
+
     interface Listener{
         fun onClick(item: Item)
     }
 
-    companion object{
-        private val difUtil = object : DiffUtil.ItemCallback<Item>(){
-            override fun areItemsTheSame(oldItem: Item, newItem: Item): Boolean {
-                return oldItem.id == newItem.id
-            }
-
-            override fun areContentsTheSame(oldItem: Item, newItem: Item): Boolean {
-                return oldItem == newItem
-            }
-        }
-    }
+//    companion object{
+//        private val difUtil = object : DiffUtil.ItemCallback<Item>(){
+//            override fun areItemsTheSame(oldItem: Item, newItem: Item): Boolean {
+//                return oldItem.id == newItem.id
+//            }
+//
+//            override fun areContentsTheSame(oldItem: Item, newItem: Item): Boolean {
+//                return oldItem == newItem
+//            }
+//        }
+//    }
 }

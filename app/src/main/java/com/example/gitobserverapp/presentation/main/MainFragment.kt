@@ -1,5 +1,7 @@
 package com.example.gitobserverapp.presentation.main
 
+import android.app.Application
+import android.content.Context
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -8,10 +10,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.gitobserverapp.App
 import com.example.gitobserverapp.data.network.model.repo.Item
 import com.example.gitobserverapp.data.repository.ApiRepository
 import com.example.gitobserverapp.databinding.FragmentMainBinding
@@ -25,16 +26,12 @@ class MainFragment : Fragment(), RepoSearchAdapter.Listener {
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
     private val internet = InternetConnection()
-
-    @Inject
-    lateinit var apiRepository: ApiRepository
-
-
     private val repoSearchAdapter: RepoSearchAdapter by lazy {
         RepoSearchAdapter(this)
     }
 
-    private lateinit var mainViewModel: MainViewModel
+    @Inject private lateinit var apiRepository: ApiRepository
+    @Inject private lateinit var mainViewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,12 +49,25 @@ class MainFragment : Fragment(), RepoSearchAdapter.Listener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mainViewModel = ViewModelProvider(this@MainFragment, (MainViewModelFactory(apiRepository, binding.edtTxtInput.text.toString())))[MainViewModel::class.java]
+//        mainViewModel = ViewModelProvider(this@MainFragment, (MainViewModelFactory(apiRepository, binding.edtTxtInput.text.toString())))[MainViewModel::class.java]
 
         recyclerViewInit()
         initViewStatement()
+        renderUi()
         checkInternet()
     }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        (requireContext().applicationContext as App).appComponent
+    }
+
+    private fun renderUi() {
+        mainViewModel.reposLiveData.observe(viewLifecycleOwner){
+            repoSearchAdapter.differ.submitList(it)
+        }
+    }
+
 
     private fun checkInternet(){
         binding.btnSearch.setOnClickListener {
@@ -68,11 +78,10 @@ class MainFragment : Fragment(), RepoSearchAdapter.Listener {
                     mainViewModel.setStatement("Search field is empty")
                     mainViewModel.setReposList(null)
                 } else {
-                    lifecycleScope.launchWhenCreated {
-                        mainViewModel.repoList.collect(){
-                            repoSearchAdapter.submitData(it)
-                        }
-                    }
+//                    lifecycleScope.launchWhenCreated {
+//                        mainViewModel.getRepoList(binding.edtTxtInput.text.toString())
+//                    }
+                    mainViewModel.getRepos(binding.edtTxtInput.text.toString())
                 }
             } else {
                 mainViewModel.setStatement("Check Internet connection")

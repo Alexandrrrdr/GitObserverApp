@@ -115,7 +115,7 @@ class ChartFragment : Fragment() {
         viewModel.starredUsersLiveData.observe(viewLifecycleOwner) { userModel ->
             listUserModel.addAll(userModel)
 
-            compareYearsModel(let { listUserModel })
+            compareYearsModel(let { userModel })
         }
 
         viewModel.radioButtonCheckedLiveData.observe(viewLifecycleOwner) { radioModel ->

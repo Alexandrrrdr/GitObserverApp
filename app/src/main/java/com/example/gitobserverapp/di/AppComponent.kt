@@ -1,5 +1,6 @@
 package com.example.gitobserverapp.di
 
+import com.example.gitobserverapp.data.network.ApiService
 import com.example.gitobserverapp.data.repository.ApiRepository
 import com.example.gitobserverapp.presentation.main.MainFragment
 import dagger.Component

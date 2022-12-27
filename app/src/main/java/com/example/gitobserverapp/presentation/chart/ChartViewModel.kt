@@ -25,12 +25,6 @@ class ChartViewModel : ViewModel() {
     private var _barChartListLiveData = MutableLiveData<List<BarChartModel>>()
     val barChartListLiveData: LiveData<List<BarChartModel>> get() = _barChartListLiveData
 
-    private var _barChartMonthsLiveData = MutableLiveData<List<BarChartModel>>()
-    val barChartMonthsLiveData: LiveData<List<BarChartModel>> get() = _barChartMonthsLiveData
-
-    private var _barChartWeeksLiveData = MutableLiveData<List<BarChartModel>>()
-    val barChartWeeksLiveData: LiveData<List<BarChartModel>> get() = _barChartWeeksLiveData
-
     private var _radioButtonCheckedLiveData = MutableLiveData<RadioButtonModel>()
     val radioButtonCheckedLiveData: LiveData<RadioButtonModel> get() = _radioButtonCheckedLiveData
 
