@@ -1,12 +1,15 @@
 package com.example.gitobserverapp.di
 
-import com.example.gitobserverapp.data.network.ApiService
-import com.example.gitobserverapp.data.repository.ApiRepository
+import com.example.gitobserverapp.presentation.chart.ChartFragment
 import com.example.gitobserverapp.presentation.main.MainFragment
 import dagger.Component
+import javax.inject.Singleton
 
-@Component(modules = [DaggerComponent::class])
+@Singleton
+@Component(modules = [DomainModul::class, DataModul::class, AppModul::class, NetworkModule::class])
 interface AppComponent {
-    fun injectApiRepository(): ApiRepository
     fun inject(mainFragment: MainFragment)
+//    fun inject(mainViewModelFactory: MainViewModelFactory)
+    fun inject(chartFragment: ChartFragment)
+//    fun inject(chartViewModelFactory: ChartViewModelFactory)
 }

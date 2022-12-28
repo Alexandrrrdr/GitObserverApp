@@ -1,5 +1,6 @@
 package com.example.gitobserverapp.presentation.chart
 
+import android.content.Context
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -9,10 +10,13 @@ import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.example.gitobserverapp.App
 import com.example.gitobserverapp.R
 import com.example.gitobserverapp.data.network.model.starred.User
+import com.example.gitobserverapp.data.repository.ApiRepository
 import com.example.gitobserverapp.databinding.FragmentChartBinding
 import com.example.gitobserverapp.presentation.InternetConnection
 import com.example.gitobserverapp.presentation.chart.chart_helper.ChartState
@@ -31,14 +35,13 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.github.mikephil.charting.utils.ColorTemplate
 import java.time.LocalDate
 import java.util.*
+import javax.inject.Inject
 
 
 class ChartFragment : Fragment() {
 
     private var _binding: FragmentChartBinding? = null
     private val binding get() = _binding!!
-
-    private val viewModel: ChartViewModel by activityViewModels()
 
     //safeArgs from main fragment
     private val args: ChartFragmentArgs by navArgs()
@@ -53,6 +56,14 @@ class ChartFragment : Fragment() {
     private lateinit var barDataSet: BarDataSet
     private lateinit var barChart: BarChart
     private var barEntryList = mutableListOf<BarEntry>()
+
+    @Inject lateinit var apiRepository: ApiRepository
+    @Inject lateinit var viewModel: ChartViewModel
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        (requireContext().applicationContext as App).appComponent.inject(this@ChartFragment)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -85,6 +96,7 @@ class ChartFragment : Fragment() {
         renderUi()
     }
 
+    //Check this function
     private fun radioButtonClick() {
         binding.radioButtonGroup.setOnCheckedChangeListener { radioGroup, isChecked ->
             val checkButton = radioGroup.checkedRadioButtonId

@@ -6,18 +6,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.gitobserverapp.data.network.RetrofitInstance
 import com.example.gitobserverapp.data.network.model.starred.StarredModelItem
+import com.example.gitobserverapp.data.repository.ApiRepository
 import com.example.gitobserverapp.presentation.chart.chart_helper.ChartState
 import com.example.gitobserverapp.presentation.chart.model.UserModel
 import com.example.gitobserverapp.presentation.chart.model.BarChartModel
 import com.example.gitobserverapp.presentation.chart.model.RadioButtonModel
-import com.example.gitobserverapp.utils.Constants
 import com.github.mikephil.charting.data.BarDataSet
 import kotlinx.coroutines.launch
 import java.time.*
+import javax.inject.Inject
 
-class ChartViewModel : ViewModel() {
+class ChartViewModel @Inject constructor(private val apiRepository: ApiRepository) : ViewModel() {
 
     private var _starredUsersLiveData = MutableLiveData<List<UserModel>>()
     val starredUsersLiveData: LiveData<List<UserModel>> get() = _starredUsersLiveData
@@ -36,14 +36,9 @@ class ChartViewModel : ViewModel() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun getDataFromGitHub(repoOwnerName: String, repoName: String, createdAt: String) {
-
         viewModelScope.launch {
             _chartScreenState.postValue(ChartState.Loading)
-            val retroRequest = RetrofitInstance.retrofitInstance.getStarredData(
-                owner_login = repoOwnerName,
-                repo_name = repoName,
-                per_page = Constants.PER_PAGE
-            )
+            val retroRequest = apiRepository.getStarredData(login = repoOwnerName, repoName = repoName)
             if (retroRequest.isSuccessful && retroRequest.body() != null) {
                 when (retroRequest.code()) {
                     in 200..421 -> {

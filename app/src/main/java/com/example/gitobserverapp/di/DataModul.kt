@@ -6,7 +6,10 @@ import dagger.Module
 import dagger.Provides
 
 @Module
-class DaggerComponent {
+class DataModul {
 
-
+    @Provides
+    fun provideApiRepository(apiService: ApiService): ApiRepository{
+        return ApiRepository(apiService)
+    }
 }

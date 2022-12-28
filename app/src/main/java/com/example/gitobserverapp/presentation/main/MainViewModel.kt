@@ -30,7 +30,8 @@ class MainViewModel @Inject constructor(private val apiRepository: ApiRepository
     fun getRepos(searchWord: String){
         _viewStateLiveData.postValue(ViewState.Loading)
         viewModelScope.launch{
-            val retrofit = RetrofitInstance.retrofitInstance.getRepos(searchWord, SORT_BY, Constants.PER_PAGE)
+//            val retrofit = RetrofitInstance.retrofitInstance.getRepos(searchWord, SORT_BY, Constants.PER_PAGE)
+            val retrofit = apiRepository.getRepositories(searchWord)
 
             if (retrofit.isSuccessful && retrofit.body() != null){
                 when (retrofit.code()) {

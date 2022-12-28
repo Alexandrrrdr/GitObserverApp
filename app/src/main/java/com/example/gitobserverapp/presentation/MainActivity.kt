@@ -2,6 +2,7 @@ package com.example.gitobserverapp.presentation
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.example.gitobserverapp.App
 import com.example.gitobserverapp.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
