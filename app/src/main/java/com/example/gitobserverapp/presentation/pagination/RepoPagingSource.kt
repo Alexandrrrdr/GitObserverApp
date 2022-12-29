@@ -25,11 +25,18 @@ class RepoPagingSource @Inject constructor(
         if (response.isSuccessful) {
             val items = checkNotNull(response.body()).items
             val nextKey = if (items.size < pageSize) null else +1
-            val prevKey = if (page == 1) null else page-1
+            val prevKey = if (page == 1) null else page - 1
             return LoadResult.Page(data = items, nextKey = nextKey, prevKey = prevKey)
         } else {
             return LoadResult.Error(HttpException(response))
         }
+
+    }
+
+    override fun getRefreshKey(state: PagingState<Int, Item>): Int? {
+        return null
+    }
+
 
 //        return try {
 //            val page = params.key ?: 1
@@ -49,9 +56,4 @@ class RepoPagingSource @Inject constructor(
 //            LoadResult.Error(exception)
 //        }
 //    }
-
-    }
-    override fun getRefreshKey(state: PagingState<Int, Item>): Int? {
-        return null
-    }
 }

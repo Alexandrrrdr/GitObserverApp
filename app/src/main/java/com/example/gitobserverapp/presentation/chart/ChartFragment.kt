@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
@@ -31,6 +32,7 @@ import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.highlight.Highlight
+import com.github.mikephil.charting.listener.OnChartGestureListener
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.github.mikephil.charting.utils.ColorTemplate
 import java.time.LocalDate
@@ -191,7 +193,7 @@ class ChartFragment : Fragment() {
         barChart.description.isEnabled = false
         barChart.axisRight.isEnabled = false
 
-        barChart.isDragEnabled = true
+        barChart.isDragEnabled = false
         barChart.setVisibleXRangeMaximum(5f)
         barChart.animateY(1000)
         barChart.animateX(1000)
@@ -205,7 +207,9 @@ class ChartFragment : Fragment() {
             }
 
         })
+
         val xAxis: XAxis = barChart.xAxis
+
         xAxis.textColor = Color.BLACK
         xAxis.textSize = 12f
         xAxis.setCenterAxisLabels(false)

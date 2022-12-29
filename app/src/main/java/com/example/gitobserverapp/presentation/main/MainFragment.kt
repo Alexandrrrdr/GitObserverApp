@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,8 +16,7 @@ import com.example.gitobserverapp.data.network.model.repo.Item
 import com.example.gitobserverapp.data.repository.ApiRepository
 import com.example.gitobserverapp.databinding.FragmentMainBinding
 import com.example.gitobserverapp.presentation.InternetConnection
-import com.example.gitobserverapp.presentation.main.main_helper.ViewState
-import kotlinx.coroutines.flow.collect
+import com.example.gitobserverapp.presentation.main.main_helper.MainViewState
 import javax.inject.Inject
 
 class MainFragment : Fragment(), RepoSearchAdapter.Listener {
@@ -56,36 +54,26 @@ class MainFragment : Fragment(), RepoSearchAdapter.Listener {
     }
 
     private fun renderUi() {
-//        mainViewModel.reposLiveData.observe(viewLifecycleOwner){
-//            repoSearchAdapter.differ.submitList(it)
-//        }
+        mainViewModel.reposLiveData.observe(viewLifecycleOwner){
+            repoSearchAdapter.differ.submitList(it)
+        }
     }
-
 
     private fun checkInternet(){
         binding.btnSearch.setOnClickListener {
             if (internet.checkInternetConnection(requireContext())) {
                 hideKeyboard(it)
-                binding.progBarMain.visibility = View.VISIBLE
+                mainViewModel.setState(MainViewState.Loading)
                 if (binding.edtTxtInput.text.isNullOrEmpty()) {
-                    mainViewModel.setStatement("Search field is empty")
+                    mainViewModel.setState(MainViewState.Error("Search field is empty"))
                     mainViewModel.setReposList(null)
                 } else {
-                    mainViewModel.setSearchName(binding.edtTxtInput.text.toString())
-
-
                     lifecycleScope.launchWhenCreated {
-                        mainViewModel.repoList.collect{ pagingData ->
-                            repoSearchAdapter.submitData(pagingData)
-//                            repoSearchAdapter.differ.submitList(it)
-                        }
+                        mainViewModel.getRepos(binding.edtTxtInput.text.toString(), 1)
                     }
-//                    lifecycleScope.launchWhenCreated {
-//                        mainViewModel.getRepos(binding.edtTxtInput.text.toString())
-//                    }
                 }
             } else {
-                mainViewModel.setStatement("Check Internet connection")
+                mainViewModel.setState(MainViewState.Error("Check internet connection"))
                 mainViewModel.setReposList(null)
             }
         }
@@ -100,16 +88,16 @@ class MainFragment : Fragment(), RepoSearchAdapter.Listener {
     private fun initViewStatement() {
         mainViewModel.viewStateLiveData.observe(viewLifecycleOwner) { viewState ->
             when (viewState) {
-                is ViewState.Error -> {
+                is MainViewState.Error -> {
                     binding.progBarMain.visibility = View.GONE
                     binding.txtError.visibility = View.VISIBLE
                     binding.txtError.text = viewState.error
                 }
-                ViewState.Loading -> {
+                MainViewState.Loading -> {
                     binding.progBarMain.visibility = View.VISIBLE
                     binding.txtError.visibility = View.GONE
                 }
-                is ViewState.ViewContentMain -> {
+                is MainViewState.MainViewContentMain -> {
                     binding.progBarMain.visibility = View.GONE
                     binding.txtError.visibility = View.GONE
                     mainViewModel.setReposList(viewState.result)
@@ -132,7 +120,6 @@ class MainFragment : Fragment(), RepoSearchAdapter.Listener {
         val repoCreatedAt: String = item.created_at
         val repoOwnerLogin: String = item.owner.login
         val repoName: String = item.name
-        mainViewModel.setSearchName(binding.edtTxtInput.text.toString())
         val direction = MainFragmentDirections.actionMainFragmentToChartFragment(
             repoName = repoName,
             repoOwnerName = repoOwnerLogin,

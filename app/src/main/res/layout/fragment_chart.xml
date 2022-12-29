@@ -39,6 +39,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:textColor="@color/indigo"
+                android:enabled="true"
                 android:text="@string/for_years"
                 android:layout_weight="0.33"/>
 
