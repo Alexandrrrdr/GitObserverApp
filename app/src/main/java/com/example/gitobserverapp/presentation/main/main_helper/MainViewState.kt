@@ -5,5 +5,7 @@ import com.example.gitobserverapp.data.network.model.repo.Item
 sealed class MainViewState{
     object Loading: MainViewState()
     data class Error(val error: String) : MainViewState()
-    data class MainViewContentMain(val result: List<Item>): MainViewState()
+    object NetworkError : MainViewState()
+//    data class MainViewContentMain(val result: List<Item>): MainViewState()
+    object MainViewContentMain : MainViewState()
 }

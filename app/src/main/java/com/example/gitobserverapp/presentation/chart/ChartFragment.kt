@@ -5,13 +5,10 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.gitobserverapp.App
@@ -19,10 +16,11 @@ import com.example.gitobserverapp.R
 import com.example.gitobserverapp.data.network.model.starred.User
 import com.example.gitobserverapp.data.repository.ApiRepository
 import com.example.gitobserverapp.databinding.FragmentChartBinding
-import com.example.gitobserverapp.presentation.InternetConnection
 import com.example.gitobserverapp.presentation.chart.chart_helper.ChartState
 import com.example.gitobserverapp.presentation.chart.model.BarChartModel
 import com.example.gitobserverapp.presentation.chart.model.UserModel
+import com.example.gitobserverapp.presentation.main.main_helper.MainViewState
+import com.example.gitobserverapp.utils.network.InternetConnectionLiveData
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
@@ -32,7 +30,6 @@ import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.highlight.Highlight
-import com.github.mikephil.charting.listener.OnChartGestureListener
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.github.mikephil.charting.utils.ColorTemplate
 import java.time.LocalDate
@@ -51,7 +48,7 @@ class ChartFragment : Fragment() {
     private var repoOwnerName = ""
     private var repoCreatedAt = ""
 
-    private val internet = InternetConnection()
+    private lateinit var internet: InternetConnectionLiveData
     private var listUserModel = mutableListOf<UserModel>()
 
     //Start creating barCharts
@@ -79,26 +76,17 @@ class ChartFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        internet = InternetConnectionLiveData(requireContext())
+
         repoName = args.repoName
         repoOwnerName = args.repoOwnerName
         repoCreatedAt = args.repoCreatedAt
 
-        if (internet.checkInternetConnection(requireContext())) {
-            let {
-                viewModel.getDataFromGitHub(
-                    repoOwnerName = repoOwnerName,
-                    repoName = repoName,
-                    createdAt = repoCreatedAt
-                )
-            }
-        } else {
-            viewModel.setErrorState("Check the internet connection")
-        }
         radioButtonClick()
         renderUi()
     }
 
-    //Check this function
+    //TODO make it work
     private fun radioButtonClick() {
         binding.radioButtonGroup.setOnCheckedChangeListener { radioGroup, isChecked ->
             val checkButton = radioGroup.checkedRadioButtonId
@@ -108,19 +96,33 @@ class ChartFragment : Fragment() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun renderUi() {
+        internet.observe(viewLifecycleOwner){ isConnected ->
+            if (isConnected){
+                binding.chartNetworkError.root.visibility = View.GONE
+                let {
+                    viewModel.getDataFromGitHub(
+                        repoOwnerName = repoOwnerName,
+                        repoName = repoName,
+                        createdAt = repoCreatedAt
+                    )
+                }
+            } else {
+                viewModel.setErrorState("Internet connectivity error")
+            }
+        }
+
         viewModel.chartScreenState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is ChartState.Error -> {
-                    binding.txtInfo.visibility = View.VISIBLE
-                    binding.txtInfo.text = state.error
+                    binding.chartNetworkError.root.visibility = View.VISIBLE
                     binding.progBarChart.visibility = View.GONE
                 }
                 ChartState.Loading -> {
-                    binding.txtInfo.visibility = View.GONE
+                    binding.chartNetworkError.root.visibility = View.GONE
                     binding.progBarChart.visibility = View.VISIBLE
                 }
                 is ChartState.ViewContentMain -> {
-                    binding.txtInfo.visibility = View.GONE
+                    binding.chartNetworkError.root.visibility = View.GONE
                     binding.progBarChart.visibility = View.GONE
                 }
             }

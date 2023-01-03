@@ -19,6 +19,13 @@ class MainViewModel @Inject constructor(private val apiRepository: ApiRepository
     private var _mainViewViewState: MutableLiveData<MainViewState> = MutableLiveData<MainViewState>()
     val viewStateLiveData get() = _mainViewViewState
 
+    private var _mainNetworkLiveData: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
+    val mainNetworkLiveData get() = _mainNetworkLiveData
+
+    fun setNetworkStatus(value: Boolean){
+        _mainNetworkLiveData.postValue(value)
+    }
+
     fun setReposList(list: List<Item>?){
         if (list == null){
             _reposLiveData.postValue(listOf())
@@ -33,8 +40,8 @@ class MainViewModel @Inject constructor(private val apiRepository: ApiRepository
                 when (retrofit.code()) {
                     in 200..303 -> {
                         retrofit.body().let { get_repos ->
-                            _mainViewViewState.postValue(MainViewState.MainViewContentMain(get_repos!!.items))
-                            _reposLiveData.postValue(get_repos.items)
+                            _mainViewViewState.postValue(MainViewState.MainViewContentMain)
+                            _reposLiveData.postValue(get_repos!!.items)
                         }
                     }
                     in 304..600 -> {
@@ -42,7 +49,6 @@ class MainViewModel @Inject constructor(private val apiRepository: ApiRepository
                     }
                 }
             }
-            _mainViewViewState.postValue(MainViewState.Error("No data from server"))
         }
     }
 
