@@ -32,6 +32,7 @@ import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.github.mikephil.charting.utils.ColorTemplate
+import com.google.android.material.snackbar.Snackbar
 import java.time.LocalDate
 import java.util.*
 import javax.inject.Inject
@@ -83,18 +84,18 @@ class ChartFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         repoName = args.repoName
         repoOwnerName = args.repoOwnerName
         repoCreatedAt = args.repoCreatedAt
 
         radioButtonClick()
         renderUi()
+        barChartOnItemClick()
     }
 
-    //TODO make it work
     private fun radioButtonClick() {
         binding.radioButtonGroup.setOnCheckedChangeListener { radioGroup, isChecked ->
-//            val checkButton = radioGroup.checkedRadioButtonId
             viewModel.setCheckedRadioButton(isChecked)
         }
     }
@@ -103,29 +104,45 @@ class ChartFragment : Fragment() {
     private fun renderUi() {
         networkStatus.observe(viewLifecycleOwner){ isConnected ->
             if (isConnected){
-                ChartState.ViewContentMain
+                viewModel.setNetworkStatus(value = true)
             } else {
-                ChartState.NetworkError
+                viewModel.setNetworkStatus(value = false)
             }
+        }
+
+        viewModel.chartNetworkLiveData.observe(viewLifecycleOwner){ status ->
+            if (status) viewModel.setScreenState(ChartState.ViewContentMain)
+            else viewModel.setScreenState(ChartState.NetworkError)
         }
 
         viewModel.chartScreenState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is ChartState.Error -> {
+                    binding.radioBtnYears.isEnabled = false
+                    binding.radioBtnMonths.isEnabled = false
+                    binding.radioBtnWeeks.isEnabled = false
                     binding.txtNetworkStatus.text = R.string.no_data_from_server.toString()
                     binding.txtNetworkStatus.visibility = View.VISIBLE
                     binding.progBarChart.visibility = View.GONE
                 }
                 is ChartState.Loading -> {
+                    binding.radioBtnYears.isEnabled = false
+                    binding.radioBtnMonths.isEnabled = false
+                    binding.radioBtnWeeks.isEnabled = false
                     binding.txtNetworkStatus.visibility = View.GONE
                     binding.progBarChart.visibility = View.VISIBLE
                 }
                 is ChartState.ViewContentMain -> {
+                    binding.radioBtnYears.isEnabled = true
+                    binding.radioBtnMonths.isEnabled = true
+                    binding.radioBtnWeeks.isEnabled = true
                     binding.txtNetworkStatus.visibility = View.GONE
                     binding.progBarChart.visibility = View.GONE
                 }
                 is ChartState.NetworkError -> {
-                    binding.txtNetworkStatus.text = R.string.check_network_chart.toString()
+                    binding.radioBtnYears.isEnabled = false
+                    binding.radioBtnMonths.isEnabled = false
+                    binding.radioBtnWeeks.isEnabled = false
                     binding.txtNetworkStatus.visibility = View.VISIBLE
                     binding.progBarChart.visibility = View.GONE
                 }
@@ -165,9 +182,7 @@ class ChartFragment : Fragment() {
 
     private fun initBarChart(list: List<BarChartModel>) {
         barChart = binding.barChart
-
         createBarChartData(list)
-
         barDataSet = BarDataSet(barEntryList, "Test")
         val barData = BarData(barDataSet)
 
@@ -188,7 +203,6 @@ class ChartFragment : Fragment() {
         barDataSet.valueTextColor = Color.BLACK
         barChart.description.isEnabled = false
         barChart.axisRight.isEnabled = false
-
         barChart.isDragEnabled = false
         barChart.setVisibleXRangeMaximum(5f)
         barChart.animateY(1000)
@@ -204,7 +218,7 @@ class ChartFragment : Fragment() {
         xAxis.isGranularityEnabled = true
         xAxis.position = XAxis.XAxisPosition.BOTTOM_INSIDE
 
-//        xAxis.textColor = Color.BLACK
+        xAxis.textColor = Color.BLACK
         xAxis.textSize = 14f
         val axisLeft: YAxis = barChart.axisLeft
         axisLeft.granularity = 5f
@@ -213,12 +227,28 @@ class ChartFragment : Fragment() {
         val axisRight: YAxis = barChart.axisRight
         axisRight.granularity = 1f
         axisRight.axisMinimum = 0f
+        barChart.invalidate()
+        barChart.setOnChartValueSelectedListener(object: OnChartValueSelectedListener{
+            override fun onValueSelected(e: Entry?, h: Highlight?) {
+                //getting index of selected bar
+                val x = barChart.data.getDataSetForEntry(e).getEntryIndex(e as BarEntry)
+                val year = barLabelList[x]
+                val amount = barEntryList[x].y.toInt()
+//                val amountOfTheYear =
+                Snackbar.make(binding.root, "Year is $year, and amount is $amount", Snackbar.LENGTH_SHORT).show()
+                findNavController().navigate(R.id.action_chartFragment_to_detailsFragment)
+            }
+
+            override fun onNothingSelected() {
+                TODO("Not yet implemented")
+            }
+        })
     }
 
     private fun createBarChartData(list: List<BarChartModel>) {
         barEntryList.clear()
         for (i in list.indices) {
-            barLabelList.add(i, list[i].item.toString())
+            barLabelList.add(i, list[i].period.toString())
             barEntryList.add(
                 BarEntry(
                     i.toFloat(),
@@ -229,16 +259,8 @@ class ChartFragment : Fragment() {
         }
     }
 
-    private fun barChartConfiguration() {
-        barChart.setOnChartValueSelectedListener(object: OnChartValueSelectedListener{
-            override fun onValueSelected(e: Entry?, h: Highlight?) {
-                findNavController().navigate(R.id.action_chartFragment_to_detailsFragment)
-            }
+    private fun barChartOnItemClick() {
 
-            override fun onNothingSelected() {
-                TODO("Not yet implemented")
-            }
-        })
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -257,7 +279,7 @@ class ChartFragment : Fragment() {
             }
             tmpMatchedList.add(
                 element = BarChartModel(
-                    item = startDate,
+                    period = startDate,
                     amount = match.size,
                     userInfo = tmpUsers
                 )

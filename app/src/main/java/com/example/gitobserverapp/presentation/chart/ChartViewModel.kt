@@ -32,34 +32,43 @@ class ChartViewModel @Inject constructor(private val apiRepository: ApiRepositor
     private var _chartScreenState = MutableLiveData<ChartState>()
     val chartScreenState: LiveData<ChartState> get() = _chartScreenState
 
-    private val _barDataSet = MutableLiveData<BarDataSet>()
-    val barDataSet: LiveData<BarDataSet> get() = _barDataSet
+    private var _chartNetworkLiveData = MutableLiveData<Boolean>()
+    val chartNetworkLiveData: LiveData<Boolean> get() = _chartNetworkLiveData
+
+    fun setNetworkStatus(value: Boolean){
+        _chartNetworkLiveData.postValue(value)
+    }
+
+    fun setScreenState(chartState: ChartState){
+        _chartScreenState.postValue(chartState)
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun getDataFromGitHub(repoOwnerName: String, repoName: String, createdAt: String) {
+        _chartScreenState.postValue(ChartState.Loading)
         viewModelScope.launch {
-            _chartScreenState.postValue(ChartState.Loading)
-            val retroRequest = apiRepository.getStarredData(login = repoOwnerName, repoName = repoName, Constants.PAGE_START)
-            if (retroRequest.isSuccessful && retroRequest.body() != null) {
-                when (retroRequest.code()) {
-                    in 200..421 -> {
-                        retroRequest.body().let { list ->
-                            if (list != null && list.isNotEmpty()) {
-                                _chartScreenState.postValue(ChartState.ViewContentMain)
-                                parseChartData(
-                                    starredDateList = list,
-                                    created = createdAt,
-                                    repoName = repoName
-                                )
-                            } else {
-                                _chartScreenState.postValue(ChartState.Error("No data to show you"))
+            try {
+                val retroRequest = apiRepository.getStarredData(login = repoOwnerName, repoName = repoName, page = Constants.PAGE_START)
+                if (retroRequest.isSuccessful && retroRequest.body() != null) {
+                    when (retroRequest.code()) {
+                        200 -> {
+                            retroRequest.body().let { list ->
+                                if (list != null && list.isNotEmpty()) {
+                                    _chartScreenState.postValue(ChartState.ViewContentMain)
+                                    parseChartData(
+                                        starredDateList = list,
+                                        created = createdAt,
+                                        repoName = repoName
+                                    )
+                                } else {
+                                    _chartScreenState.postValue(ChartState.Error("Check your request details"))
+                                }
                             }
                         }
                     }
-                    in 422..500 -> {
-                        _chartScreenState.postValue(ChartState.Error("No server response"))
-                    }
                 }
+            } catch (e: Exception){
+                _chartNetworkLiveData.postValue(false)
             }
         }
     }

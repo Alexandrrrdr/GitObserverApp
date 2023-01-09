@@ -14,5 +14,6 @@
     <string name="previous">Previous</string>
     <string name="check_network_chart">Check network connection</string>
     <string name="no_data_from_server">No data from server</string>
+    <string name="check_network_connection">Check network connection</string>
 
 </resources>
