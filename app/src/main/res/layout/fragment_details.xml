@@ -8,13 +8,6 @@
     android:background="#FFE57F"
     tools:context=".presentation.details.DetailsFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/recView_details"
-        android:background="#FFE57F"
-        android:padding="8dp"/>
-
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -23,5 +16,12 @@
         android:gravity="center_horizontal"
         android:visibility="visible"
         />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recView_details"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFE57F"
+        android:padding="8dp" />
 
 </LinearLayout>

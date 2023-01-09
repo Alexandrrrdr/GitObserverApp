@@ -16,9 +16,10 @@ import com.example.gitobserverapp.R
 import com.example.gitobserverapp.data.network.model.starred.User
 import com.example.gitobserverapp.data.repository.ApiRepository
 import com.example.gitobserverapp.databinding.FragmentChartBinding
-import com.example.gitobserverapp.presentation.chart.chart_helper.ChartState
+import com.example.gitobserverapp.presentation.chart.chart_helper.ChartViewState
 import com.example.gitobserverapp.presentation.chart.model.BarChartModel
 import com.example.gitobserverapp.presentation.chart.model.UserModel
+import com.example.gitobserverapp.utils.Constants
 import com.example.gitobserverapp.utils.network.NetworkStatusHelper
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.XAxis
@@ -48,6 +49,7 @@ class ChartFragment : Fragment() {
     private var repoName = ""
     private var repoOwnerName = ""
     private var repoCreatedAt = ""
+    private var page = 1
 
 //    private lateinit var internet: InternetConnectionLiveData
     private lateinit var networkStatus: NetworkStatusHelper
@@ -84,24 +86,46 @@ class ChartFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         repoName = args.repoName
         repoOwnerName = args.repoOwnerName
         repoCreatedAt = args.repoCreatedAt
+        binding.repoName.text = repoName
+
 
         radioButtonClick()
         renderUi()
         barChartOnItemClick()
+        nextPageClick()
+        prevPageClick()
+    }
+
+    private fun prevPageClick() {
+        binding.prevPage.setOnClickListener {
+            viewModel.setPageObserverLiveData(page-1)
+            page--
+        }
+    }
+
+    private fun nextPageClick() {
+        binding.nextPage.setOnClickListener {
+            viewModel.setPageObserverLiveData(page+1)
+            page++
+        }
     }
 
     private fun radioButtonClick() {
-        binding.radioButtonGroup.setOnCheckedChangeListener { radioGroup, isChecked ->
+        binding.radioButtonGroup.setOnCheckedChangeListener { _, isChecked ->
             viewModel.setCheckedRadioButton(isChecked)
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun renderUi() {
+        viewModel.chartPageObserveLiveData.observe(viewLifecycleOwner){ page ->
+            binding.prevPage.isEnabled = page > 1
+            Snackbar.make(binding.root, "Page is $page", Snackbar.LENGTH_SHORT).show()
+        }
+
         networkStatus.observe(viewLifecycleOwner){ isConnected ->
             if (isConnected){
                 viewModel.setNetworkStatus(value = true)
@@ -111,38 +135,30 @@ class ChartFragment : Fragment() {
         }
 
         viewModel.chartNetworkLiveData.observe(viewLifecycleOwner){ status ->
-            if (status) viewModel.setScreenState(ChartState.ViewContentMain)
-            else viewModel.setScreenState(ChartState.NetworkError)
+            if (status) viewModel.setScreenState(ChartViewState.ViewContentMain)
+            else viewModel.setScreenState(ChartViewState.NetworkError)
         }
 
         viewModel.chartScreenState.observe(viewLifecycleOwner) { state ->
             when (state) {
-                is ChartState.Error -> {
-                    binding.radioBtnYears.isEnabled = false
-                    binding.radioBtnMonths.isEnabled = false
-                    binding.radioBtnWeeks.isEnabled = false
+                is ChartViewState.Error -> {
+                    disableButtons(value = false)
                     binding.txtNetworkStatus.text = R.string.no_data_from_server.toString()
                     binding.txtNetworkStatus.visibility = View.VISIBLE
                     binding.progBarChart.visibility = View.GONE
                 }
-                is ChartState.Loading -> {
-                    binding.radioBtnYears.isEnabled = false
-                    binding.radioBtnMonths.isEnabled = false
-                    binding.radioBtnWeeks.isEnabled = false
+                is ChartViewState.Loading -> {
+                    disableButtons(value = false)
                     binding.txtNetworkStatus.visibility = View.GONE
                     binding.progBarChart.visibility = View.VISIBLE
                 }
-                is ChartState.ViewContentMain -> {
-                    binding.radioBtnYears.isEnabled = true
-                    binding.radioBtnMonths.isEnabled = true
-                    binding.radioBtnWeeks.isEnabled = true
+                is ChartViewState.ViewContentMain -> {
+                    disableButtons(value = true)
                     binding.txtNetworkStatus.visibility = View.GONE
                     binding.progBarChart.visibility = View.GONE
                 }
-                is ChartState.NetworkError -> {
-                    binding.radioBtnYears.isEnabled = false
-                    binding.radioBtnMonths.isEnabled = false
-                    binding.radioBtnWeeks.isEnabled = false
+                is ChartViewState.NetworkError -> {
+                    disableButtons(value = false)
                     binding.txtNetworkStatus.visibility = View.VISIBLE
                     binding.progBarChart.visibility = View.GONE
                 }
@@ -162,7 +178,8 @@ class ChartFragment : Fragment() {
                         viewModel.getDataFromGitHub(
                             repoOwnerName = repoOwnerName,
                             repoName = repoName,
-                            createdAt = repoCreatedAt
+                            createdAt = repoCreatedAt,
+                            page = Constants.PAGE_START
                         )
                     }
                 }
@@ -177,6 +194,24 @@ class ChartFragment : Fragment() {
 
         viewModel.barChartListLiveData.observe(viewLifecycleOwner) { barChartModelList ->
             initBarChart(barChartModelList)
+        }
+    }
+
+    private fun disableButtons(value: Boolean){
+        when(value) {
+            true -> {
+                binding.radioBtnYears.isEnabled = true
+                binding.radioBtnMonths.isEnabled = true
+                binding.radioBtnWeeks.isEnabled = true
+                binding.nextPage.isEnabled = true
+            }
+            else -> {
+                binding.radioBtnYears.isEnabled = false
+                binding.radioBtnMonths.isEnabled = false
+                binding.radioBtnWeeks.isEnabled = false
+                binding.nextPage.isEnabled = false
+                binding.prevPage.isEnabled = false
+            }
         }
     }
 

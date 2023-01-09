@@ -8,13 +8,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.gitobserverapp.data.network.model.starred.StarredModelItem
 import com.example.gitobserverapp.data.repository.ApiRepository
-import com.example.gitobserverapp.presentation.chart.chart_helper.ChartState
+import com.example.gitobserverapp.presentation.chart.chart_helper.ChartViewState
 import com.example.gitobserverapp.presentation.chart.model.UserModel
 import com.example.gitobserverapp.presentation.chart.model.BarChartModel
 import com.example.gitobserverapp.presentation.chart.model.RadioButtonModel
 import com.example.gitobserverapp.utils.Constants
-import com.github.mikephil.charting.data.BarDataSet
 import kotlinx.coroutines.launch
+import okhttp3.internal.notifyAll
 import java.time.*
 import javax.inject.Inject
 
@@ -29,39 +29,49 @@ class ChartViewModel @Inject constructor(private val apiRepository: ApiRepositor
     private var _radioButtonCheckedLiveData = MutableLiveData<RadioButtonModel>()
     val radioButtonCheckedLiveData: LiveData<RadioButtonModel> get() = _radioButtonCheckedLiveData
 
-    private var _chartScreenState = MutableLiveData<ChartState>()
-    val chartScreenState: LiveData<ChartState> get() = _chartScreenState
+    private var _chartScreenState = MutableLiveData<ChartViewState>()
+    val chartScreenState: LiveData<ChartViewState> get() = _chartScreenState
 
     private var _chartNetworkLiveData = MutableLiveData<Boolean>()
     val chartNetworkLiveData: LiveData<Boolean> get() = _chartNetworkLiveData
+
+    private var _chartPageObserveLiveData = MutableLiveData<Int>()
+    val chartPageObserveLiveData: LiveData<Int> get() = _chartPageObserveLiveData
+
+    init {
+        _chartPageObserveLiveData.value = 1
+    }
 
     fun setNetworkStatus(value: Boolean){
         _chartNetworkLiveData.postValue(value)
     }
 
-    fun setScreenState(chartState: ChartState){
-        _chartScreenState.postValue(chartState)
+    fun setPageObserverLiveData(value: Int){
+        _chartPageObserveLiveData.postValue(+value)
+    }
+
+    fun setScreenState(chartViewState: ChartViewState){
+        _chartScreenState.postValue(chartViewState)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun getDataFromGitHub(repoOwnerName: String, repoName: String, createdAt: String) {
-        _chartScreenState.postValue(ChartState.Loading)
+    fun getDataFromGitHub(repoOwnerName: String, repoName: String, createdAt: String, page: Int) {
+        _chartScreenState.postValue(ChartViewState.Loading)
         viewModelScope.launch {
             try {
-                val retroRequest = apiRepository.getStarredData(login = repoOwnerName, repoName = repoName, page = Constants.PAGE_START)
+                val retroRequest = apiRepository.getStarredData(login = repoOwnerName, repoName = repoName, page = page)
                 if (retroRequest.isSuccessful && retroRequest.body() != null) {
                     when (retroRequest.code()) {
                         200 -> {
                             retroRequest.body().let { list ->
                                 if (list != null && list.isNotEmpty()) {
-                                    _chartScreenState.postValue(ChartState.ViewContentMain)
                                     parseChartData(
-                                        starredDateList = list,
+                                        starredDataList = list,
                                         created = createdAt,
                                         repoName = repoName
                                     )
                                 } else {
-                                    _chartScreenState.postValue(ChartState.Error("Check your request details"))
+                                    _chartScreenState.postValue(ChartViewState.Error("Check your request details"))
                                 }
                             }
                         }
@@ -73,22 +83,24 @@ class ChartViewModel @Inject constructor(private val apiRepository: ApiRepositor
         }
     }
 
+    //Parse date format to localDate
     @RequiresApi(Build.VERSION_CODES.O)
-    fun parseChartData(starredDateList: List<StarredModelItem>, created: String, repoName: String) {
+    fun parseChartData(starredDataList: List<StarredModelItem>, created: String, repoName: String) {
         val starParsedList = mutableListOf<UserModel>()
         var starredModel: UserModel
         val date = dateConverter(created)
 
-        for (i in starredDateList.indices) {
-            val localDate = dateConverter(starredDateList[i].starred_at)
+        for (i in starredDataList.indices) {
+            val localDate = dateConverter(starredDataList[i].starred_at)
             starredModel = UserModel(
-                user = starredDateList[i].user,
+                user = starredDataList[i].user,
                 starredAt = localDate,
                 createdAt = date,
                 repoName = repoName
             )
             starParsedList.add(i, starredModel)
         }
+        _chartScreenState.postValue(ChartViewState.ViewContentMain)
         _starredUsersLiveData.postValue(starParsedList)
     }
 
