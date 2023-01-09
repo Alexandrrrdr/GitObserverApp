@@ -12,6 +12,7 @@ import com.example.gitobserverapp.presentation.chart.chart_helper.ChartState
 import com.example.gitobserverapp.presentation.chart.model.UserModel
 import com.example.gitobserverapp.presentation.chart.model.BarChartModel
 import com.example.gitobserverapp.presentation.chart.model.RadioButtonModel
+import com.example.gitobserverapp.utils.Constants
 import com.github.mikephil.charting.data.BarDataSet
 import kotlinx.coroutines.launch
 import java.time.*
@@ -38,13 +39,13 @@ class ChartViewModel @Inject constructor(private val apiRepository: ApiRepositor
     fun getDataFromGitHub(repoOwnerName: String, repoName: String, createdAt: String) {
         viewModelScope.launch {
             _chartScreenState.postValue(ChartState.Loading)
-            val retroRequest = apiRepository.getStarredData(login = repoOwnerName, repoName = repoName)
+            val retroRequest = apiRepository.getStarredData(login = repoOwnerName, repoName = repoName, Constants.PAGE_START)
             if (retroRequest.isSuccessful && retroRequest.body() != null) {
                 when (retroRequest.code()) {
                     in 200..421 -> {
                         retroRequest.body().let { list ->
                             if (list != null && list.isNotEmpty()) {
-                                _chartScreenState.postValue(ChartState.ViewContentMain(list))
+                                _chartScreenState.postValue(ChartState.ViewContentMain)
                                 parseChartData(
                                     starredDateList = list,
                                     created = createdAt,
@@ -70,10 +71,9 @@ class ChartViewModel @Inject constructor(private val apiRepository: ApiRepositor
         val date = dateConverter(created)
 
         for (i in starredDateList.indices) {
-
             val localDate = dateConverter(starredDateList[i].starred_at)
             starredModel = UserModel(
-                users = starredDateList[i].user,
+                user = starredDateList[i].user,
                 starredAt = localDate,
                 createdAt = date,
                 repoName = repoName
@@ -95,9 +95,5 @@ class ChartViewModel @Inject constructor(private val apiRepository: ApiRepositor
 
     fun setBarChartYearsData(list: List<BarChartModel>){
         _barChartListLiveData.postValue(list)
-    }
-
-    fun setErrorState(error: String?){
-        _chartScreenState.postValue(error?.let { ChartState.Error(error = it) })
     }
 }

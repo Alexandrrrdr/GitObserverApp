@@ -27,6 +27,7 @@ interface ApiService {
     suspend fun getStarredData(
         @Path("owner_login") owner_login: String,
         @Path("repo_name") repo_name: String,
-        @Query("per_page") per_page: Int
+        @Query("per_page") per_page: Int,
+        @Query("page") page : Int
     ): Response<List<StarredModelItem>>
 }

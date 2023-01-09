@@ -19,8 +19,7 @@ import com.example.gitobserverapp.databinding.FragmentChartBinding
 import com.example.gitobserverapp.presentation.chart.chart_helper.ChartState
 import com.example.gitobserverapp.presentation.chart.model.BarChartModel
 import com.example.gitobserverapp.presentation.chart.model.UserModel
-import com.example.gitobserverapp.presentation.main.main_helper.MainViewState
-import com.example.gitobserverapp.utils.network.InternetConnectionLiveData
+import com.example.gitobserverapp.utils.network.NetworkStatusHelper
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
@@ -28,6 +27,7 @@ import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
@@ -48,16 +48,23 @@ class ChartFragment : Fragment() {
     private var repoOwnerName = ""
     private var repoCreatedAt = ""
 
-    private lateinit var internet: InternetConnectionLiveData
+//    private lateinit var internet: InternetConnectionLiveData
+    private lateinit var networkStatus: NetworkStatusHelper
     private var listUserModel = mutableListOf<UserModel>()
 
     //Start creating barCharts
     private lateinit var barDataSet: BarDataSet
     private lateinit var barChart: BarChart
     private var barEntryList = mutableListOf<BarEntry>()
+    private var barLabelList = mutableListOf<String>()
 
     @Inject lateinit var apiRepository: ApiRepository
     @Inject lateinit var viewModel: ChartViewModel
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        networkStatus = NetworkStatusHelper(requireContext())
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -76,8 +83,6 @@ class ChartFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        internet = InternetConnectionLiveData(requireContext())
-
         repoName = args.repoName
         repoOwnerName = args.repoOwnerName
         repoCreatedAt = args.repoCreatedAt
@@ -89,40 +94,39 @@ class ChartFragment : Fragment() {
     //TODO make it work
     private fun radioButtonClick() {
         binding.radioButtonGroup.setOnCheckedChangeListener { radioGroup, isChecked ->
-            val checkButton = radioGroup.checkedRadioButtonId
-            viewModel.setCheckedRadioButton(checkButton)
+//            val checkButton = radioGroup.checkedRadioButtonId
+            viewModel.setCheckedRadioButton(isChecked)
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun renderUi() {
-        internet.observe(viewLifecycleOwner){ isConnected ->
+        networkStatus.observe(viewLifecycleOwner){ isConnected ->
             if (isConnected){
-                binding.chartNetworkError.root.visibility = View.GONE
-                let {
-                    viewModel.getDataFromGitHub(
-                        repoOwnerName = repoOwnerName,
-                        repoName = repoName,
-                        createdAt = repoCreatedAt
-                    )
-                }
+                ChartState.ViewContentMain
             } else {
-                viewModel.setErrorState("Internet connectivity error")
+                ChartState.NetworkError
             }
         }
 
         viewModel.chartScreenState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is ChartState.Error -> {
-                    binding.chartNetworkError.root.visibility = View.VISIBLE
+                    binding.txtNetworkStatus.text = R.string.no_data_from_server.toString()
+                    binding.txtNetworkStatus.visibility = View.VISIBLE
                     binding.progBarChart.visibility = View.GONE
                 }
-                ChartState.Loading -> {
-                    binding.chartNetworkError.root.visibility = View.GONE
+                is ChartState.Loading -> {
+                    binding.txtNetworkStatus.visibility = View.GONE
                     binding.progBarChart.visibility = View.VISIBLE
                 }
                 is ChartState.ViewContentMain -> {
-                    binding.chartNetworkError.root.visibility = View.GONE
+                    binding.txtNetworkStatus.visibility = View.GONE
+                    binding.progBarChart.visibility = View.GONE
+                }
+                is ChartState.NetworkError -> {
+                    binding.txtNetworkStatus.text = R.string.check_network_chart.toString()
+                    binding.txtNetworkStatus.visibility = View.VISIBLE
                     binding.progBarChart.visibility = View.GONE
                 }
             }
@@ -136,44 +140,35 @@ class ChartFragment : Fragment() {
 
         viewModel.radioButtonCheckedLiveData.observe(viewLifecycleOwner) { radioModel ->
             when (radioModel.radioButton) {
-                R.id.radioBtnYears -> binding.radioBtnYears.isChecked
-                R.id.radioBtnMonths -> binding.radioBtnMonths.isChecked
-                R.id.radioBtnWeeks -> binding.radioBtnWeeks.isChecked
+                R.id.radioBtnYears -> {
+                    let {
+                        viewModel.getDataFromGitHub(
+                            repoOwnerName = repoOwnerName,
+                            repoName = repoName,
+                            createdAt = repoCreatedAt
+                        )
+                    }
+                }
+                R.id.radioBtnMonths -> {
+
+                }
+                R.id.radioBtnWeeks -> {
+
+                }
             }
         }
 
         viewModel.barChartListLiveData.observe(viewLifecycleOwner) { barChartModelList ->
-
             initBarChart(barChartModelList)
         }
     }
 
     private fun initBarChart(list: List<BarChartModel>) {
         barChart = binding.barChart
-        val data = createBarChartData(list = list)
-        barChartConfiguration()
-        prepareBarChart(data)
-    }
 
-    private fun prepareBarChart(data: BarData) {
-        data.setValueTextSize(12f)
-        barChart.data = data
-        barChart.invalidate()
-    }
+        createBarChartData(list)
 
-    private fun createBarChartData(list: List<BarChartModel>): BarData {
-        barEntryList.clear()
-        for (i in list.indices) {
-            barEntryList.add(
-                BarEntry(
-                    list[i].item.toFloat(),
-                    list[i].amount.toFloat(),
-                    list[i].userInfo
-                )
-            )
-        }
         barDataSet = BarDataSet(barEntryList, "Test")
-        barDataSet.setColors(ColorTemplate.JOYFUL_COLORS, 250)
         val barData = BarData(barDataSet)
 
         //Hide unnecessary labels if no data in AXis
@@ -186,12 +181,11 @@ class ChartFragment : Fragment() {
                 }
             }
         })
-        barData.barWidth = 0.6f
-        return barData
-    }
 
-    private fun barChartConfiguration() {
-
+        barChart.data = barData
+        barDataSet.setColors(ColorTemplate.COLORFUL_COLORS, 250)
+        barDataSet.valueTextSize = 14f
+        barDataSet.valueTextColor = Color.BLACK
         barChart.description.isEnabled = false
         barChart.axisRight.isEnabled = false
 
@@ -199,6 +193,43 @@ class ChartFragment : Fragment() {
         barChart.setVisibleXRangeMaximum(5f)
         barChart.animateY(1000)
         barChart.animateX(1000)
+
+        val xAxis: XAxis = barChart.xAxis
+
+        //set labels
+        xAxis.valueFormatter = IndexAxisValueFormatter(barLabelList)
+        xAxis.setCenterAxisLabels(false)
+        xAxis.setDrawGridLines(false)
+        xAxis.granularity = 1f
+        xAxis.isGranularityEnabled = true
+        xAxis.position = XAxis.XAxisPosition.BOTTOM_INSIDE
+
+//        xAxis.textColor = Color.BLACK
+        xAxis.textSize = 14f
+        val axisLeft: YAxis = barChart.axisLeft
+        axisLeft.granularity = 5f
+        axisLeft.axisMinimum = 0f
+
+        val axisRight: YAxis = barChart.axisRight
+        axisRight.granularity = 1f
+        axisRight.axisMinimum = 0f
+    }
+
+    private fun createBarChartData(list: List<BarChartModel>) {
+        barEntryList.clear()
+        for (i in list.indices) {
+            barLabelList.add(i, list[i].item.toString())
+            barEntryList.add(
+                BarEntry(
+                    i.toFloat(),
+                    list[i].amount.toFloat(),
+                    list[i].userInfo
+                )
+            )
+        }
+    }
+
+    private fun barChartConfiguration() {
         barChart.setOnChartValueSelectedListener(object: OnChartValueSelectedListener{
             override fun onValueSelected(e: Entry?, h: Highlight?) {
                 findNavController().navigate(R.id.action_chartFragment_to_detailsFragment)
@@ -207,25 +238,7 @@ class ChartFragment : Fragment() {
             override fun onNothingSelected() {
                 TODO("Not yet implemented")
             }
-
         })
-
-        val xAxis: XAxis = barChart.xAxis
-
-        xAxis.textColor = Color.BLACK
-        xAxis.textSize = 12f
-        xAxis.setCenterAxisLabels(false)
-        xAxis.granularity = 1f
-        xAxis.isGranularityEnabled = true
-        xAxis.textColor = Color.BLACK
-        xAxis.position = XAxis.XAxisPosition.BOTTOM
-        xAxis.setDrawGridLines(true)
-        val axisLeft: YAxis = barChart.axisLeft
-        axisLeft.granularity = 5f
-        axisLeft.axisMinimum = 0f
-        val axisRight: YAxis = barChart.axisRight
-        axisRight.granularity = 1f
-        axisRight.axisMinimum = 0f
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -240,7 +253,7 @@ class ChartFragment : Fragment() {
         while (startDate <= findMaxStarredDate) {
             val (match, _) = list.partition { it.starredAt.year == startDate }
             for (i in match.indices) {
-                tmpUsers.add(match[i].users)
+                tmpUsers.add(match[i].user)
             }
             tmpMatchedList.add(
                 element = BarChartModel(

@@ -5,7 +5,7 @@ import java.time.LocalDate
 
 data class UserModel(
     val repoName: String,
-    val users: User,
+    val user: User,
     val starredAt: LocalDate,
     val createdAt: LocalDate
 )

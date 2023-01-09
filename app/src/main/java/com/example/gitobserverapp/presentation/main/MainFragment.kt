@@ -16,14 +16,15 @@ import com.example.gitobserverapp.data.network.model.repo.Item
 import com.example.gitobserverapp.data.repository.ApiRepository
 import com.example.gitobserverapp.databinding.FragmentMainBinding
 import com.example.gitobserverapp.presentation.main.main_helper.MainViewState
-import com.example.gitobserverapp.utils.network.InternetConnectionLiveData
+import com.example.gitobserverapp.utils.network.NetworkStatusHelper
 import javax.inject.Inject
 
 class MainFragment : Fragment(), RepoSearchAdapter.Listener {
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
-    private lateinit var networkStatus: InternetConnectionLiveData
+//    private lateinit var networkStatus: InternetConnectionLiveData
+    private lateinit var networkStatus: NetworkStatusHelper
     private val repoSearchAdapter: RepoSearchAdapter by lazy {
         RepoSearchAdapter(this)
     }
@@ -34,6 +35,11 @@ class MainFragment : Fragment(), RepoSearchAdapter.Listener {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         (requireContext().applicationContext as App).appComponent.inject(this@MainFragment)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        networkStatus = NetworkStatusHelper(requireContext())
     }
 
     override fun onCreateView(
@@ -47,10 +53,9 @@ class MainFragment : Fragment(), RepoSearchAdapter.Listener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        networkStatus = InternetConnectionLiveData(requireContext())
+        renderUi()
         recyclerViewInit()
         initViewStatement()
-        renderUi()
         startSearch()
     }
 
@@ -59,33 +64,34 @@ class MainFragment : Fragment(), RepoSearchAdapter.Listener {
             repoSearchAdapter.differ.submitList(it)
         }
 
-        networkStatus.observe(viewLifecycleOwner){ isConnected ->
-            if (isConnected) {
+        mainViewModel.mainNetworkLiveData.observe(viewLifecycleOwner){ isConnected ->
+            if (isConnected) mainViewModel.setState(MainViewState.MainViewContentMain)
+            else mainViewModel.setState(MainViewState.NetworkError)
+        }
+
+        networkStatus.observe(viewLifecycleOwner){ status ->
+            if (status) {
                 mainViewModel.setNetworkStatus(value = true)
             } else {
                 mainViewModel.setNetworkStatus(value = false)
-            }
-        }
-
-        mainViewModel.mainNetworkLiveData.observe(viewLifecycleOwner){ status ->
-            if (status) {
-                mainViewModel.setState(MainViewState.MainViewContentMain)
-            } else {
-                mainViewModel.setState(MainViewState.NetworkError)
             }
         }
     }
 
     private fun startSearch() {
         binding.btnSearch.setOnClickListener {
-            hideKeyboard(it)
-            mainViewModel.setState(MainViewState.Loading)
-            if (binding.edtTxtInput.text.isNullOrEmpty()) {
-                mainViewModel.setState(MainViewState.Error("Search field is empty"))
-                mainViewModel.setReposList(null)
+            if (mainViewModel.mainNetworkLiveData.value == false) {
+                mainViewModel.setState(MainViewState.NetworkError)
             } else {
-                lifecycleScope.launchWhenCreated {
-                    mainViewModel.getRepos(binding.edtTxtInput.text.toString(), 1)
+                hideKeyboard(it)
+                mainViewModel.setState(MainViewState.Loading)
+                if (binding.edtTxtInput.text.isNullOrEmpty()) {
+                    mainViewModel.setState(MainViewState.Error("Search field is empty"))
+                    mainViewModel.setReposList(null)
+                } else {
+                    lifecycleScope.launchWhenCreated {
+                        mainViewModel.getRepos(binding.edtTxtInput.text.toString(), 1)
+                    }
                 }
             }
         }
@@ -103,25 +109,29 @@ class MainFragment : Fragment(), RepoSearchAdapter.Listener {
                 is MainViewState.Error -> {
                     mainViewModel.setReposList(null)
                     binding.progBarMain.visibility = View.GONE
-                    binding.btnSearch.isEnabled = true
                     binding.networkError.root.visibility = View.GONE
+                    binding.txtError.visibility = View.VISIBLE
+                    binding.txtError.text = viewState.error
+                    binding.btnSearch.isEnabled = true
                 }
                 is MainViewState.Loading -> {
                     binding.progBarMain.visibility = View.VISIBLE
-                    binding.btnSearch.isEnabled = false
+                    binding.txtError.visibility = View.GONE
                     binding.networkError.root.visibility = View.GONE
+                    binding.btnSearch.isEnabled = false
                 }
                 is MainViewState.MainViewContentMain -> {
                     binding.progBarMain.visibility = View.GONE
-                    binding.btnSearch.isEnabled = true
                     binding.networkError.root.visibility = View.GONE
-//                    mainViewModel.setReposList(viewState.result)
+                    binding.txtError.visibility = View.GONE
+                    binding.btnSearch.isEnabled = true
                 }
                 is MainViewState.NetworkError -> {
                     mainViewModel.setReposList(null)
                     binding.progBarMain.visibility = View.GONE
-                    binding.btnSearch.isEnabled = false
                     binding.networkError.root.visibility = View.VISIBLE
+                    binding.txtError.visibility = View.GONE
+                    binding.btnSearch.isEnabled = false
                 }
             }
         }

@@ -35,19 +35,23 @@ class MainViewModel @Inject constructor(private val apiRepository: ApiRepository
     fun getRepos(searchWord: String, page: Int){
         _mainViewViewState.postValue(MainViewState.Loading)
         viewModelScope.launch{
-            val retrofit = apiRepository.getRepositories(searchName = searchWord, page = page)
-            if (retrofit.isSuccessful && retrofit.body() != null){
-                when (retrofit.code()) {
-                    in 200..303 -> {
-                        retrofit.body().let { get_repos ->
-                            _mainViewViewState.postValue(MainViewState.MainViewContentMain)
-                            _reposLiveData.postValue(get_repos!!.items)
+            try {
+                val retrofit = apiRepository.getRepositories(searchName = searchWord, page = page)
+                if (retrofit.isSuccessful && retrofit.body() != null){
+                    when (retrofit.code()) {
+                        in 200..303 -> {
+                            retrofit.body().let { get_repos ->
+                                _mainViewViewState.postValue(MainViewState.MainViewContentMain)
+                                _reposLiveData.postValue(get_repos!!.items)
+                            }
+                        }
+                        in 304..600 -> {
+                            _mainViewViewState.postValue(MainViewState.Error(retrofit.message().toString()))
                         }
                     }
-                    in 304..600 -> {
-                        _mainViewViewState.postValue(MainViewState.Error(retrofit.message().toString()))
-                    }
                 }
+            } catch (e: Exception){
+                _mainNetworkLiveData.postValue(false)
             }
         }
     }

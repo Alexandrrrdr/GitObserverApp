@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="main_search_field">Saerch</string>
+    <string name="main_search_field">Search</string>
+    <string name="check_network_chart">Check network connection</string>
+    <string name="no_data_from_server">No data from server</string>
 </resources>
