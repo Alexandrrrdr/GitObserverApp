@@ -106,7 +106,6 @@ class ChartViewModel @Inject constructor(private val apiRepository: ApiRepositor
         _chartScreenState.postValue(ChartViewState.ViewContentMain)
         _starredUsersLiveData.postValue(starParsedList)
         compareYearsModel(starParsedList)
-
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -130,7 +129,6 @@ class ChartViewModel @Inject constructor(private val apiRepository: ApiRepositor
                     userInfo = tmpUsers
                 )
             )
-
             tmpUsers.clear()
             startDate++
         }
@@ -147,7 +145,7 @@ class ChartViewModel @Inject constructor(private val apiRepository: ApiRepositor
         _radioButtonCheckedLiveData.postValue(RadioButtonModel(radioId))
     }
 
-    fun setBarChartYearsData(list: List<BarChartModel>){
+    private fun setBarChartYearsData(list: List<BarChartModel>){
         _barChartListLiveData.postValue(list)
     }
 }

@@ -13,5 +13,4 @@ interface AppComponent {
     fun inject(mainFragment: MainFragment)
     fun inject(chartFragment: ChartFragment)
     fun inject(chartViewModel: ChartViewModel)
-    fun inject(detailsViewModel: DetailsViewModel)
 }

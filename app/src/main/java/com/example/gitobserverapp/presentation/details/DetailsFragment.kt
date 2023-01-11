@@ -1,6 +1,8 @@
 package com.example.gitobserverapp.presentation.details
 
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -32,21 +34,25 @@ class DetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-//        binding.txtDetailsHeader.text = args.period
         recyclerViewInit()
         renderUi()
 
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun renderUi() {
         detailsViewModel.usersList.observe(viewLifecycleOwner){ userData ->
             binding.txtDetailsHeader.text = userData.period
-            if (userData == null) {
-                detailsAdapter.differ.submitList(randomUsers())
-            } else {
-                detailsAdapter.differ.submitList(userData.users)
-            }
+            detailsAdapter.differ.submitList(userData.users)
+            detailsAdapter.notifyDataSetChanged()
+            Log.d("info", userData.users.size.toString())
+//            if (userData == null) {
+//                detailsAdapter.differ.submitList(randomUsers())
+//                detailsAdapter.notifyDataSetChanged()
+//            } else {
+//                detailsAdapter.differ.submitList(userData.users)
+//                detailsAdapter.notifyDataSetChanged()
+//            }
         }
     }
 
