@@ -1,0 +1,43 @@
+package com.example.gitobserverapp.presentation.details
+
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
+import com.example.gitobserverapp.data.network.model.starred.User
+import com.example.gitobserverapp.databinding.DetailsItemBinding
+
+class DetailsAdapter(): RecyclerView.Adapter<DetailsAdapter.ViewHolder>() {
+
+    inner class ViewHolder(private val binding: DetailsItemBinding): RecyclerView.ViewHolder(binding.root){
+        fun bind(userData: User){
+            binding.txtViewName.text = userData.login
+            binding.txtViewUserId.text = userData.id.toString()
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val binding = let { DetailsItemBinding.inflate(LayoutInflater.from(parent.context), parent, false) }
+        return ViewHolder(binding = binding)
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.bind(userData = differ.currentList[position])
+    }
+
+    override fun getItemCount(): Int = differ.currentList.size
+
+    private val diffUtil = object : DiffUtil.ItemCallback<User>(){
+        override fun areItemsTheSame(oldItem: User, newItem: User): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(oldItem: User, newItem: User): Boolean {
+            return oldItem == newItem
+        }
+
+    }
+
+    val differ = AsyncListDiffer(this, diffUtil)
+}

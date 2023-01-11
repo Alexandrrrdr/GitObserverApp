@@ -7,15 +7,18 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.gitobserverapp.data.network.model.starred.StarredModelItem
+import com.example.gitobserverapp.data.network.model.starred.User
 import com.example.gitobserverapp.data.repository.ApiRepository
 import com.example.gitobserverapp.presentation.chart.chart_helper.ChartViewState
 import com.example.gitobserverapp.presentation.chart.model.UserModel
 import com.example.gitobserverapp.presentation.chart.model.BarChartModel
 import com.example.gitobserverapp.presentation.chart.model.RadioButtonModel
 import com.example.gitobserverapp.utils.Constants
+import com.example.gitobserverapp.utils.parse_period.PeriodList
 import kotlinx.coroutines.launch
 import okhttp3.internal.notifyAll
 import java.time.*
+import java.util.Comparator
 import javax.inject.Inject
 
 class ChartViewModel @Inject constructor(private val apiRepository: ApiRepository) : ViewModel() {
@@ -102,6 +105,36 @@ class ChartViewModel @Inject constructor(private val apiRepository: ApiRepositor
         }
         _chartScreenState.postValue(ChartViewState.ViewContentMain)
         _starredUsersLiveData.postValue(starParsedList)
+        compareYearsModel(starParsedList)
+
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun compareYearsModel(list: List<UserModel>) {
+
+        val tmpMatchedList = mutableListOf<BarChartModel>()
+        val tmpUsers = mutableListOf<User>()
+        val findMinStarredDate = list.minWith(Comparator.comparingInt { it.createdAt.year })
+        val todayDate = LocalDate.now().year
+        var startDate = findMinStarredDate.starredAt.year
+
+        while (startDate <= todayDate) {
+            val (match, _) = list.partition { it.starredAt.year == startDate }
+            for (i in match.indices) {
+                tmpUsers.add(match[i].user)
+            }
+            tmpMatchedList.add(
+                element = BarChartModel(
+                    period = startDate,
+                    amount = match.size,
+                    userInfo = tmpUsers
+                )
+            )
+
+            tmpUsers.clear()
+            startDate++
+        }
+        setBarChartYearsData(tmpMatchedList)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

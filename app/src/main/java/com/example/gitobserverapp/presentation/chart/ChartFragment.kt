@@ -19,6 +19,8 @@ import com.example.gitobserverapp.databinding.FragmentChartBinding
 import com.example.gitobserverapp.presentation.chart.chart_helper.ChartViewState
 import com.example.gitobserverapp.presentation.chart.model.BarChartModel
 import com.example.gitobserverapp.presentation.chart.model.UserModel
+import com.example.gitobserverapp.presentation.details.DetailsViewModel
+import com.example.gitobserverapp.presentation.details.model.UserData
 import com.example.gitobserverapp.utils.Constants
 import com.example.gitobserverapp.utils.network.NetworkStatusHelper
 import com.github.mikephil.charting.charts.BarChart
@@ -37,6 +39,7 @@ import com.google.android.material.snackbar.Snackbar
 import java.time.LocalDate
 import java.util.*
 import javax.inject.Inject
+import kotlin.collections.ArrayList
 
 
 class ChartFragment : Fragment() {
@@ -63,6 +66,7 @@ class ChartFragment : Fragment() {
 
     @Inject lateinit var apiRepository: ApiRepository
     @Inject lateinit var viewModel: ChartViewModel
+    @Inject lateinit var userDataViewModel: DetailsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,7 +94,6 @@ class ChartFragment : Fragment() {
         repoOwnerName = args.repoOwnerName
         repoCreatedAt = args.repoCreatedAt
         binding.repoName.text = repoName
-
 
         radioButtonClick()
         renderUi()
@@ -123,7 +126,6 @@ class ChartFragment : Fragment() {
     private fun renderUi() {
         viewModel.chartPageObserveLiveData.observe(viewLifecycleOwner){ page ->
             binding.prevPage.isEnabled = page > 1
-            Snackbar.make(binding.root, "Page is $page", Snackbar.LENGTH_SHORT).show()
         }
 
         networkStatus.observe(viewLifecycleOwner){ isConnected ->
@@ -269,14 +271,16 @@ class ChartFragment : Fragment() {
                 val x = barChart.data.getDataSetForEntry(e).getEntryIndex(e as BarEntry)
                 val year = barLabelList[x]
                 val amount = barEntryList[x].y.toInt()
-//                val amountOfTheYear =
-                Snackbar.make(binding.root, "Year is $year, and amount is $amount", Snackbar.LENGTH_SHORT).show()
+                val userList: Any? = barEntryList[x].data
+                val tmpList = mutableListOf<User>()
+                if (userList is List<*>){
+                    //TODO how convert
+                }
+                userDataViewModel.setUserList(UserData(year, userList!!))
+//                val toDetails = ChartFragmentDirections.actionChartFragmentToDetailsFragment(period = year)
                 findNavController().navigate(R.id.action_chartFragment_to_detailsFragment)
             }
-
-            override fun onNothingSelected() {
-                TODO("Not yet implemented")
-            }
+            override fun onNothingSelected(){}
         })
     }
 
@@ -304,10 +308,10 @@ class ChartFragment : Fragment() {
         val tmpMatchedList = mutableListOf<BarChartModel>()
         val tmpUsers = mutableListOf<User>()
         val findMinStarredDate = list.minWith(Comparator.comparingInt { it.createdAt.year })
-        val findMaxStarredDate = LocalDate.now().year
+        val todayDate = LocalDate.now().year
         var startDate = findMinStarredDate.starredAt.year
 
-        while (startDate <= findMaxStarredDate) {
+        while (startDate <= todayDate) {
             val (match, _) = list.partition { it.starredAt.year == startDate }
             for (i in match.indices) {
                 tmpUsers.add(match[i].user)

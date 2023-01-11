@@ -39,5 +39,12 @@
         android:id="@+id/detailsFragment"
         android:name="com.example.gitobserverapp.presentation.details.DetailsFragment"
         android:label="fragment_details"
-        tools:layout="@layout/fragment_details" />
+        tools:layout="@layout/fragment_details" >
+        <argument
+            android:name="TimePeriod"
+            app:argType="string" />
+        <argument
+            android:name="UserList"
+            app:argType="string[]" />
+    </fragment>
 </navigation>

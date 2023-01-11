@@ -23,7 +23,6 @@ class MainFragment : Fragment(), RepoSearchAdapter.Listener {
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
-//    private lateinit var networkStatus: InternetConnectionLiveData
     private lateinit var networkStatus: NetworkStatusHelper
     private val repoSearchAdapter: RepoSearchAdapter by lazy {
         RepoSearchAdapter(this)

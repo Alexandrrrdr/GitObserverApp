@@ -38,10 +38,6 @@ class RepoSearchAdapter(private val listener: Listener): RecyclerView.Adapter<Re
 
     override fun getItemCount() = differ.currentList.size
 
-    interface Listener{
-        fun onClick(item: Item)
-    }
-
     private val difUtil = object : DiffUtil.ItemCallback<Item>(){
         override fun areItemsTheSame(oldItem: Item, newItem: Item): Boolean {
             return oldItem.id == newItem.id
@@ -53,4 +49,8 @@ class RepoSearchAdapter(private val listener: Listener): RecyclerView.Adapter<Re
     }
 
     val differ = AsyncListDiffer(this, difUtil)
+
+    interface Listener{
+        fun onClick(item: Item)
+    }
 }

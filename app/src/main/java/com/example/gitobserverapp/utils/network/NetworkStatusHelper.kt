@@ -11,41 +11,25 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class NetworkStatusHelper(context: Context): LiveData<Boolean>(){
+class NetworkStatusHelper(context: Context) : LiveData<Boolean>() {
 
-    private val validNetworkConnections : MutableSet<Network> = HashSet<Network>()
     private val connectivityManager: ConnectivityManager =
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
     private lateinit var connectivityManagerCallback: ConnectivityManager.NetworkCallback
 
-    private fun getConnectivityManagerCallback() = object : ConnectivityManager.NetworkCallback(){
+    private fun getConnectivityManagerCallback() = object : ConnectivityManager.NetworkCallback() {
 
         override fun onAvailable(network: Network) {
             super.onAvailable(network)
             val networkCapability = connectivityManager.getNetworkCapabilities(network)
-
-//            val hasConnectivity = networkCapability?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) ?: false
-//            if (hasConnectivity){
-//                CoroutineScope(Dispatchers.IO).launch {
-//                    if (InternetAvailability.check()){
-//                        withContext(Dispatchers.Main){
-//                            validNetworkConnections.add(network)
-//                            announceStatus()
-//                        }
-//                    }
-//                }
-//            }
-
-            val isConnected = networkCapability?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) ?: false
-            val hasCellConnect = networkCapability?.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ?: false
-            val hasWifiConnect = networkCapability?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ?: false
-            if (isConnected){
+            val isConnected =
+                networkCapability?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                    ?: false
+            if (isConnected) {
                 CoroutineScope(Dispatchers.IO).launch {
-                    if (NetworkStatusRequest.execute()){
-                        withContext(Dispatchers.Main){
-//                            validNetworkConnections.add(network)
-//                            announceStatus()
+                    if (NetworkStatusRequest.execute()) {
+                        withContext(Dispatchers.Main) {
                             postValue(true)
                         }
                     } else {
@@ -55,18 +39,11 @@ class NetworkStatusHelper(context: Context): LiveData<Boolean>(){
             } else {
                 postValue(false)
             }
-//            if (networkCapability!!.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) || networkCapability.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)){
-//                validNetworkConnections.add(network)
-//                announceStatus()
-//            }
         }
 
         override fun onLost(network: Network) {
             super.onLost(network)
-
             postValue(false)
-//            validNetworkConnections.remove(network)
-//            announceStatus()
         }
 
         override fun onCapabilitiesChanged(
@@ -74,15 +51,13 @@ class NetworkStatusHelper(context: Context): LiveData<Boolean>(){
             networkCapabilities: NetworkCapabilities
         ) {
             super.onCapabilitiesChanged(network, networkCapabilities)
-            val isConnected = networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-            val cell = networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
-            val wifi = networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
-            if (isConnected){
+            val isConnected =
+                networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+            if (isConnected) {
                 CoroutineScope(Dispatchers.IO).launch {
-                    if (NetworkStatusRequest.execute()){
-                        withContext(Dispatchers.Main){
+                    if (NetworkStatusRequest.execute()) {
+                        withContext(Dispatchers.Main) {
                             postValue(true)
-//                            validNetworkConnections.add(network)
                         }
                     } else {
                         postValue(false)
@@ -92,31 +67,8 @@ class NetworkStatusHelper(context: Context): LiveData<Boolean>(){
             } else {
                 postValue(false)
             }
-//            if (networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET))
-//            {
-//                CoroutineScope(Dispatchers.IO).launch {
-//                    if (InternetAvailability.check()){
-//                        withContext(Dispatchers.Main){
-//                            postValue(NetworkStatus.Available)
-////                            validNetworkConnections.add(network)
-//                        }
-//                    }
-//                }
-//            } else {
-//                postValue(NetworkStatus.UnAvailable)
-////                validNetworkConnections.remove(network)
-//            }
-////            announceStatus()
         }
     }
-
-//    fun announceStatus(){
-//        if (validNetworkConnections.isNotEmpty()){
-//            postValue(NetworkStatus.Available)
-//        } else {
-//            postValue(NetworkStatus.UnAvailable)
-//        }
-//    }
 
     override fun onActive() {
         super.onActive()

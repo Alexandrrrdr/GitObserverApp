@@ -9,10 +9,14 @@
     tools:context=".presentation.details.DetailsFragment">
 
     <TextView
+        android:id="@+id/txtDetailsHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-        android:text="Screen in work..."
+        android:textColor="@color/g_black"
+        android:textStyle="bold"
+        android:layout_margin="6dp"
+        tools:text="Starred for some year"
         android:gravity="center_horizontal"
         android:visibility="visible"
         />
@@ -21,6 +25,7 @@
         android:id="@+id/recView_details"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="2dp"
         android:background="#FFE57F"
         android:padding="8dp" />
 
