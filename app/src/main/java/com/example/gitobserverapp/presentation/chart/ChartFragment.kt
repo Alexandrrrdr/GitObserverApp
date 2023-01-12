@@ -269,26 +269,14 @@ class ChartFragment : Fragment() {
                 val x = barChart.data.getDataSetForEntry(e).getEntryIndex(e as BarEntry)
                 val year = barLabelList[x]
                 val amount = barEntryList[x].y.toInt()
-                val userList: Any? = barEntryList[x].data
-                val tmpList = mutableListOf<User>()
-                val lister = userList to tmpList
-
-
-
-//                val secondWay: List<User> = userList.filterIsInstance<User>()
-
+                //TODO it is full list, all data! Need consider it!
+                val userList = e.data
+//
                 if (userList is List<*>){
                     getViaPoints(userList)?.let { UserData(year, it) }
                         ?.let { detailsViewModel.setUserList(it)
-                            Log.d("info", "$it.")
                         }
-
                 }
-                //TODO it doesn't work
-
-
-//                detailsViewModel.setUserList(UserData(year, tmpList))
-//                val toDetails = ChartFragmentDirections.actionChartFragmentToDetailsFragment(period = year)
                 findNavController().navigate(R.id.action_chartFragment_to_detailsFragment)
             }
 
@@ -296,22 +284,17 @@ class ChartFragment : Fragment() {
         })
     }
 
-//    @Suppress("UNCHECKED_CAST")
-//    inline fun <reified T : Any> List<*>.checkItemsAre() =
-//        if (all { it is T })
-//            this as List<T>
-//        else null
-
     private fun getViaPoints(list: List<*>): List<User>? {
-
         list.forEach { if (it !is User) return null }
-
         return list.filterIsInstance<User>()
             .apply { if (size != list.size) return null }
     }
 
+
+    //TODO here is something wrong amount and list in BarEntry!!!
     private fun createBarChartData(list: List<BarChartModel>) {
         barEntryList.clear()
+        barLabelList.clear()
         for (i in list.indices) {
             barLabelList.add(i, list[i].period.toString())
             barEntryList.add(

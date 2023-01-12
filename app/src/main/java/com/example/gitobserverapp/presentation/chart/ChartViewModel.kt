@@ -1,6 +1,7 @@
 package com.example.gitobserverapp.presentation.chart
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -104,6 +105,7 @@ class ChartViewModel @Inject constructor(private val apiRepository: ApiRepositor
             starParsedList.add(i, starredModel)
         }
         _chartScreenState.postValue(ChartViewState.ViewContentMain)
+        //TODO check this necessarily
         _starredUsersLiveData.postValue(starParsedList)
         compareYearsModel(starParsedList)
     }
@@ -113,25 +115,52 @@ class ChartViewModel @Inject constructor(private val apiRepository: ApiRepositor
 
         val tmpMatchedList = mutableListOf<BarChartModel>()
         val tmpUsers = mutableListOf<User>()
-        val findMinStarredDate = list.minWith(Comparator.comparingInt { it.createdAt.year })
-        val todayDate = LocalDate.now().year
-        var startDate = findMinStarredDate.starredAt.year
 
-        while (startDate <= todayDate) {
-            val (match, _) = list.partition { it.starredAt.year == startDate }
-            for (i in match.indices) {
-                tmpUsers.add(match[i].user)
+        val endDate = list[list.size-1].starredAt.year
+        var startDate = list[0].starredAt.year
+
+        while (startDate <= endDate){
+            for (i in list.indices){
+                if (startDate == list[i].starredAt.year){
+                    tmpUsers.add(i, list[i].user)
+                }
             }
             tmpMatchedList.add(
                 element = BarChartModel(
                     period = startDate,
-                    amount = match.size,
+                    amount = tmpUsers.size,
                     userInfo = tmpUsers
                 )
             )
-            tmpUsers.clear()
             startDate++
+
+            Log.d("info", "Number of users - ${tmpMatchedList[0].userInfo.size}")
         }
+
+
+//        val todayDate = LocalDate.now().year
+//
+//        while (startDate <= endDate) {
+//
+//            val (match, _) = list.partition { it.starredAt.year == startDate }
+//            tmpUsers.clear()
+//            for (i in match.indices) {
+//                tmpUsers.add(i, match[i].user)
+//            }
+//            tmpMatchedList.add(
+//                element = BarChartModel(
+//                    period = startDate,
+//                    amount = match.size,
+//                    userInfo = tmpUsers
+//                )
+//            )
+//            startDate++
+//        }
+
+        //TODO userInfo.size is ZERO
+//        for (i in tmpMatchedList.indices){
+//            Log.d("info", "${tmpMatchedList[i].userInfo.size}")
+//        }
         setBarChartYearsData(tmpMatchedList)
     }
 
