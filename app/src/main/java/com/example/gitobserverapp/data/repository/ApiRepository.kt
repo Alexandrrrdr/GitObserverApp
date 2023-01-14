@@ -15,7 +15,7 @@ class ApiRepository @Inject constructor(var apiService: ApiService) {
     suspend fun getStarredData(login: String, repoName: String, page: Int) = apiService.getStarredData(
         owner_login = login,
         repo_name = repoName,
-        per_page = DEF_PER_PAGE,
+        per_page = MAX_PER_PAGE,
         page = page
     )
 }

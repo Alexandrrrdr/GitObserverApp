@@ -37,6 +37,7 @@ import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.github.mikephil.charting.utils.ColorTemplate
+import java.time.LocalDate
 import javax.inject.Inject
 
 
@@ -96,27 +97,32 @@ class ChartFragment : Fragment() {
         binding.repoName.text = repoName
 
         radioButtonClick()
-        renderUi()
         nextPageClick()
         prevPageClick()
+        renderUi()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun prevPageClick() {
         binding.prevPage.setOnClickListener {
             viewModel.setPageObserverLiveData(page - 1)
             page--
+//            viewModel.getDataFromGitHub(repoOwnerName = repoOwnerName, repoName = repoName, createdAt = repoCreatedAt, page = page)
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun nextPageClick() {
         binding.nextPage.setOnClickListener {
             viewModel.setPageObserverLiveData(page + 1)
             page++
+//            viewModel.getDataFromGitHub(repoOwnerName = repoOwnerName, repoName = repoName, createdAt = repoCreatedAt, page = page)
         }
     }
 
     private fun radioButtonClick() {
         binding.radioButtonGroup.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.setSearchLiveData(repoOwnerName = repoOwnerName, repoName = repoName, createdAt = repoCreatedAt, Constants.PAGE_START)
             viewModel.setCheckedRadioButton(isChecked)
         }
     }
@@ -166,21 +172,11 @@ class ChartFragment : Fragment() {
             }
         }
 
-        viewModel.starredUsersLiveData.observe(viewLifecycleOwner) { userModel ->
-            listUserModel.addAll(userModel)
-//            compareYearsModel(let { userModel })
-        }
-
         viewModel.radioButtonCheckedLiveData.observe(viewLifecycleOwner) { radioModel ->
             when (radioModel.radioButton) {
                 R.id.radioBtnYears -> {
                     let {
-                        viewModel.getDataFromGitHub(
-                            repoOwnerName = repoOwnerName,
-                            repoName = repoName,
-                            createdAt = repoCreatedAt,
-                            page = Constants.PAGE_START
-                        )
+                        viewModel.getDataFromGitHub()
                     }
                 }
                 R.id.radioBtnMonths -> {
@@ -215,7 +211,15 @@ class ChartFragment : Fragment() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun initBarChart(list: List<BarChartModel>) {
+
+        if ((LocalDate.now().year - list[list.size-1].period) <= 3) {
+            hidePrevNextButtons(value = false)
+        } else {
+            hidePrevNextButtons(value = true)
+        }
+
         barChart = binding.barChart
         createBarChartData(list)
         barDataSet = BarDataSet(barEntryList, "Test")
@@ -239,7 +243,7 @@ class ChartFragment : Fragment() {
         barChart.description.isEnabled = false
         barChart.axisRight.isEnabled = false
         barChart.isDragEnabled = false
-        barChart.setVisibleXRangeMaximum(5f)
+        barChart.setVisibleXRangeMaximum(1f)
         barChart.animateY(1000)
         barChart.animateX(1000)
 
@@ -252,9 +256,9 @@ class ChartFragment : Fragment() {
         xAxis.granularity = 1f
         xAxis.isGranularityEnabled = true
         xAxis.position = XAxis.XAxisPosition.BOTTOM_INSIDE
-
         xAxis.textColor = Color.BLACK
         xAxis.textSize = 14f
+
         val axisLeft: YAxis = barChart.axisLeft
         axisLeft.granularity = 5f
         axisLeft.axisMinimum = 0f
@@ -263,6 +267,7 @@ class ChartFragment : Fragment() {
         axisRight.granularity = 1f
         axisRight.axisMinimum = 0f
         barChart.invalidate()
+
         barChart.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
             override fun onValueSelected(e: Entry?, h: Highlight?) {
                 //getting index of selected bar
@@ -270,7 +275,7 @@ class ChartFragment : Fragment() {
                 val year = barLabelList[x]
                 val amount = barEntryList[x].y.toInt()
                 //TODO it is full list, all data! Need consider it!
-                val userList = e.data
+                val userList = barEntryList[x].data
 //
                 if (userList is List<*>){
                     getViaPoints(userList)?.let { UserData(year, it) }
@@ -284,6 +289,14 @@ class ChartFragment : Fragment() {
         })
     }
 
+    private fun hidePrevNextButtons(value: Boolean){
+        when(value){
+            true -> binding.nextPage.isEnabled = true
+            false -> binding.nextPage.isEnabled = false
+        }
+    }
+
+    //Check BarChart data.object after click on line
     private fun getViaPoints(list: List<*>): List<User>? {
         list.forEach { if (it !is User) return null }
         return list.filterIsInstance<User>()
