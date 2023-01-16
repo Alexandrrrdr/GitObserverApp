@@ -26,7 +26,6 @@ class PeriodList(){
             tmpMatchedList.add(
                 element = BarChartModel(
                     period = startDate,
-                    amount = match.size,
                     userInfo = tmpUsers
                 )
             )
@@ -40,7 +39,7 @@ class PeriodList(){
     fun getMonthsPeriod(list: List<UserModel>): List<BarChartModel>{
         val tmpMatchedList = mutableListOf<BarChartModel>()
         val tmpUsers = mutableListOf<User>()
-        val findMinStarredDate = list.minWith(Comparator.comparingInt { it.createdAt.year })
+        val findMinStarredDate = list.minWith(Comparator.comparingInt { it.createdAt.month.value })
         val todayDate = LocalDate.now().month.value
         var startDate = findMinStarredDate.starredAt.year
 
@@ -52,7 +51,6 @@ class PeriodList(){
             tmpMatchedList.add(
                 element = BarChartModel(
                     period = startDate,
-                    amount = match.size,
                     userInfo = tmpUsers
                 )
             )

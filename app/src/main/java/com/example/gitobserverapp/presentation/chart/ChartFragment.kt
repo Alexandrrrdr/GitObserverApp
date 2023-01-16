@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -107,7 +106,7 @@ class ChartFragment : Fragment() {
         binding.prevPage.setOnClickListener {
             viewModel.setPageObserverLiveData(page - 1)
             page--
-//            viewModel.getDataFromGitHub(repoOwnerName = repoOwnerName, repoName = repoName, createdAt = repoCreatedAt, page = page)
+//            viewModel.getDataFromGitHub(page = page)
         }
     }
 
@@ -116,13 +115,13 @@ class ChartFragment : Fragment() {
         binding.nextPage.setOnClickListener {
             viewModel.setPageObserverLiveData(page + 1)
             page++
-//            viewModel.getDataFromGitHub(repoOwnerName = repoOwnerName, repoName = repoName, createdAt = repoCreatedAt, page = page)
+//            viewModel.getDataFromGitHub(page = page)
         }
     }
 
     private fun radioButtonClick() {
         binding.radioButtonGroup.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.setSearchLiveData(repoOwnerName = repoOwnerName, repoName = repoName, createdAt = repoCreatedAt, Constants.PAGE_START)
+            viewModel.setSearchValues(repoOwnerName = repoOwnerName, repoName = repoName, createdAt = repoCreatedAt, page = Constants.PAGE_START)
             viewModel.setCheckedRadioButton(isChecked)
         }
     }
@@ -176,14 +175,15 @@ class ChartFragment : Fragment() {
             when (radioModel.radioButton) {
                 R.id.radioBtnYears -> {
                     let {
-                        viewModel.getDataFromGitHub()
+                        viewModel.getDataFromGitHub(page = page)
                     }
                 }
                 R.id.radioBtnMonths -> {
+                    viewModel.setScreenState(ChartViewState.Error("This function in work"))
 
                 }
                 R.id.radioBtnWeeks -> {
-
+                    viewModel.setScreenState(ChartViewState.Error("This function in work"))
                 }
             }
         }
@@ -214,11 +214,8 @@ class ChartFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun initBarChart(list: List<BarChartModel>) {
 
-        if ((LocalDate.now().year - list[list.size-1].period) <= 3) {
-            hidePrevNextButtons(value = false)
-        } else {
-            hidePrevNextButtons(value = true)
-        }
+        //Buttons navigation control
+        binding.nextPage.isEnabled = (LocalDate.now().year - list[list.size-1].period) > 1
 
         barChart = binding.barChart
         createBarChartData(list)
@@ -248,7 +245,6 @@ class ChartFragment : Fragment() {
         barChart.animateX(1000)
 
         val xAxis: XAxis = barChart.xAxis
-
         //set labels
         xAxis.valueFormatter = IndexAxisValueFormatter(barLabelList)
         xAxis.setCenterAxisLabels(false)
@@ -269,31 +265,22 @@ class ChartFragment : Fragment() {
         barChart.invalidate()
 
         barChart.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
+
             override fun onValueSelected(e: Entry?, h: Highlight?) {
                 //getting index of selected bar
                 val x = barChart.data.getDataSetForEntry(e).getEntryIndex(e as BarEntry)
                 val year = barLabelList[x]
-                val amount = barEntryList[x].y.toInt()
-                //TODO it is full list, all data! Need consider it!
                 val userList = barEntryList[x].data
 //
                 if (userList is List<*>){
-                    getViaPoints(userList)?.let { UserData(year, it) }
+                    getViaPoints(userList)?.let { UserData(year, users = it) }
                         ?.let { detailsViewModel.setUserList(it)
                         }
                 }
                 findNavController().navigate(R.id.action_chartFragment_to_detailsFragment)
             }
-
             override fun onNothingSelected() {}
         })
-    }
-
-    private fun hidePrevNextButtons(value: Boolean){
-        when(value){
-            true -> binding.nextPage.isEnabled = true
-            false -> binding.nextPage.isEnabled = false
-        }
     }
 
     //Check BarChart data.object after click on line
@@ -303,9 +290,8 @@ class ChartFragment : Fragment() {
             .apply { if (size != list.size) return null }
     }
 
-
-    //TODO here is something wrong amount and list in BarEntry!!!
     private fun createBarChartData(list: List<BarChartModel>) {
+
         barEntryList.clear()
         barLabelList.clear()
         for (i in list.indices) {
@@ -313,7 +299,7 @@ class ChartFragment : Fragment() {
             barEntryList.add(
                 BarEntry(
                     i.toFloat(),
-                    list[i].amount.toFloat(),
+                    list[i].userInfo.size.toFloat(),
                     list[i].userInfo
                 )
             )
