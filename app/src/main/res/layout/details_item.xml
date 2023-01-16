@@ -14,16 +14,27 @@
         android:layout_height="match_parent"
         android:padding="8dp">
 
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/ic_star"
+            android:id="@+id/imgView_star"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
         <TextView
             android:id="@+id/txtView_name_header"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"
             android:text="@string/user_name"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textColor="@color/indigo"
-            android:layout_margin="12dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/imgView_star"
+            app:layout_constraintBottom_toTopOf="@+id/txtView_userId_header"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
@@ -41,24 +52,25 @@
             android:id="@+id/txtView_userId_header"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_marginStart="20dp"
+            android:layout_marginBottom="8dp"
             android:text="@string/user_id"
-            android:layout_marginEnd="20dp"
-            android:textColor="@color/indigo"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            app:layout_constraintTop_toTopOf="@+id/txtView_userId"
-            app:layout_constraintBottom_toBottomOf="@+id/txtView_userId"
-            app:layout_constraintEnd_toStartOf="@+id/txtView_userId"
-            />
+            android:textColor="@color/indigo"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/imgView_star"
+            app:layout_constraintTop_toBottomOf="@+id/txtView_name_header"/>
 
         <TextView
             android:id="@+id/txtView_userId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/indigo"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             android:layout_margin="12dp"
+            android:textColor="@color/indigo"
+            app:layout_constraintBottom_toBottomOf="@+id/txtView_userId_header"
+            app:layout_constraintStart_toEndOf="@+id/txtView_userId_header"
+            app:layout_constraintTop_toTopOf="@+id/txtView_userId_header"
             tools:text="User id" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

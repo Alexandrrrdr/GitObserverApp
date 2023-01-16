@@ -243,7 +243,7 @@ class ChartFragment : Fragment() {
         barChart.description.isEnabled = false
         barChart.axisRight.isEnabled = false
         barChart.isDragEnabled = false
-        barChart.setVisibleXRangeMaximum(1f)
+        barChart.setVisibleXRangeMaximum(5f)
         barChart.animateY(1000)
         barChart.animateX(1000)
 

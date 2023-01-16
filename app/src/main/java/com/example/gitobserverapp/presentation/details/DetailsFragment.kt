@@ -42,26 +42,12 @@ class DetailsFragment : Fragment() {
     @SuppressLint("NotifyDataSetChanged")
     private fun renderUi() {
         detailsViewModel.usersList.observe(viewLifecycleOwner){ userData ->
-            binding.txtDetailsHeader.text = userData.period
+            binding.txtDetailsHeader.text = "Period is ${userData.period}"
             detailsAdapter.differ.submitList(userData.users)
+            binding.totalAmount.text = "Amount of users ${userData.users.size}"
             detailsAdapter.notifyDataSetChanged()
             Log.d("info", userData.users.size.toString())
-//            if (userData == null) {
-//                detailsAdapter.differ.submitList(randomUsers())
-//                detailsAdapter.notifyDataSetChanged()
-//            } else {
-//                detailsAdapter.differ.submitList(userData.users)
-//                detailsAdapter.notifyDataSetChanged()
-//            }
         }
-    }
-
-    private fun randomUsers(): List<User>{
-        val list = mutableListOf<User>()
-            for (i in 0..20){
-                list.add(User(id = i, login = "$i + abc"))
-            }
-        return list
     }
 
     private fun recyclerViewInit() {
