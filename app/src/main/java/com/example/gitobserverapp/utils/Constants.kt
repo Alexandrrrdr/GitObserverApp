@@ -9,7 +9,8 @@ object Constants {
     const val ORDER = "asc"
     const val MAX_PER_PAGE = 100
     const val DEF_PER_PAGE = 30
-    const val PAGE_START = 1
+    const val START_PAGE = 1
+    const val ZERO_PAGE = 0
 
     const val MAX_X_VALUE = 13
     const val GROUPS = 2

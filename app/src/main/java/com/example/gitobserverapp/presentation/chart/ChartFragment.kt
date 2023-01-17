@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,6 +23,8 @@ import com.example.gitobserverapp.presentation.chart.model.UserModel
 import com.example.gitobserverapp.presentation.details.DetailsViewModel
 import com.example.gitobserverapp.presentation.details.model.UserData
 import com.example.gitobserverapp.utils.Constants
+import com.example.gitobserverapp.utils.Constants.START_PAGE
+import com.example.gitobserverapp.utils.Constants.ZERO_PAGE
 import com.example.gitobserverapp.utils.network.NetworkStatusHelper
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.XAxis
@@ -96,6 +97,8 @@ class ChartFragment : Fragment() {
         repoCreatedAt = args.repoCreatedAt
         binding.repoName.text = repoName
 
+        viewModel.setSearchLiveData(repoOwnerName = repoOwnerName, repoName = repoName, createdAt = repoCreatedAt, Constants.START_PAGE)
+
         radioButtonClick()
         nextPageClick()
         prevPageClick()
@@ -122,13 +125,15 @@ class ChartFragment : Fragment() {
 
     private fun radioButtonClick() {
         binding.radioButtonGroup.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.setSearchLiveData(repoOwnerName = repoOwnerName, repoName = repoName, createdAt = repoCreatedAt, Constants.PAGE_START)
             viewModel.setCheckedRadioButton(isChecked)
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun renderUi() {
+//        viewModel.requestBodyLiveData.observe(viewLifecycleOwner){ list ->
+//        }
+
         viewModel.chartPageObserveLiveData.observe(viewLifecycleOwner) { page ->
             binding.prevPage.isEnabled = page > 1
         }
@@ -176,7 +181,7 @@ class ChartFragment : Fragment() {
             when (radioModel.radioButton) {
                 R.id.radioBtnYears -> {
                     let {
-                        viewModel.getDataFromGitHub()
+                        viewModel.getDataFromGitHub(START_PAGE)
                     }
                 }
                 R.id.radioBtnMonths -> {
@@ -213,12 +218,6 @@ class ChartFragment : Fragment() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun initBarChart(list: List<BarChartModel>) {
-
-        if ((LocalDate.now().year - list[list.size-1].period) <= 3) {
-            hidePrevNextButtons(value = false)
-        } else {
-            hidePrevNextButtons(value = true)
-        }
 
         barChart = binding.barChart
         createBarChartData(list)
@@ -287,13 +286,6 @@ class ChartFragment : Fragment() {
 
             override fun onNothingSelected() {}
         })
-    }
-
-    private fun hidePrevNextButtons(value: Boolean){
-        when(value){
-            true -> binding.nextPage.isEnabled = true
-            false -> binding.nextPage.isEnabled = false
-        }
     }
 
     //Check BarChart data.object after click on line
