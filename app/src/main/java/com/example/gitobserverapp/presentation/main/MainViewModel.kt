@@ -5,13 +5,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.gitobserverapp.data.network.model.repo.Item
-import com.example.gitobserverapp.data.repository.ApiRepository
+import com.example.gitobserverapp.data.repository.StarRepository
 import com.example.gitobserverapp.presentation.main.main_helper.MainViewState
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-class MainViewModel @Inject constructor(private val apiRepository: ApiRepository): ViewModel() {
+class MainViewModel @Inject constructor(private val starRepository: StarRepository): ViewModel() {
 
     private var _reposLiveData: MutableLiveData<List<Item>> = MutableLiveData<List<Item>>()
     val reposLiveData: LiveData<List<Item>> get() = _reposLiveData
@@ -36,7 +36,7 @@ class MainViewModel @Inject constructor(private val apiRepository: ApiRepository
         _mainViewViewState.postValue(MainViewState.Loading)
         viewModelScope.launch{
             try {
-                val retrofit = apiRepository.getRepositories(searchName = searchWord, page = page)
+                val retrofit = starRepository.getRepositories(searchName = searchWord, page = page)
                 if (retrofit.isSuccessful && retrofit.body() != null){
                     when (retrofit.code()) {
                         in 200..303 -> {

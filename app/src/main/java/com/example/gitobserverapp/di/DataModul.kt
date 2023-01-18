@@ -1,7 +1,7 @@
 package com.example.gitobserverapp.di
 
 import com.example.gitobserverapp.data.network.ApiService
-import com.example.gitobserverapp.data.repository.ApiRepository
+import com.example.gitobserverapp.data.repository.StarRepository
 import dagger.Module
 import dagger.Provides
 
@@ -9,7 +9,7 @@ import dagger.Provides
 class DataModul {
 
     @Provides
-    fun provideApiRepository(apiService: ApiService): ApiRepository{
-        return ApiRepository(apiService)
+    fun provideApiRepository(apiService: ApiService): StarRepository{
+        return StarRepository(apiService)
     }
 }

@@ -6,6 +6,5 @@ import java.time.LocalDate
 data class UserModel(
     val repoName: String,
     val user: User,
-    val starredAt: LocalDate,
-    val createdAt: LocalDate
+    val starredAt: LocalDate
 )

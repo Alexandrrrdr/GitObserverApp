@@ -15,7 +15,7 @@ import androidx.navigation.fragment.navArgs
 import com.example.gitobserverapp.App
 import com.example.gitobserverapp.R
 import com.example.gitobserverapp.data.network.model.starred.User
-import com.example.gitobserverapp.data.repository.ApiRepository
+import com.example.gitobserverapp.data.repository.StarRepository
 import com.example.gitobserverapp.databinding.FragmentChartBinding
 import com.example.gitobserverapp.presentation.chart.chart_helper.ChartViewState
 import com.example.gitobserverapp.presentation.chart.model.BarChartModel
@@ -24,7 +24,6 @@ import com.example.gitobserverapp.presentation.details.DetailsViewModel
 import com.example.gitobserverapp.presentation.details.model.UserData
 import com.example.gitobserverapp.utils.Constants
 import com.example.gitobserverapp.utils.Constants.START_PAGE
-import com.example.gitobserverapp.utils.Constants.ZERO_PAGE
 import com.example.gitobserverapp.utils.network.NetworkStatusHelper
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.XAxis
@@ -38,7 +37,6 @@ import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.github.mikephil.charting.utils.ColorTemplate
-import java.time.LocalDate
 import javax.inject.Inject
 
 
@@ -65,15 +63,10 @@ class ChartFragment : Fragment() {
     private var barLabelList = mutableListOf<String>()
 
     @Inject
-    lateinit var apiRepository: ApiRepository
+    lateinit var starRepository: StarRepository
     @Inject
     lateinit var viewModel: ChartViewModel
     private val detailsViewModel: DetailsViewModel by activityViewModels()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        networkStatus = NetworkStatusHelper(requireContext())
-    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -85,6 +78,7 @@ class ChartFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentChartBinding.inflate(inflater, container, false)
+        networkStatus = NetworkStatusHelper(requireContext())
         return binding.root
     }
 
@@ -97,7 +91,7 @@ class ChartFragment : Fragment() {
         repoCreatedAt = args.repoCreatedAt
         binding.repoName.text = repoName
 
-        viewModel.setSearchLiveData(repoOwnerName = repoOwnerName, repoName = repoName, createdAt = repoCreatedAt, Constants.START_PAGE)
+        viewModel.setSearchLiveData(repoOwnerName = repoOwnerName, repoName = repoName, createdAt = repoCreatedAt, START_PAGE)
 
         radioButtonClick()
         nextPageClick()
@@ -110,7 +104,6 @@ class ChartFragment : Fragment() {
         binding.prevPage.setOnClickListener {
             viewModel.setPageObserverLiveData(page - 1)
             page--
-//            viewModel.getDataFromGitHub(repoOwnerName = repoOwnerName, repoName = repoName, createdAt = repoCreatedAt, page = page)
         }
     }
 
@@ -119,20 +112,21 @@ class ChartFragment : Fragment() {
         binding.nextPage.setOnClickListener {
             viewModel.setPageObserverLiveData(page + 1)
             page++
-//            viewModel.getDataFromGitHub(repoOwnerName = repoOwnerName, repoName = repoName, createdAt = repoCreatedAt, page = page)
+            viewModel.checkLoadedPage()
         }
     }
 
     private fun radioButtonClick() {
         binding.radioButtonGroup.setOnCheckedChangeListener { _, isChecked ->
             viewModel.setCheckedRadioButton(isChecked)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                viewModel.getDataFromGitHub(START_PAGE)
+            }
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun renderUi() {
-//        viewModel.requestBodyLiveData.observe(viewLifecycleOwner){ list ->
-//        }
 
         viewModel.chartPageObserveLiveData.observe(viewLifecycleOwner) { page ->
             binding.prevPage.isEnabled = page > 1
@@ -154,23 +148,27 @@ class ChartFragment : Fragment() {
         viewModel.chartScreenState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is ChartViewState.Error -> {
-                    disableButtons(value = false)
+                    disableNavigationButtons(value = 0)
+                    disableRadioButtons(value = false)
                     binding.txtNetworkStatus.text = R.string.no_data_from_server.toString()
                     binding.txtNetworkStatus.visibility = View.VISIBLE
                     binding.progBarChart.visibility = View.GONE
                 }
                 is ChartViewState.Loading -> {
-                    disableButtons(value = false)
+                    disableNavigationButtons(value = 0)
+                    disableRadioButtons(value = false)
                     binding.txtNetworkStatus.visibility = View.GONE
                     binding.progBarChart.visibility = View.VISIBLE
                 }
                 is ChartViewState.ViewContentMain -> {
-                    disableButtons(value = true)
+                    disableNavigationButtons(value = 1)
+                    disableRadioButtons(value = true)
                     binding.txtNetworkStatus.visibility = View.GONE
                     binding.progBarChart.visibility = View.GONE
                 }
                 is ChartViewState.NetworkError -> {
-                    disableButtons(value = false)
+                    disableNavigationButtons(value = 0)
+                    disableRadioButtons(value = false)
                     binding.txtNetworkStatus.visibility = View.VISIBLE
                     binding.progBarChart.visibility = View.GONE
                 }
@@ -180,15 +178,13 @@ class ChartFragment : Fragment() {
         viewModel.radioButtonCheckedLiveData.observe(viewLifecycleOwner) { radioModel ->
             when (radioModel.radioButton) {
                 R.id.radioBtnYears -> {
-                    let {
-                        viewModel.getDataFromGitHub(START_PAGE)
-                    }
+                    binding.radioBtnYears.isChecked = true
                 }
                 R.id.radioBtnMonths -> {
-
+                    binding.radioBtnMonths.isChecked = true
                 }
                 R.id.radioBtnWeeks -> {
-
+                    binding.radioBtnWeeks.isChecked = true
                 }
             }
         }
@@ -198,20 +194,34 @@ class ChartFragment : Fragment() {
         }
     }
 
-    private fun disableButtons(value: Boolean) {
+    private fun disableNavigationButtons(value: Int) {
+        when (value) {
+            2 -> {
+                binding.nextPage.isEnabled = true
+                binding.prevPage.isEnabled = true
+            }
+            1 -> {
+                binding.nextPage.isEnabled = true
+                binding.prevPage.isEnabled = false
+            }
+            0 -> {
+                binding.nextPage.isEnabled = false
+                binding.prevPage.isEnabled = false
+            }
+        }
+    }
+
+    private fun disableRadioButtons(value: Boolean) {
         when (value) {
             true -> {
                 binding.radioBtnYears.isEnabled = true
                 binding.radioBtnMonths.isEnabled = true
                 binding.radioBtnWeeks.isEnabled = true
-                binding.nextPage.isEnabled = true
             }
             else -> {
                 binding.radioBtnYears.isEnabled = false
                 binding.radioBtnMonths.isEnabled = false
                 binding.radioBtnWeeks.isEnabled = false
-                binding.nextPage.isEnabled = false
-                binding.prevPage.isEnabled = false
             }
         }
     }
@@ -272,10 +282,8 @@ class ChartFragment : Fragment() {
                 //getting index of selected bar
                 val x = barChart.data.getDataSetForEntry(e).getEntryIndex(e as BarEntry)
                 val year = barLabelList[x]
-                val amount = barEntryList[x].y.toInt()
-                //TODO it is full list, all data! Need consider it!
                 val userList = barEntryList[x].data
-//
+
                 if (userList is List<*>){
                     getViaPoints(userList)?.let { UserData(year, it) }
                         ?.let { detailsViewModel.setUserList(it)
@@ -305,7 +313,7 @@ class ChartFragment : Fragment() {
             barEntryList.add(
                 BarEntry(
                     i.toFloat(),
-                    list[i].amount.toFloat(),
+                    list[i].userInfo.size.toFloat(),
                     list[i].userInfo
                 )
             )
