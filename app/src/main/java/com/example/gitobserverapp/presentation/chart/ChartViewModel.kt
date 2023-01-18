@@ -1,6 +1,7 @@
 package com.example.gitobserverapp.presentation.chart
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -15,8 +16,15 @@ import com.example.gitobserverapp.presentation.chart.model.BarChartModel
 import com.example.gitobserverapp.presentation.chart.model.RadioButtonModel
 import com.example.gitobserverapp.presentation.chart.model.SearchModel
 import com.example.gitobserverapp.utils.Constants
+import com.example.gitobserverapp.utils.Constants.START_PAGE
+import com.example.gitobserverapp.utils.Constants.ZERO_PAGE
+import com.example.gitobserverapp.utils.parse_period.PeriodList
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.yield
+import okhttp3.RequestBody
+import okhttp3.internal.notifyAll
 import java.time.*
+import java.util.Comparator
 import javax.inject.Inject
 
 class ChartViewModel @Inject constructor(private val apiRepository: ApiRepository) : ViewModel() {
@@ -36,10 +44,12 @@ class ChartViewModel @Inject constructor(private val apiRepository: ApiRepositor
     private var _chartPageObserveLiveData = MutableLiveData<Int>()
     val chartPageObserveLiveData: LiveData<Int> get() = _chartPageObserveLiveData
 
-    private var searchValues = mutableListOf<SearchModel>()
+    private var searchLiveData = mutableListOf<SearchModel>()
 
-    fun setSearchValues(repoOwnerName: String, repoName: String, createdAt: String, page: Int){
-        searchValues.add(0, SearchModel(repoOwnerName = repoOwnerName, repoName = repoName, createdAt = createdAt, page = page))
+    private var _requestBodyLiveData = MutableLiveData<List<StarredModelItem>>()
+
+    fun setSearchLiveData(repoOwnerName: String, repoName: String, createdAt: String, page: Int){
+        searchLiveData.add(0, SearchModel(repoOwnerName = repoOwnerName, repoName = repoName, createdAt = createdAt, page = page))
     }
 
     init {
@@ -60,34 +70,33 @@ class ChartViewModel @Inject constructor(private val apiRepository: ApiRepositor
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun getDataFromGitHub(page: Int) {
-        _chartScreenState.postValue(ChartViewState.Loading)
 
+        _chartScreenState.postValue(ChartViewState.Loading)
         viewModelScope.launch {
             try {
                 val retroRequest = apiRepository.getStarredData(
-                    login = searchValues[Constants.DEF_ZERO_PAGE].repoOwnerName,
-                    repoName = searchValues[Constants.DEF_ZERO_PAGE].repoName,
-                    page = searchValues[Constants.DEF_ZERO_PAGE].page
+                    login = searchLiveData[ZERO_PAGE].repoOwnerName,
+                    repoName = searchLiveData[ZERO_PAGE].repoName,
+                    page = page
                 )
                 if (retroRequest.isSuccessful && retroRequest.body() != null) {
                     when (retroRequest.code()) {
                         200 -> {
                             retroRequest.body().let { list ->
                                 if (list != null && list.isNotEmpty()) {
-                                    parseChartData(
-                                        starredDataList = list,
-                                        created = searchValues[Constants.DEF_ZERO_PAGE].createdAt,
-                                        repoName = searchValues[Constants.DEF_ZERO_PAGE].repoName
-                                    )
+                                    checkLoadNewPage(list)
                                 } else {
-                                    _chartScreenState.postValue(ChartViewState.Error("Check your request details"))
+                                    _chartScreenState.postValue(ChartViewState.Error("Check your request details."))
                                 }
                             }
+                        }
+                        422 -> {
+                            _chartScreenState.postValue(ChartViewState.Error("Request limit error."))
                         }
                     }
                 }
             } catch (e: Exception){
-                _chartNetworkLiveData.postValue(false)
+                _chartScreenState.postValue(ChartViewState.NetworkError)
             }
         }
     }
@@ -117,7 +126,9 @@ class ChartViewModel @Inject constructor(private val apiRepository: ApiRepositor
     private fun compareYearsModel(list: List<UserModel>) {
 
         val tmpMatchedList = mutableListOf<BarChartModel>()
-        val endDate = list[list.size-1].starredAt.year
+
+        //TODO
+        val endDate = list[list.lastIndex].starredAt.year
         var startDate = list[0].starredAt.year
 
         while (startDate <= endDate){
@@ -128,6 +139,7 @@ class ChartViewModel @Inject constructor(private val apiRepository: ApiRepositor
                 }
                 tmpMatchedList.add(element = BarChartModel(
                     period = startDate,
+                    amount = list1.size,
                     userInfo = tmpUsers
                 ))
             startDate++
@@ -135,14 +147,21 @@ class ChartViewModel @Inject constructor(private val apiRepository: ApiRepositor
         setBarChartYearsData(tmpMatchedList)
     }
 
-//    @RequiresApi(Build.VERSION_CODES.O)
-//    fun checkLoadNewPage(list: List<StarredModelItem>){
-//        val startDate = dateConverter(list[0].starred_at)
-//        val endDate = dateConverter(list[list.size-1].starred_at)
-//        if (endDate == startDate){
-//            getDataFromGitHub()
-//        }
-//    }
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun checkLoadNewPage(list: List<StarredModelItem>): {
+        var page: Int = 1
+        val tmpList = mutableListOf<StarredModelItem>()
+        val startDate = dateConverter(list[ZERO_PAGE].starred_at)
+        val endDate = dateConverter(list[list.size-1].starred_at)
+//        if (endDate.year == startDate.year && (endDate.year - startDate.year) <= 3 && (LocalDate.now().year - endDate.year) != 0){
+        if (endDate.year == startDate.year && (LocalDate.now().year - endDate.year) != 0){
+            page++
+            tmpList.addAll(list)
+            getDataFromGitHub(page = page)
+        } else {
+            parseChartData(tmpList, created = searchLiveData[ZERO_PAGE].createdAt, repoName = searchLiveData[ZERO_PAGE].repoName)
+        }
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun dateConverter(value: String): LocalDate {

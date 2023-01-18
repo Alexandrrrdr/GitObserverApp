@@ -23,19 +23,20 @@ class NetworkStatusHelper(context: Context) : LiveData<Boolean>() {
         override fun onAvailable(network: Network) {
             super.onAvailable(network)
             val networkCapability = connectivityManager.getNetworkCapabilities(network)
-            val isConnected =
-                networkCapability?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+//            val isConnected =
+//                networkCapability?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+//                    ?: false
+
+            val isWifeConnected =
+                networkCapability?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
                     ?: false
-            if (isConnected) {
-                CoroutineScope(Dispatchers.IO).launch {
-                    if (NetworkStatusRequest.execute()) {
-                        withContext(Dispatchers.Main) {
-                            postValue(true)
-                        }
-                    } else {
-                        postValue(false)
-                    }
-                }
+
+            val isCellConnected =
+                networkCapability?.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
+                    ?: false
+
+            if (isWifeConnected || isCellConnected) {
+                postValue(true)
             } else {
                 postValue(false)
             }
@@ -51,19 +52,17 @@ class NetworkStatusHelper(context: Context) : LiveData<Boolean>() {
             networkCapabilities: NetworkCapabilities
         ) {
             super.onCapabilitiesChanged(network, networkCapabilities)
-            val isConnected =
-                networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-            if (isConnected) {
-                CoroutineScope(Dispatchers.IO).launch {
-                    if (NetworkStatusRequest.execute()) {
-                        withContext(Dispatchers.Main) {
-                            postValue(true)
-                        }
-                    } else {
-                        postValue(false)
-                    }
-                }
+//            val isConnected =
+//                networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
 
+            val isWifeConnected =
+                networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+
+            val isCellConnected =
+                networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
+
+            if (isWifeConnected || isCellConnected) {
+                postValue(true)
             } else {
                 postValue(false)
             }
@@ -76,6 +75,8 @@ class NetworkStatusHelper(context: Context) : LiveData<Boolean>() {
         val networkRequest = NetworkRequest
             .Builder()
             .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+            .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+            .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
             .build()
         connectivityManager.registerNetworkCallback(networkRequest, connectivityManagerCallback)
     }

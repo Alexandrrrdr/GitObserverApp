@@ -23,6 +23,8 @@ import com.example.gitobserverapp.presentation.chart.model.UserModel
 import com.example.gitobserverapp.presentation.details.DetailsViewModel
 import com.example.gitobserverapp.presentation.details.model.UserData
 import com.example.gitobserverapp.utils.Constants
+import com.example.gitobserverapp.utils.Constants.START_PAGE
+import com.example.gitobserverapp.utils.Constants.ZERO_PAGE
 import com.example.gitobserverapp.utils.network.NetworkStatusHelper
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.XAxis
@@ -95,6 +97,8 @@ class ChartFragment : Fragment() {
         repoCreatedAt = args.repoCreatedAt
         binding.repoName.text = repoName
 
+        viewModel.setSearchLiveData(repoOwnerName = repoOwnerName, repoName = repoName, createdAt = repoCreatedAt, Constants.START_PAGE)
+
         radioButtonClick()
         nextPageClick()
         prevPageClick()
@@ -106,7 +110,7 @@ class ChartFragment : Fragment() {
         binding.prevPage.setOnClickListener {
             viewModel.setPageObserverLiveData(page - 1)
             page--
-//            viewModel.getDataFromGitHub(page = page)
+//            viewModel.getDataFromGitHub(repoOwnerName = repoOwnerName, repoName = repoName, createdAt = repoCreatedAt, page = page)
         }
     }
 
@@ -115,19 +119,21 @@ class ChartFragment : Fragment() {
         binding.nextPage.setOnClickListener {
             viewModel.setPageObserverLiveData(page + 1)
             page++
-//            viewModel.getDataFromGitHub(page = page)
+//            viewModel.getDataFromGitHub(repoOwnerName = repoOwnerName, repoName = repoName, createdAt = repoCreatedAt, page = page)
         }
     }
 
     private fun radioButtonClick() {
         binding.radioButtonGroup.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.setSearchValues(repoOwnerName = repoOwnerName, repoName = repoName, createdAt = repoCreatedAt, page = Constants.PAGE_START)
             viewModel.setCheckedRadioButton(isChecked)
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun renderUi() {
+//        viewModel.requestBodyLiveData.observe(viewLifecycleOwner){ list ->
+//        }
+
         viewModel.chartPageObserveLiveData.observe(viewLifecycleOwner) { page ->
             binding.prevPage.isEnabled = page > 1
         }
@@ -175,15 +181,14 @@ class ChartFragment : Fragment() {
             when (radioModel.radioButton) {
                 R.id.radioBtnYears -> {
                     let {
-                        viewModel.getDataFromGitHub(page = page)
+                        viewModel.getDataFromGitHub(START_PAGE)
                     }
                 }
                 R.id.radioBtnMonths -> {
-                    viewModel.setScreenState(ChartViewState.Error("This function in work"))
 
                 }
                 R.id.radioBtnWeeks -> {
-                    viewModel.setScreenState(ChartViewState.Error("This function in work"))
+
                 }
             }
         }
@@ -214,9 +219,6 @@ class ChartFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun initBarChart(list: List<BarChartModel>) {
 
-        //Buttons navigation control
-        binding.nextPage.isEnabled = (LocalDate.now().year - list[list.size-1].period) > 1
-
         barChart = binding.barChart
         createBarChartData(list)
         barDataSet = BarDataSet(barEntryList, "Test")
@@ -245,6 +247,7 @@ class ChartFragment : Fragment() {
         barChart.animateX(1000)
 
         val xAxis: XAxis = barChart.xAxis
+
         //set labels
         xAxis.valueFormatter = IndexAxisValueFormatter(barLabelList)
         xAxis.setCenterAxisLabels(false)
@@ -265,20 +268,22 @@ class ChartFragment : Fragment() {
         barChart.invalidate()
 
         barChart.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
-
             override fun onValueSelected(e: Entry?, h: Highlight?) {
                 //getting index of selected bar
                 val x = barChart.data.getDataSetForEntry(e).getEntryIndex(e as BarEntry)
                 val year = barLabelList[x]
+                val amount = barEntryList[x].y.toInt()
+                //TODO it is full list, all data! Need consider it!
                 val userList = barEntryList[x].data
 //
                 if (userList is List<*>){
-                    getViaPoints(userList)?.let { UserData(year, users = it) }
+                    getViaPoints(userList)?.let { UserData(year, it) }
                         ?.let { detailsViewModel.setUserList(it)
                         }
                 }
                 findNavController().navigate(R.id.action_chartFragment_to_detailsFragment)
             }
+
             override fun onNothingSelected() {}
         })
     }
@@ -290,8 +295,9 @@ class ChartFragment : Fragment() {
             .apply { if (size != list.size) return null }
     }
 
-    private fun createBarChartData(list: List<BarChartModel>) {
 
+    //TODO here is something wrong amount and list in BarEntry!!!
+    private fun createBarChartData(list: List<BarChartModel>) {
         barEntryList.clear()
         barLabelList.clear()
         for (i in list.indices) {
@@ -299,7 +305,7 @@ class ChartFragment : Fragment() {
             barEntryList.add(
                 BarEntry(
                     i.toFloat(),
-                    list[i].userInfo.size.toFloat(),
+                    list[i].amount.toFloat(),
                     list[i].userInfo
                 )
             )
