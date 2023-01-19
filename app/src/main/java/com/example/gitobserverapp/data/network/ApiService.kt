@@ -7,10 +7,7 @@ import com.example.gitobserverapp.utils.Constants.API_GET_REPOS
 import com.example.gitobserverapp.utils.Constants.DEF_PER_PAGE
 import com.example.gitobserverapp.utils.Constants.MAX_PER_PAGE
 import retrofit2.Response
-import retrofit2.http.GET
-import retrofit2.http.Headers
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.*
 
 interface ApiService {
 
@@ -21,6 +18,8 @@ interface ApiService {
         @Query("page") @IntRange(from = 1) page: Int = 1,
         @Query("per_page") @IntRange(from = 1L, to = MAX_PER_PAGE.toLong()) per_page: Int = DEF_PER_PAGE
     ): Response<GitHubRepoResult>
+
+
 
     @Headers("Accept: application/vnd.github.star+json")
     @GET("/repos/{owner_login}/{repo_name}/stargazers")

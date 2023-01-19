@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,6 +38,7 @@ import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.github.mikephil.charting.utils.ColorTemplate
+import com.google.android.material.snackbar.Snackbar
 import javax.inject.Inject
 
 
@@ -112,7 +114,6 @@ class ChartFragment : Fragment() {
         binding.nextPage.setOnClickListener {
             viewModel.setPageObserverLiveData(page + 1)
             page++
-            viewModel.checkLoadedPage()
         }
     }
 
@@ -122,6 +123,14 @@ class ChartFragment : Fragment() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 viewModel.getDataFromGitHub(START_PAGE)
             }
+        }
+
+        binding.radioBtnMonths.setOnClickListener{
+            Snackbar.make(binding.root, "Months", Snackbar.LENGTH_LONG).show()
+        }
+
+        binding.radioBtnWeeks.setOnClickListener {
+            Snackbar.make(binding.root, "Weeks", Snackbar.LENGTH_LONG).show()
         }
     }
 
@@ -150,7 +159,7 @@ class ChartFragment : Fragment() {
                 is ChartViewState.Error -> {
                     disableNavigationButtons(value = 0)
                     disableRadioButtons(value = false)
-                    binding.txtNetworkStatus.text = R.string.no_data_from_server.toString()
+                    binding.txtNetworkStatus.text = state.error
                     binding.txtNetworkStatus.visibility = View.VISIBLE
                     binding.progBarChart.visibility = View.GONE
                 }
@@ -264,7 +273,7 @@ class ChartFragment : Fragment() {
         xAxis.setDrawGridLines(false)
         xAxis.granularity = 1f
         xAxis.isGranularityEnabled = true
-        xAxis.position = XAxis.XAxisPosition.BOTTOM_INSIDE
+        xAxis.position = XAxis.XAxisPosition.BOTTOM
         xAxis.textColor = Color.BLACK
         xAxis.textSize = 14f
 
@@ -303,13 +312,13 @@ class ChartFragment : Fragment() {
             .apply { if (size != list.size) return null }
     }
 
-
-    //TODO here is something wrong amount and list in BarEntry!!!
     private fun createBarChartData(list: List<BarChartModel>) {
+
         barEntryList.clear()
         barLabelList.clear()
         for (i in list.indices) {
             barLabelList.add(i, list[i].period.toString())
+            Log.d("info", "${list[i].period}")
             barEntryList.add(
                 BarEntry(
                     i.toFloat(),

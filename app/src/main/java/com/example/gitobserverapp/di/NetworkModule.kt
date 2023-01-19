@@ -2,9 +2,11 @@ package com.example.gitobserverapp.di
 
 import com.example.gitobserverapp.data.network.ApiService
 import com.example.gitobserverapp.utils.Constants
+import com.example.gitobserverapp.utils.Constants.GIT_TOKEN
 import dagger.Module
 import dagger.Provides
-import okhttp3.OkHttpClient
+import okhttp3.*
+import okhttp3.internal.addHeaderLenient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -26,6 +28,9 @@ class NetworkModule {
         logging.level = HttpLoggingInterceptor.Level.BODY
         return OkHttpClient.Builder()
             .addInterceptor(logging)
+            .addInterceptor { chain: Interceptor.Chain -> val request = chain.request().newBuilder().addHeader("Authorization", GIT_TOKEN).build()
+                return@addInterceptor chain.proceed(request)
+            }
             .build()
     }
 

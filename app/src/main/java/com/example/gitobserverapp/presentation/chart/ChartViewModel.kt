@@ -84,22 +84,17 @@ class ChartViewModel @Inject constructor(private val starRepository: StarReposit
                     repoName = searchLiveData[ZERO_PAGE].repoName,
                     page = page
                 )
-                if (retroRequest.isSuccessful && retroRequest.body() != null) {
+                if (retroRequest.isSuccessful) {
                     when (retroRequest.code()) {
                         200 -> {
-                            retroRequest.body().let { list ->
-                                if (list != null && list.isNotEmpty()) {
-                                    requestBodyList.addAll(list)
-                                    checkLoadedPage()
-                                } else {
-                                    _chartScreenState.postValue(ChartViewState.Error("Check your request details."))
-                                }
-                            }
+                            retroRequest.body()?.let { checkLoadedPage(it) }
                         }
                         422 -> {
-                            _chartScreenState.postValue(ChartViewState.Error("Request limit error."))
+                            _chartScreenState.postValue(ChartViewState.Error("Check your request parameters"))
                         }
                     }
+                } else {
+                    _chartScreenState.postValue(ChartViewState.Error("Error 403 - Requests limit error"))
                 }
             } catch (e: Exception) {
                 _chartScreenState.postValue(ChartViewState.NetworkError)
@@ -108,13 +103,14 @@ class ChartViewModel @Inject constructor(private val starRepository: StarReposit
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun checkLoadedPage() {
-        val startDate = dateConverter(requestBodyList[ZERO_PAGE].starred_at)
-        val endDate = dateConverter(requestBodyList[requestBodyList.lastIndex].starred_at)
-        if (endDate.year == startDate.year) {
+    fun checkLoadedPage(list: List<StarredModelItem>) {
+
+//        val startDate = dateConverter(requestBodyList[ZERO_PAGE].starred_at)
+//        val endDate = dateConverter(requestBodyList[requestBodyList.lastIndex].starred_at)
+        if (list.isNotEmpty()) {
+            requestBodyList.addAll(list)
             loadNewPage()
         } else {
-//            startParsingAndShowData(requestBodyList)
             parseChartData(requestBodyList, repoName = searchLiveData[ZERO_PAGE].repoName)
         }
     }
@@ -122,7 +118,6 @@ class ChartViewModel @Inject constructor(private val starRepository: StarReposit
     @RequiresApi(Build.VERSION_CODES.O)
     private fun loadNewPage() {
         page++
-        Log.d("info", "$page")
         getDataFromGitHub(page = page)
     }
 
@@ -166,15 +161,8 @@ class ChartViewModel @Inject constructor(private val starRepository: StarReposit
             )
             startDate++
         }
+//        tmpMatchedList.addAll(tmpMatchedList.sortedBy { it.period })
         setBarChartYearsData(tmpMatchedList)
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun startParsingAndShowData(list: List<StarredModelItem>) {
-        parseChartData(
-            list,
-            repoName = searchLiveData[ZERO_PAGE].repoName
-        )
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
