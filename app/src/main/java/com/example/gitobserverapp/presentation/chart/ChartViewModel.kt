@@ -87,7 +87,7 @@ class ChartViewModel @Inject constructor(private val starRepository: StarReposit
                 if (retroRequest.isSuccessful) {
                     when (retroRequest.code()) {
                         200 -> {
-                            retroRequest.body()?.let { checkLoadedPage(it) }
+                            retroRequest.body()?.let { checkLoadedPage(it, page) }
                         }
                         422 -> {
                             _chartScreenState.postValue(ChartViewState.Error("Check your request parameters"))
@@ -161,7 +161,12 @@ class ChartViewModel @Inject constructor(private val starRepository: StarReposit
             )
             startDate++
         }
-//        tmpMatchedList.addAll(tmpMatchedList.sortedBy { it.period })
+
+        tmpMatchedList.addAll(tmpMatchedList.sortedWith(compareByDescending { it.period }))
+
+        for (i in tmpMatchedList.indices){
+            Log.d("info", tmpMatchedList[i].period.toString())
+        }
         setBarChartYearsData(tmpMatchedList)
     }
 
