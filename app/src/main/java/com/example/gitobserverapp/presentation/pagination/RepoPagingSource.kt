@@ -2,7 +2,7 @@ package com.example.gitobserverapp.presentation.pagination
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.example.gitobserverapp.data.network.model.repo.Item
+import com.example.gitobserverapp.data.network.model.repos.Item
 import com.example.gitobserverapp.data.repository.StarRepository
 import com.example.gitobserverapp.utils.Constants.MAX_PER_PAGE
 import retrofit2.HttpException

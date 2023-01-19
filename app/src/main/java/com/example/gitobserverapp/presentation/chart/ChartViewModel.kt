@@ -1,14 +1,13 @@
 package com.example.gitobserverapp.presentation.chart
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.gitobserverapp.data.network.model.starred.StarredModelItem
-import com.example.gitobserverapp.data.network.model.starred.User
+import com.example.gitobserverapp.data.network.model.stargazers.StarredModelItem
+import com.example.gitobserverapp.data.network.model.stargazers.User
 import com.example.gitobserverapp.data.repository.StarRepository
 import com.example.gitobserverapp.presentation.chart.chart_helper.ChartViewState
 import com.example.gitobserverapp.presentation.chart.model.BarChartModel

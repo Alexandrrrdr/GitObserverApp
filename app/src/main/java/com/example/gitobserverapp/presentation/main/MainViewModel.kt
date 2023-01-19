@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.gitobserverapp.data.network.model.repo.Item
+import com.example.gitobserverapp.data.network.model.repos.Item
 import com.example.gitobserverapp.data.repository.StarRepository
 import com.example.gitobserverapp.presentation.main.main_helper.MainViewState
 import kotlinx.coroutines.launch

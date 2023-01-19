@@ -15,7 +15,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.gitobserverapp.App
 import com.example.gitobserverapp.R
-import com.example.gitobserverapp.data.network.model.starred.User
+import com.example.gitobserverapp.data.network.model.stargazers.User
 import com.example.gitobserverapp.data.repository.StarRepository
 import com.example.gitobserverapp.databinding.FragmentChartBinding
 import com.example.gitobserverapp.presentation.chart.chart_helper.ChartViewState
@@ -23,7 +23,6 @@ import com.example.gitobserverapp.presentation.chart.model.BarChartModel
 import com.example.gitobserverapp.presentation.chart.model.UserModel
 import com.example.gitobserverapp.presentation.details.DetailsViewModel
 import com.example.gitobserverapp.presentation.details.model.UserData
-import com.example.gitobserverapp.utils.Constants
 import com.example.gitobserverapp.utils.Constants.START_PAGE
 import com.example.gitobserverapp.utils.network.NetworkStatusHelper
 import com.github.mikephil.charting.charts.BarChart
