@@ -1,6 +1,6 @@
-package com.example.gitobserverapp.data.network.model.stargazers
+package com.example.gitobserverapp.data.network.model
 
-data class StarredModel(
+data class ListStargazersModel(
     val data: ArrayList<StarredModelItem>
 )
 

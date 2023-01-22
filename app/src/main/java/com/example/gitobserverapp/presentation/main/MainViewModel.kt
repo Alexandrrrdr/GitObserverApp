@@ -4,17 +4,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.gitobserverapp.data.network.model.repos.Item
-import com.example.gitobserverapp.data.repository.StarRepository
+import com.example.gitobserverapp.domain.usecase.GetReposUseCase
 import com.example.gitobserverapp.presentation.main.main_helper.MainViewState
+import com.example.gitobserverapp.presentation.main.model.ReposListModel
+import com.example.gitobserverapp.presentation.mapping.repos.DomainToPresentationReposListMapper
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-class MainViewModel @Inject constructor(private val starRepository: StarRepository): ViewModel() {
+class MainViewModel @Inject constructor(private val getReposUseCase: GetReposUseCase): ViewModel() {
 
-    private var _reposLiveData: MutableLiveData<List<Item>> = MutableLiveData<List<Item>>()
-    val reposLiveData: LiveData<List<Item>> get() = _reposLiveData
+    private var _reposLiveData: MutableLiveData<ReposListModel> = MutableLiveData<ReposListModel>()
+    val reposLiveData: LiveData<ReposListModel> get() = _reposLiveData
 
     private var _mainViewViewState: MutableLiveData<MainViewState> = MutableLiveData<MainViewState>()
     val viewStateLiveData get() = _mainViewViewState
@@ -26,35 +27,43 @@ class MainViewModel @Inject constructor(private val starRepository: StarReposito
         _mainNetworkLiveData.postValue(value)
     }
 
-    fun setReposList(list: List<Item>?){
+    fun setReposList(list: List<ReposListModel>?){
         if (list == null){
-            _reposLiveData.postValue(listOf())
+            _reposLiveData.postValue(ReposListModel(listOf()))
         }
     }
 
-    fun getRepos(searchWord: String, page: Int){
-        _mainViewViewState.postValue(MainViewState.Loading)
-        viewModelScope.launch{
-            try {
-                val retrofit = starRepository.getRepositories(searchName = searchWord, page = page)
-                if (retrofit.isSuccessful && retrofit.body() != null){
-                    when (retrofit.code()) {
-                        in 200..303 -> {
-                            retrofit.body().let { get_repos ->
-                                _mainViewViewState.postValue(MainViewState.MainViewContentMain)
-                                _reposLiveData.postValue(get_repos!!.items)
-                            }
-                        }
-                        in 304..600 -> {
-                            _mainViewViewState.postValue(MainViewState.Error(retrofit.message().toString()))
-                        }
-                    }
-                }
-            } catch (e: Exception){
-                _mainNetworkLiveData.postValue(false)
-            }
+    fun getRepos(searchName: String, page: Int){
+        viewModelScope.launch {
+            val domainReposList = getReposUseCase.invoke(searchName = searchName, page = page)
+            _reposLiveData.postValue(DomainToPresentationReposListMapper().map(domainReposList))
+
         }
     }
+
+//    fun getRepos(searchWord: String, page: Int){
+//        _mainViewViewState.postValue(MainViewState.Loading)
+//        viewModelScope.launch{
+//            try {
+//                val retrofit = repository.getRepositories(searchName = searchWord, page = page)
+//                if (retrofit.isSuccessful && retrofit.body() != null){
+//                    when (retrofit.code()) {
+//                        in 200..303 -> {
+//                            retrofit.body().let { get_repos ->
+//                                _mainViewViewState.postValue(MainViewState.MainViewContentMain)
+//                                _reposLiveData.postValue(value = get_repos.items)
+//                            }
+//                        }
+//                        in 304..600 -> {
+//                            _mainViewViewState.postValue(MainViewState.Error(retrofit.message().toString()))
+//                        }
+//                    }
+//                }
+//            } catch (e: Exception){
+//                _mainNetworkLiveData.postValue(false)
+//            }
+//        }
+//    }
 
     fun setState(mainViewState: MainViewState){
         _mainViewViewState.postValue(mainViewState)

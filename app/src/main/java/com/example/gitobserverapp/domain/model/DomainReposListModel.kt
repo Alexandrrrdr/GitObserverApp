@@ -1,17 +1,13 @@
 package com.example.gitobserverapp.domain.model
 
 data class DomainReposListModel(
-    val items: List<DomainRepoListModelItems>,
+    val items: List<Items>,
 )
 
-data class DomainRepoListModelItems(
+data class Items(
     val created_at: String,
-    val name: String,
-    val owner: DomainRepoListModelOwner,
-    val stargazers_count: Int
-)
-
-data class DomainRepoListModelOwner(
-    val avatar_url: String,
-    val login: String
+    val repo_name: String,
+    val stargazers_count: Int,
+    val owner_avatar_url: String,
+    val owner_login: String
 )

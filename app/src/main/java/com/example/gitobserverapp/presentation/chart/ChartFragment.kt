@@ -15,14 +15,12 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.gitobserverapp.App
 import com.example.gitobserverapp.R
-import com.example.gitobserverapp.data.network.model.stargazers.User
-import com.example.gitobserverapp.data.repository.StarRepository
 import com.example.gitobserverapp.databinding.FragmentChartBinding
 import com.example.gitobserverapp.presentation.chart.chart_helper.ChartViewState
 import com.example.gitobserverapp.presentation.chart.model.BarChartModel
-import com.example.gitobserverapp.presentation.chart.model.UserModel
+import com.example.gitobserverapp.presentation.chart.model.StargazerModel
 import com.example.gitobserverapp.presentation.details.DetailsViewModel
-import com.example.gitobserverapp.presentation.details.model.UserData
+import com.example.gitobserverapp.presentation.details.model.UsersListModel
 import com.example.gitobserverapp.utils.Constants.START_PAGE
 import com.example.gitobserverapp.utils.network.NetworkStatusHelper
 import com.github.mikephil.charting.charts.BarChart
@@ -55,7 +53,6 @@ class ChartFragment : Fragment() {
 
     //    private lateinit var internet: InternetConnectionLiveData
     private lateinit var networkStatus: NetworkStatusHelper
-    private var listUserModel = mutableListOf<UserModel>()
 
     //Start creating barCharts
     private lateinit var barDataSet: BarDataSet
@@ -63,8 +60,6 @@ class ChartFragment : Fragment() {
     private var barEntryList = mutableListOf<BarEntry>()
     private var barLabelList = mutableListOf<String>()
 
-    @Inject
-    lateinit var starRepository: StarRepository
     @Inject
     lateinit var viewModel: ChartViewModel
     private val detailsViewModel: DetailsViewModel by activityViewModels()
@@ -92,7 +87,7 @@ class ChartFragment : Fragment() {
         repoCreatedAt = args.repoCreatedAt
         binding.repoName.text = repoName
 
-        viewModel.setSearchLiveData(repoOwnerName = repoOwnerName, repoName = repoName, createdAt = repoCreatedAt, START_PAGE)
+        viewModel.setSearchLiveData(repoOwnerName = repoOwnerName, repoName = repoName)
 
         radioButtonClick()
         nextPageClick()
@@ -120,7 +115,7 @@ class ChartFragment : Fragment() {
         binding.radioButtonGroup.setOnCheckedChangeListener { _, isChecked ->
             viewModel.setCheckedRadioButton(isChecked)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                viewModel.getDataFromGitHub(START_PAGE)
+                viewModel.getStargazersList()
             }
         }
 
@@ -293,7 +288,7 @@ class ChartFragment : Fragment() {
                 val userList = barEntryList[x].data
 
                 if (userList is List<*>){
-                    getViaPoints(userList)?.let { UserData(year, it) }
+                    getViaPoints(userList)?.let { UsersListModel(year, it) }
                         ?.let { detailsViewModel.setUserList(it)
                         }
                 }
@@ -305,9 +300,9 @@ class ChartFragment : Fragment() {
     }
 
     //Check BarChart data.object after click on line
-    private fun getViaPoints(list: List<*>): List<User>? {
-        list.forEach { if (it !is User) return null }
-        return list.filterIsInstance<User>()
+    private fun getViaPoints(list: List<*>): List<StargazerModel>? {
+        list.forEach { if (it !is StargazerModel) return null }
+        return list.filterIsInstance<StargazerModel>()
             .apply { if (size != list.size) return null }
     }
 

@@ -12,8 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gitobserverapp.App
-import com.example.gitobserverapp.data.network.model.repos.Item
-import com.example.gitobserverapp.data.repository.StarRepository
+import com.example.gitobserverapp.data.network.model.Item
 import com.example.gitobserverapp.databinding.FragmentMainBinding
 import com.example.gitobserverapp.presentation.main.main_helper.MainViewState
 import com.example.gitobserverapp.utils.network.NetworkStatusHelper
@@ -28,7 +27,6 @@ class MainFragment : Fragment(), RepoSearchAdapter.Listener {
         RepoSearchAdapter(this)
     }
 
-    @Inject lateinit var starRepository: StarRepository
     @Inject lateinit var mainViewModel: MainViewModel
 
     override fun onAttach(context: Context) {

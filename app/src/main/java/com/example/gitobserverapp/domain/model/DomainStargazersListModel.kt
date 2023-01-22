@@ -1,15 +1,11 @@
 package com.example.gitobserverapp.domain.model
 
 data class DomainStargazersListModel(
-    val stargazersList: ArrayList<DomainStargazersListModelInfo>
+    val stargazersList: ArrayList<StargazersList>
 )
 
-data class DomainStargazersListModelInfo(
+data class StargazersList(
     val starred_at: String,
-    val user: DomainStargazersListModelUser
-)
-
-data class DomainStargazersListModelUser(
     val id: Int,
     val login: String,
     val avatar_url: String
