@@ -11,7 +11,7 @@ import com.example.gitobserverapp.presentation.mapping.stargazers.DomainToPresen
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class ChartViewModel @Inject constructor(private val getStargazersUseCase: GetStargazersUseCase) : ViewModel() {
+class ChartViewModel (private val getStargazersUseCase: GetStargazersUseCase) : ViewModel() {
 
     private var _barChartListLiveData = MutableLiveData<List<BarChartModel>>()
     val barChartListLiveData: LiveData<List<BarChartModel>> get() = _barChartListLiveData

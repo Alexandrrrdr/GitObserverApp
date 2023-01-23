@@ -60,8 +60,8 @@ class ChartFragment : Fragment() {
     private var barEntryList = mutableListOf<BarEntry>()
     private var barLabelList = mutableListOf<String>()
 
-    @Inject
-    lateinit var viewModel: ChartViewModel
+
+    private val viewModel: ChartViewModel by activityViewModels()
     private val detailsViewModel: DetailsViewModel by activityViewModels()
 
     override fun onAttach(context: Context) {

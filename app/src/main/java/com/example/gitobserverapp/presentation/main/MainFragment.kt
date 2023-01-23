@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,7 +28,7 @@ class MainFragment : Fragment(), RepoSearchAdapter.Listener {
         RepoSearchAdapter(this)
     }
 
-    @Inject lateinit var mainViewModel: MainViewModel
+    private val mainViewModel: MainViewModel by activityViewModels()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)

@@ -5,7 +5,7 @@ import com.example.gitobserverapp.domain.repository.DomainGetRepoByNameRepositor
 import com.example.gitobserverapp.domain.usecase.base.BaseUseCaseWithParams
 import javax.inject.Inject
 
-class GetReposUseCase @Inject constructor(
+class GetReposUseCase (
     private val domainGetRepoByNameRepository: DomainGetRepoByNameRepository,
 ): BaseUseCaseWithParams<String, String, Int, DomainReposListModel> {
 

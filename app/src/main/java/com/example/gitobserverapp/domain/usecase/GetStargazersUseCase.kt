@@ -5,7 +5,7 @@ import com.example.gitobserverapp.domain.repository.DomainGetStargazersRepositor
 import com.example.gitobserverapp.domain.usecase.base.BaseUseCaseWithParams
 import javax.inject.Inject
 
-class GetStargazersUseCase @Inject constructor(
+class GetStargazersUseCase(
     private val getStargazersRepository: DomainGetStargazersRepository,
 ): BaseUseCaseWithParams<String, String, Int, DomainStargazersListModel> {
 
