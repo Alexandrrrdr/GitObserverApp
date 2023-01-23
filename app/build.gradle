@@ -38,11 +38,17 @@ android {
 dependencies {
 
     //Dagger
-    kapt "com.google.dagger:dagger-compiler:2.44"
-    implementation "com.google.dagger:dagger:2.44"
-    implementation "com.google.dagger:dagger-android:2.44"
-    implementation "com.google.dagger:dagger-android-support:2.44"
-    kapt "com.google.dagger:dagger-android-processor:2.44"
+    def daggerVer = 2.44
+    implementation "com.google.dagger:dagger:$daggerVer"
+    implementation "com.google.dagger:dagger-android-support:$daggerVer"
+    kapt "com.google.dagger:dagger-android-processor:$daggerVer"
+    kapt "com.google.dagger:dagger-compiler:$daggerVer"
+
+//    kapt "com.google.dagger:dagger-compiler:2.44"
+//    implementation "com.google.dagger:dagger:2.44"
+//    implementation "com.google.dagger:dagger-android:2.44"
+//    implementation "com.google.dagger:dagger-android-support:2.44"
+//    kapt "com.google.dagger:dagger-android-processor:2.44"
 
     //Pagination
     implementation 'androidx.paging:paging-common-ktx:3.1.1'

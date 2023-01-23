@@ -1,22 +1,14 @@
 package com.example.gitobserverapp.presentation.chart
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.gitobserverapp.data.network.model.ListStargazersModel
-import com.example.gitobserverapp.data.network.model.User
-import com.example.gitobserverapp.domain.repository.DomainGetStargazersRepository
 import com.example.gitobserverapp.domain.usecase.GetStargazersUseCase
 import com.example.gitobserverapp.presentation.chart.chart_helper.ChartViewState
 import com.example.gitobserverapp.presentation.chart.model.*
-import com.example.gitobserverapp.presentation.main.model.ReposListModel
 import com.example.gitobserverapp.presentation.mapping.stargazers.DomainToPresentationStargazersListMapper
-import com.example.gitobserverapp.utils.Constants.ZERO_PAGE
 import kotlinx.coroutines.launch
-import java.time.*
 import javax.inject.Inject
 
 class ChartViewModel @Inject constructor(private val getStargazersUseCase: GetStargazersUseCase) : ViewModel() {
@@ -51,10 +43,10 @@ class ChartViewModel @Inject constructor(private val getStargazersUseCase: GetSt
 
     fun getStargazersList() {
         viewModelScope.launch {
-            val domainStargazersList = getStargazersUseCase.invoke(
-                owner_login = searchLiveData[0].repoOwnerName,
-                repo_name = searchLiveData[0].repoName,
-                page = page
+            val domainStargazersList = getStargazersUseCase.getData(
+                value_one = searchLiveData[0].repoOwnerName,
+                value_two = searchLiveData[0].repoName,
+                value_three = page
             )
             _stargazersLiveData.postValue(DomainToPresentationStargazersListMapper().map(domainStargazersList))
 

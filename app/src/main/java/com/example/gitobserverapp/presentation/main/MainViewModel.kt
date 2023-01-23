@@ -35,7 +35,7 @@ class MainViewModel @Inject constructor(private val getReposUseCase: GetReposUse
 
     fun getRepos(searchName: String, page: Int){
         viewModelScope.launch {
-            val domainReposList = getReposUseCase.invoke(searchName = searchName, page = page)
+            val domainReposList = getReposUseCase.getData(value_one = searchName, value_two = "", value_three = page)
             _reposLiveData.postValue(DomainToPresentationReposListMapper().map(domainReposList))
 
         }
