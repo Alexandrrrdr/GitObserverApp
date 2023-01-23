@@ -2,14 +2,14 @@ package com.example.gitobserverapp.presentation.details
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.gitobserverapp.presentation.details.model.UserData
+import com.example.gitobserverapp.presentation.details.model.UsersListModel
 
 class DetailsViewModel: ViewModel() {
-    val usersList: MutableLiveData<UserData> by lazy {
-        MutableLiveData<UserData>()
+    val usersList: MutableLiveData<UsersListModel> by lazy {
+        MutableLiveData<UsersListModel>()
     }
 
-    fun setUserList(userData: UserData){
-        usersList.postValue(userData)
+    fun setUserList(usersListModel: UsersListModel){
+        usersList.postValue(usersListModel)
     }
 }

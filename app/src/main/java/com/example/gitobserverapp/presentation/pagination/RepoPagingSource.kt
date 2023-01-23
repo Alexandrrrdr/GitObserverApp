@@ -2,14 +2,14 @@ package com.example.gitobserverapp.presentation.pagination
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.example.gitobserverapp.data.network.model.repo.Item
-import com.example.gitobserverapp.data.repository.StarRepository
+import com.example.gitobserverapp.data.network.model.repos.Item
+import com.example.gitobserverapp.data.repository.Repository
 import com.example.gitobserverapp.utils.Constants.MAX_PER_PAGE
 import retrofit2.HttpException
 import javax.inject.Inject
 
 class RepoPagingSource @Inject constructor(
-    private val starRepository: StarRepository,
+    private val repository: Repository,
     private val query: String
 ) :
     PagingSource<Int, Item>() {
@@ -21,7 +21,7 @@ class RepoPagingSource @Inject constructor(
         val page = params.key ?: 1
         val pageSize = params.loadSize.coerceAtMost(MAX_PER_PAGE)
 
-        val response = starRepository.getRepositories(searchName = query, page = page)
+        val response = repository.getRepositories(searchName = query, page = page)
         if (response.isSuccessful) {
             val items = checkNotNull(response.body()).items
             val nextKey = if (items.size < pageSize) null else +1

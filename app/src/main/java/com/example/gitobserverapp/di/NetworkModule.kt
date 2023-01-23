@@ -1,12 +1,11 @@
 package com.example.gitobserverapp.di
 
-import com.example.gitobserverapp.data.network.ApiService
+import com.example.gitobserverapp.data.network.GitRetrofitService
 import com.example.gitobserverapp.utils.Constants
 import com.example.gitobserverapp.utils.Constants.GIT_TOKEN
 import dagger.Module
 import dagger.Provides
 import okhttp3.*
-import okhttp3.internal.addHeaderLenient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -36,12 +35,12 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideRetrofitService(okhttp: OkHttpClient, moshiConverterFactory: MoshiConverterFactory): ApiService {
+    fun provideRetrofitService(okhttp: OkHttpClient, moshiConverterFactory: MoshiConverterFactory): GitRetrofitService {
         val retrofit: Retrofit = Retrofit.Builder()
             .client(okhttp)
             .baseUrl(Constants.API_BASE_URL)
             .addConverterFactory(moshiConverterFactory)
             .build()
-        return retrofit.create(ApiService::class.java)
+        return retrofit.create(GitRetrofitService::class.java)
     }
 }

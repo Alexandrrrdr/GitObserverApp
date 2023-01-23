@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.gitobserverapp.R
-import com.example.gitobserverapp.data.network.model.starred.User
+import com.example.gitobserverapp.data.network.model.stargazers.User
 import com.example.gitobserverapp.databinding.DetailsItemBinding
 
 class DetailsAdapter(): RecyclerView.Adapter<DetailsAdapter.ViewHolder>() {
