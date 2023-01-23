@@ -14,7 +14,8 @@ class DomainToPresentationReposListMapper: BaseMap<DomainReposListModel, ReposLi
                 repo_name = from.items[i].repo_name,
                 stargazers_count = from.items[i].stargazers_count,
                 owner_avatar_url = from.items[i].owner_avatar_url,
-                owner_login = from.items[i].owner_login
+                owner_login = from.items[i].owner_login,
+                owner_id = from.items[i].owner_id
             )
             tmpList.add(i, value)
         }

@@ -13,7 +13,8 @@ class DataToDomainRepoListMapper: BaseMap<ListReposModel, DomainReposListModel>(
                     repo_name = from.items[i].name,
                     stargazers_count = from.items[i].stargazers_count,
                     owner_avatar_url = from.items[i].owner.avatar_url,
-                    owner_login = from.items[i].owner.login
+                    owner_login = from.items[i].owner.login,
+                    owner_id = from.items[i].owner.id
                 )
                 tmpList.add(i, value)
             }

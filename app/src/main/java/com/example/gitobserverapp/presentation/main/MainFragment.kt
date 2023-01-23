@@ -16,6 +16,7 @@ import com.example.gitobserverapp.App
 import com.example.gitobserverapp.data.network.model.Item
 import com.example.gitobserverapp.databinding.FragmentMainBinding
 import com.example.gitobserverapp.presentation.main.main_helper.MainViewState
+import com.example.gitobserverapp.presentation.main.model.RepoItem
 import com.example.gitobserverapp.utils.network.NetworkStatusHelper
 import javax.inject.Inject
 
@@ -58,8 +59,8 @@ class MainFragment : Fragment(), RepoSearchAdapter.Listener {
     }
 
     private fun renderUi() {
-        mainViewModel.reposLiveData.observe(viewLifecycleOwner){
-            repoSearchAdapter.differ.submitList(it)
+        mainViewModel.reposLiveData.observe(viewLifecycleOwner){ list ->
+            repoSearchAdapter.differ.submitList(list.items)
         }
 
         mainViewModel.mainNetworkLiveData.observe(viewLifecycleOwner){ isConnected ->
@@ -145,10 +146,10 @@ class MainFragment : Fragment(), RepoSearchAdapter.Listener {
         _binding = null
     }
 
-    override fun onClick(item: Item) {
+    override fun onClick(item: RepoItem) {
         val repoCreatedAt: String = item.created_at
-        val repoOwnerLogin: String = item.owner.login
-        val repoName: String = item.name
+        val repoOwnerLogin: String = item.owner_login
+        val repoName: String = item.repo_name
         val direction = MainFragmentDirections.actionMainFragmentToChartFragment(
             repoName = repoName,
             repoOwnerName = repoOwnerLogin,

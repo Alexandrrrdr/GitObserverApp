@@ -24,7 +24,8 @@ class ReposRepositoryImpl @Inject constructor(var gitRetrofitService: GitRetrofi
                     repo_name = apiResult.body()!!.items[i].name,
                     stargazers_count = apiResult.body()!!.items[i].stargazers_count,
                     owner_avatar_url = apiResult.body()!!.items[i].owner.avatar_url,
-                    owner_login = apiResult.body()!!.items[i].owner.login
+                    owner_login = apiResult.body()!!.items[i].owner.login,
+                    owner_id = apiResult.body()!!.items[i].owner.id
                 )
                 tmpList.add(i, value)
             }

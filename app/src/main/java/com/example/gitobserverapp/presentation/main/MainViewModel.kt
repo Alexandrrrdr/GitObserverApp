@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-class MainViewModel @Inject constructor(private val getReposUseCase: GetReposUseCase): ViewModel() {
+class MainViewModel: ViewModel() {
 
     private var _reposLiveData: MutableLiveData<ReposListModel> = MutableLiveData<ReposListModel>()
     val reposLiveData: LiveData<ReposListModel> get() = _reposLiveData
@@ -35,8 +35,8 @@ class MainViewModel @Inject constructor(private val getReposUseCase: GetReposUse
 
     fun getRepos(searchName: String, page: Int){
         viewModelScope.launch {
-            val domainReposList = getReposUseCase.getData(value_one = searchName, value_two = "", value_three = page)
-            _reposLiveData.postValue(DomainToPresentationReposListMapper().map(domainReposList))
+//            val domainReposList = getReposUseCase.getData(value_one = searchName, value_two = "", value_three = page)
+//            _reposLiveData.postValue(DomainToPresentationReposListMapper().map(domainReposList))
 
         }
     }

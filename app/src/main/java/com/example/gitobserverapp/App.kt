@@ -6,8 +6,6 @@ import com.example.gitobserverapp.di.DaggerAppComponent
 
 class App: Application() {
 
-
-
     lateinit var appComponent: AppComponent
 
     override fun onCreate() {

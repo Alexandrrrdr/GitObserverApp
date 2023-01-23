@@ -41,10 +41,10 @@
         android:label="fragment_details"
         tools:layout="@layout/fragment_details" >
         <argument
-            android:name="TimePeriod"
+            android:name="timePeriod"
             app:argType="string" />
         <argument
-            android:name="UserList"
-            app:argType="string[]" />
+            android:name="amountUsers"
+            app:argType="integer" />
     </fragment>
 </navigation>

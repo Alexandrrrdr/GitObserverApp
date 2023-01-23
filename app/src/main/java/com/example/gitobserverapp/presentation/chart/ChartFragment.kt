@@ -19,8 +19,9 @@ import com.example.gitobserverapp.databinding.FragmentChartBinding
 import com.example.gitobserverapp.presentation.chart.chart_helper.ChartViewState
 import com.example.gitobserverapp.presentation.chart.model.BarChartModel
 import com.example.gitobserverapp.presentation.chart.model.StargazerModel
+import com.example.gitobserverapp.presentation.chart.model.StargazersListModel
 import com.example.gitobserverapp.presentation.details.DetailsViewModel
-import com.example.gitobserverapp.presentation.details.model.UsersListModel
+import com.example.gitobserverapp.presentation.details.model.UsersListDetails
 import com.example.gitobserverapp.utils.Constants.START_PAGE
 import com.example.gitobserverapp.utils.network.NetworkStatusHelper
 import com.github.mikephil.charting.charts.BarChart
@@ -288,13 +289,13 @@ class ChartFragment : Fragment() {
                 val userList = barEntryList[x].data
 
                 if (userList is List<*>){
-                    getViaPoints(userList)?.let { UsersListModel(year, it) }
-                        ?.let { detailsViewModel.setUserList(it)
-                        }
+                    getViaPoints(userList)?.let {
+                        detailsViewModel.setUserList(it)
+                    }
                 }
-                findNavController().navigate(R.id.action_chartFragment_to_detailsFragment)
+                val direction = ChartFragmentDirections.actionChartFragmentToDetailsFragment(timePeriod = year, amountUsers = barEntryList.size)
+                findNavController().navigate(directions = direction)
             }
-
             override fun onNothingSelected() {}
         })
     }

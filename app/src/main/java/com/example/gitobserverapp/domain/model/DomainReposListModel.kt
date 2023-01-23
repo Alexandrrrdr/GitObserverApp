@@ -5,6 +5,7 @@ data class DomainReposListModel(
 )
 
 data class Items(
+    val owner_id: Int,
     val created_at: String,
     val repo_name: String,
     val stargazers_count: Int,

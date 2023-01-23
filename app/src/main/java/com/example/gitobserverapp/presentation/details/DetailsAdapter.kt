@@ -7,13 +7,14 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.gitobserverapp.R
-import com.example.gitobserverapp.data.network.model.stargazers.User
 import com.example.gitobserverapp.databinding.DetailsItemBinding
+import com.example.gitobserverapp.presentation.chart.model.StargazerModel
+import com.example.gitobserverapp.presentation.details.model.User
 
 class DetailsAdapter(): RecyclerView.Adapter<DetailsAdapter.ViewHolder>() {
 
     inner class ViewHolder(private val binding: DetailsItemBinding): RecyclerView.ViewHolder(binding.root){
-        fun bind(userData: User){
+        fun bind(userData: StargazerModel){
             binding.txtViewName.text = userData.login
             binding.txtViewUserId.text = userData.id.toString()
             Glide.with(itemView)
@@ -34,15 +35,14 @@ class DetailsAdapter(): RecyclerView.Adapter<DetailsAdapter.ViewHolder>() {
 
     override fun getItemCount(): Int = differ.currentList.size
 
-    private val diffUtil = object : DiffUtil.ItemCallback<User>(){
-        override fun areItemsTheSame(oldItem: User, newItem: User): Boolean {
+    private val diffUtil = object : DiffUtil.ItemCallback<StargazerModel>(){
+        override fun areItemsTheSame(oldItem: StargazerModel, newItem: StargazerModel): Boolean {
             return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(oldItem: User, newItem: User): Boolean {
+        override fun areContentsTheSame(oldItem: StargazerModel, newItem: StargazerModel): Boolean {
             return oldItem == newItem
         }
-
     }
 
     val differ = AsyncListDiffer(this, diffUtil)

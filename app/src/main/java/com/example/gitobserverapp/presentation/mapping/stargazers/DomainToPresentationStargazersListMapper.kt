@@ -19,6 +19,6 @@ class DomainToPresentationStargazersListMapper: BaseMap<DomainStargazersListMode
             )
             tmpList.add(i, value)
         }
-        return StargazersListModel(tmpList)
+        return StargazersListModel(stargazers_list = tmpList)
     }
 }
