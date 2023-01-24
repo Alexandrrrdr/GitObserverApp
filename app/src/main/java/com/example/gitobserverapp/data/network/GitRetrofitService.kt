@@ -1,8 +1,8 @@
 package com.example.gitobserverapp.data.network
 
 import androidx.annotation.IntRange
-import com.example.gitobserverapp.data.network.model.ResultReposModel
-import com.example.gitobserverapp.data.network.model.ResultStargazersModel
+import com.example.gitobserverapp.data.network.model.DataReposListModel
+import com.example.gitobserverapp.data.network.model.DataStargazersListModel
 import com.example.gitobserverapp.utils.Constants.API_GET_REPOS
 import com.example.gitobserverapp.utils.Constants.DEF_PER_PAGE
 import com.example.gitobserverapp.utils.Constants.MAX_PER_PAGE
@@ -17,7 +17,7 @@ interface GitRetrofitService {
         @Query("sort") sort: String,
         @Query("page") @IntRange(from = 1) page: Int = 1,
         @Query("per_page") @IntRange(from = 1L, to = MAX_PER_PAGE.toLong()) per_page: Int = DEF_PER_PAGE
-    ): Response<ResultReposModel>
+    ): Response<DataReposListModel>
 
 
 
@@ -28,5 +28,5 @@ interface GitRetrofitService {
         @Path("repo_name") repo_name: String,
         @Query("per_page") per_page: Int,
         @Query("page") page : Int
-    ): Response<ResultStargazersModel>
+    ): Response<DataStargazersListModel>
 }

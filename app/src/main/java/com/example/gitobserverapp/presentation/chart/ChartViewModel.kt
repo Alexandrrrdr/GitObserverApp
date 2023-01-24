@@ -1,5 +1,7 @@
 package com.example.gitobserverapp.presentation.chart
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,7 +11,6 @@ import com.example.gitobserverapp.presentation.chart.chart_helper.ChartViewState
 import com.example.gitobserverapp.presentation.chart.model.*
 import com.example.gitobserverapp.presentation.mapping.stargazers.DomainToPresentationStargazersListMapper
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 class ChartViewModel(private val getStargazersUseCase: GetStargazersUseCase) : ViewModel() {
 
@@ -19,8 +20,8 @@ class ChartViewModel(private val getStargazersUseCase: GetStargazersUseCase) : V
     private var _radioButtonCheckedLiveData = MutableLiveData<RadioButtonModel>()
     val radioButtonCheckedLiveData: LiveData<RadioButtonModel> get() = _radioButtonCheckedLiveData
 
-    private var _chartScreenState = MutableLiveData<ChartViewState>()
-    val chartScreenState: LiveData<ChartViewState> get() = _chartScreenState
+    private var _chartViewState = MutableLiveData<ChartViewState>()
+    val chartViewState: LiveData<ChartViewState> get() = _chartViewState
 
     private var _chartNetworkLiveData = MutableLiveData<Boolean>()
     val chartNetworkLiveData: LiveData<Boolean> get() = _chartNetworkLiveData
@@ -28,19 +29,14 @@ class ChartViewModel(private val getStargazersUseCase: GetStargazersUseCase) : V
     private var _chartPageObserveLiveData = MutableLiveData<Int>()
     val chartPageObserveLiveData: LiveData<Int> get() = _chartPageObserveLiveData
 
-    private var _stargazersLiveData: MutableLiveData<StargazersListModel> = MutableLiveData<StargazersListModel>()
-    val stargazersLiveData: LiveData<StargazersListModel> get() = _stargazersLiveData
+    private var _stargazersLiveData: MutableLiveData<PresentationChartListModel> = MutableLiveData<PresentationChartListModel>()
+    val stargazersLiveData: LiveData<PresentationChartListModel> get() = _stargazersLiveData
 
     private var searchLiveData = mutableListOf<SearchModel>()
 
-    private val requestBodyList = mutableListOf<StargazersListModel>()
-
     private var page = 1
 
-    fun clearRequestBodyList() {
-        requestBodyList.clear()
-    }
-
+    @RequiresApi(Build.VERSION_CODES.O)
     fun getStargazersList() {
         viewModelScope.launch {
             val domainStargazersList = getStargazersUseCase.getData(
@@ -48,8 +44,18 @@ class ChartViewModel(private val getStargazersUseCase: GetStargazersUseCase) : V
                 value_two = searchLiveData[0].repoName,
                 value_three = page
             )
-            _stargazersLiveData.postValue(DomainToPresentationStargazersListMapper().map(domainStargazersList))
+            val tmp = DomainToPresentationStargazersListMapper().map(domainStargazersList)
+//            _stargazersLiveData.postValue(tmp)
+            checkLoadedPage(tmp)
+        }
+    }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun checkLoadedPage(list: PresentationChartListModel) {
+        if (list.stargazers_list.isNotEmpty()) {
+            loadNewPage()
+        } else {
+//            parseChartData(list.stargazers_list, searchLiveData[0].repoName)
         }
     }
 
@@ -76,68 +82,28 @@ class ChartViewModel(private val getStargazersUseCase: GetStargazersUseCase) : V
     }
 
     fun setScreenState(chartViewState: ChartViewState) {
-        _chartScreenState.postValue(chartViewState)
+        _chartViewState.postValue(chartViewState)
     }
 
-//    @RequiresApi(Build.VERSION_CODES.O)
-//    fun getDataFromGitHub(page: Int) {
-//        _chartScreenState.postValue(ChartViewState.Loading)
-//        viewModelScope.launch {
-//            try {
-//                val retroRequest = repository.getStarredData(
-//                    login = searchLiveData[ZERO_PAGE].repoOwnerName,
-//                    repoName = searchLiveData[ZERO_PAGE].repoName,
-//                    page = page
-//                )
-//                if (retroRequest.isSuccessful) {
-//                    when (retroRequest.code()) {
-//                        200 -> {
-//                            retroRequest.body()?.let { checkLoadedPage(it) }
-//                        }
-//                        422 -> {
-//                            _chartScreenState.postValue(ChartViewState.Error("Check your request parameters"))
-//                        }
-//                    }
-//                } else {
-//                    _chartScreenState.postValue(ChartViewState.Error("Error 403 - Requests limit error"))
-//                }
-//            } catch (e: Exception) {
-//                _chartScreenState.postValue(ChartViewState.NetworkError)
-//            }
-//        }
-//    }
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun loadNewPage() {
+        page++
+        getStargazersList()
+    }
 
+    //Parse date format from String to LocalDate
 //    @RequiresApi(Build.VERSION_CODES.O)
-//    fun checkLoadedPage(list: List<StargazersListModel>) {
-//
-////        val startDate = dateConverter(requestBodyList[ZERO_PAGE].starred_at)
-////        val endDate = dateConverter(requestBodyList[requestBodyList.lastIndex].starred_at)
-//        if (list.isNotEmpty()) {
-//            requestBodyList.addAll(list)
-//            loadNewPage()
-//        } else {
-//            parseChartData(requestBodyList, repoName = searchLiveData[ZERO_PAGE].repoName)
-//        }
-//    }
-//
-//    @RequiresApi(Build.VERSION_CODES.O)
-//    private fun loadNewPage() {
-//        page++
-//        getStargazersList()
-//    }
-//
-//    //Parse date format from String to LocalDate
-//    @RequiresApi(Build.VERSION_CODES.O)
-//    fun parseChartData(starredDataList: List<ListStargazersModel>, repoName: String) {
-//        val starParsedList = mutableListOf<StargazerModel>()
-//        var starredModel: StargazerModel
+//    fun parseChartData(starredDataList: ArrayList<PresentationChartListItem>, repoName: String) {
+//        val starParsedList = mutableListOf<PresentationChartListItem>()
+//        var starredModel: PresentationChartListItem
 //
 //        for (i in starredDataList.indices) {
-//            val localDate = dateConverter(starredDataList[i].data[i].starred_at)
-//            starredModel = StargazerModel(
-//                user = starredDataList[i].data[i].user,
-//                starredAt = localDate,
-//                repoName = repoName
+//            val localDate = dateConverter(starredDataList[i].starred_at)
+//            starredModel = PresentationChartListItem(
+//                starred_at = localDate,
+//                id = starredDataList[i].id,
+//                login = starredDataList[i].login,
+//                avatar_url = starredDataList[i].avatar_url
 //            )
 //            starParsedList.add(i, starredModel)
 //        }
@@ -169,12 +135,8 @@ class ChartViewModel(private val getStargazersUseCase: GetStargazersUseCase) : V
 ////        tmpMatchedList.addAll(tmpMatchedList.sortedBy { it.period })
 //        setBarChartYearsData(tmpMatchedList)
 //    }
-//
-//    @RequiresApi(Build.VERSION_CODES.O)
-//    private fun dateConverter(value: String): LocalDate {
-//        val instant = Instant.parse(value)
-//        return LocalDateTime.ofInstant(instant, ZoneId.of(ZoneOffset.UTC.id)).toLocalDate()
-//    }
+
+
 
     fun setCheckedRadioButton(radioId: Int) {
         _radioButtonCheckedLiveData.postValue(RadioButtonModel(radioId))

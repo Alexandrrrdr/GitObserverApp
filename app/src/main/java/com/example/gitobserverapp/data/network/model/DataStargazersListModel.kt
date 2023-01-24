@@ -1,10 +1,8 @@
 package com.example.gitobserverapp.data.network.model
 
-data class ResultStargazersModel(
-    val data: ArrayList<StargazerModel>
-)
+class DataStargazersListModel: ArrayList<DataStargazersListItem>()
 
-data class StargazerModel(
+data class DataStargazersListItem(
     val starred_at: String,
     val user: User
 )

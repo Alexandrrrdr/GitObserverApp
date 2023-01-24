@@ -1,11 +1,13 @@
 package com.example.gitobserverapp.domain.model
 
+import java.time.LocalDate
+
 data class DomainStargazersListModel(
-    val stargazersList: List<StargazersList>
+    val domainStargazersListItem: List<DomainStargazersListItem>
 )
 
-data class StargazersList(
-    val starred_at: String,
+data class DomainStargazersListItem(
+    val starred_at: LocalDate,
     val id: Int,
     val login: String,
     val avatar_url: String

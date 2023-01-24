@@ -19,7 +19,7 @@ import com.example.gitobserverapp.R
 import com.example.gitobserverapp.databinding.FragmentChartBinding
 import com.example.gitobserverapp.presentation.chart.chart_helper.ChartViewState
 import com.example.gitobserverapp.presentation.chart.model.BarChartModel
-import com.example.gitobserverapp.presentation.chart.model.StargazerModel
+import com.example.gitobserverapp.presentation.chart.model.PresentationChartListItem
 import com.example.gitobserverapp.presentation.details.DetailsViewModel
 import com.example.gitobserverapp.utils.network.NetworkStatusHelper
 import com.github.mikephil.charting.charts.BarChart
@@ -115,10 +115,13 @@ class ChartFragment : Fragment() {
 
     private fun radioButtonClick() {
         binding.radioButtonGroup.setOnCheckedChangeListener { _, isChecked ->
-            chartViewModel.setCheckedRadioButton(isChecked)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                chartViewModel.getStargazersList()
-            }
+//            chartViewModel.setCheckedRadioButton(isChecked)
+//                chartViewModel.getStargazersList()
+        }
+
+        binding.radioBtnYears.setOnClickListener {
+            chartViewModel.getStargazersList()
+
         }
 
         binding.radioBtnMonths.setOnClickListener{
@@ -150,7 +153,7 @@ class ChartFragment : Fragment() {
             else chartViewModel.setScreenState(ChartViewState.NetworkError)
         }
 
-        chartViewModel.chartScreenState.observe(viewLifecycleOwner) { state ->
+        chartViewModel.chartViewState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is ChartViewState.Error -> {
                     disableNavigationButtons(value = 0)
@@ -302,9 +305,9 @@ class ChartFragment : Fragment() {
     }
 
     //Check BarChart data.object after click on line
-    private fun getViaPoints(list: List<*>): List<StargazerModel>? {
-        list.forEach { if (it !is StargazerModel) return null }
-        return list.filterIsInstance<StargazerModel>()
+    private fun getViaPoints(list: List<*>): List<PresentationChartListItem>? {
+        list.forEach { if (it !is PresentationChartListItem) return null }
+        return list.filterIsInstance<PresentationChartListItem>()
             .apply { if (size != list.size) return null }
     }
 

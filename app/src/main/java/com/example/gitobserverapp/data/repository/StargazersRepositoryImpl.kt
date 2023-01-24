@@ -1,28 +1,32 @@
 package com.example.gitobserverapp.data.repository
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.example.gitobserverapp.data.mapping.stargazers.DataToDomainStargazersListMapper
 import com.example.gitobserverapp.data.network.GitRetrofitService
 import com.example.gitobserverapp.domain.model.DomainStargazersListModel
-import com.example.gitobserverapp.domain.model.StargazersList
+import com.example.gitobserverapp.domain.model.DomainStargazersListItem
 import com.example.gitobserverapp.domain.repository.DomainGetStargazersRepository
 import com.example.gitobserverapp.utils.Constants
 
 class StargazersRepositoryImpl(private var gitRetrofitService: GitRetrofitService):
     DomainGetStargazersRepository {
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun getData(
         owner_login: String,
         repo_name: String,
         page: Int
     ): DomainStargazersListModel {
-        val tmpList = emptyList<StargazersList>()
+        val tmpList = arrayListOf<DomainStargazersListItem>()
         val apiResult = gitRetrofitService.getStarredData(
-            owner_login = owner_login,
-            repo_name = repo_name,
+            owner_login = repo_name,
+            repo_name = owner_login,
             per_page = Constants.MAX_PER_PAGE,
             page = page
         )
         if (apiResult.isSuccessful && apiResult.body() != null) {
+
             return DataToDomainStargazersListMapper().map(apiResult.body()!!)
         }
         return DomainStargazersListModel(tmpList)
@@ -33,13 +37,9 @@ class StargazersRepositoryImpl(private var gitRetrofitService: GitRetrofitServic
         }
 
 //    @RequiresApi(Build.VERSION_CODES.O)
-//    fun checkLoadedPage(list: StargazersListModel) {
-//
-////        val startDate = dateConverter(requestBodyList[ZERO_PAGE].starred_at)
-////        val endDate = dateConverter(requestBodyList[requestBodyList.lastIndex].starred_at)
+//    fun checkLoadedPage(list: DataStargazersListModel) {
 //        if (list.isNotEmpty()) {
-//            requestBodyList.addAll(list)
-//            loadNewPage()
+//
 //        } else {
 //            parseChartData(requestBodyList, repoName = searchLiveData[Constants.ZERO_PAGE].repoName)
 //        }
