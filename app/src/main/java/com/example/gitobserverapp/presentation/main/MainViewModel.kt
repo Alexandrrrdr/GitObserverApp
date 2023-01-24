@@ -12,20 +12,13 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-class MainViewModel: ViewModel() {
+class MainViewModel(private val getReposUseCase: GetReposUseCase): ViewModel() {
 
     private var _reposLiveData: MutableLiveData<ReposListModel> = MutableLiveData<ReposListModel>()
     val reposLiveData: LiveData<ReposListModel> get() = _reposLiveData
 
     private var _mainViewViewState: MutableLiveData<MainViewState> = MutableLiveData<MainViewState>()
     val viewStateLiveData get() = _mainViewViewState
-
-    private var _mainNetworkLiveData: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
-    val mainNetworkLiveData get() = _mainNetworkLiveData
-
-    fun setNetworkStatus(value: Boolean){
-        _mainNetworkLiveData.postValue(value)
-    }
 
     fun setReposList(list: List<ReposListModel>?){
         if (list == null){
@@ -35,40 +28,18 @@ class MainViewModel: ViewModel() {
 
     fun getRepos(searchName: String, page: Int){
         viewModelScope.launch {
-//            val domainReposList = getReposUseCase.getData(value_one = searchName, value_two = "", value_three = page)
-//            _reposLiveData.postValue(DomainToPresentationReposListMapper().map(domainReposList))
+            val domainReposList = getReposUseCase.getData(value_one = searchName, value_two = "", value_three = page)
+            _reposLiveData.postValue(DomainToPresentationReposListMapper().map(domainReposList))
 
         }
     }
-
-//    fun getRepos(searchWord: String, page: Int){
-//        _mainViewViewState.postValue(MainViewState.Loading)
-//        viewModelScope.launch{
-//            try {
-//                val retrofit = repository.getRepositories(searchName = searchWord, page = page)
-//                if (retrofit.isSuccessful && retrofit.body() != null){
-//                    when (retrofit.code()) {
-//                        in 200..303 -> {
-//                            retrofit.body().let { get_repos ->
-//                                _mainViewViewState.postValue(MainViewState.MainViewContentMain)
-//                                _reposLiveData.postValue(value = get_repos.items)
-//                            }
-//                        }
-//                        in 304..600 -> {
-//                            _mainViewViewState.postValue(MainViewState.Error(retrofit.message().toString()))
-//                        }
-//                    }
-//                }
-//            } catch (e: Exception){
-//                _mainNetworkLiveData.postValue(false)
-//            }
-//        }
-//    }
 
     fun setState(mainViewState: MainViewState){
         _mainViewViewState.postValue(mainViewState)
     }
 }
+
+        //TODO Pagination for main fragment
 //    val repoList: StateFlow<PagingData<Item>> = query
 //        .map(::newPager)
 //        .flatMapLatest { pager -> pager.flow }

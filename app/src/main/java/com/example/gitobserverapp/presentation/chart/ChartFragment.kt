@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.gitobserverapp.App
@@ -19,10 +20,7 @@ import com.example.gitobserverapp.databinding.FragmentChartBinding
 import com.example.gitobserverapp.presentation.chart.chart_helper.ChartViewState
 import com.example.gitobserverapp.presentation.chart.model.BarChartModel
 import com.example.gitobserverapp.presentation.chart.model.StargazerModel
-import com.example.gitobserverapp.presentation.chart.model.StargazersListModel
 import com.example.gitobserverapp.presentation.details.DetailsViewModel
-import com.example.gitobserverapp.presentation.details.model.UsersListDetails
-import com.example.gitobserverapp.utils.Constants.START_PAGE
 import com.example.gitobserverapp.utils.network.NetworkStatusHelper
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.XAxis
@@ -62,7 +60,9 @@ class ChartFragment : Fragment() {
     private var barLabelList = mutableListOf<String>()
 
 
-    private val viewModel: ChartViewModel by activityViewModels()
+    private lateinit var chartViewModel: ChartViewModel
+    @Inject
+    lateinit var chartViewModelFactory: ChartViewModelFactory
     private val detailsViewModel: DetailsViewModel by activityViewModels()
 
     override fun onAttach(context: Context) {
@@ -76,6 +76,7 @@ class ChartFragment : Fragment() {
     ): View {
         _binding = FragmentChartBinding.inflate(inflater, container, false)
         networkStatus = NetworkStatusHelper(requireContext())
+        chartViewModel = ViewModelProvider(this, chartViewModelFactory)[ChartViewModel::class.java]
         return binding.root
     }
 
@@ -88,7 +89,7 @@ class ChartFragment : Fragment() {
         repoCreatedAt = args.repoCreatedAt
         binding.repoName.text = repoName
 
-        viewModel.setSearchLiveData(repoOwnerName = repoOwnerName, repoName = repoName)
+        chartViewModel.setSearchLiveData(repoOwnerName = repoOwnerName, repoName = repoName)
 
         radioButtonClick()
         nextPageClick()
@@ -99,7 +100,7 @@ class ChartFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun prevPageClick() {
         binding.prevPage.setOnClickListener {
-            viewModel.setPageObserverLiveData(page - 1)
+            chartViewModel.setPageObserverLiveData(page - 1)
             page--
         }
     }
@@ -107,16 +108,16 @@ class ChartFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun nextPageClick() {
         binding.nextPage.setOnClickListener {
-            viewModel.setPageObserverLiveData(page + 1)
+            chartViewModel.setPageObserverLiveData(page + 1)
             page++
         }
     }
 
     private fun radioButtonClick() {
         binding.radioButtonGroup.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.setCheckedRadioButton(isChecked)
+            chartViewModel.setCheckedRadioButton(isChecked)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                viewModel.getStargazersList()
+                chartViewModel.getStargazersList()
             }
         }
 
@@ -132,24 +133,24 @@ class ChartFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun renderUi() {
 
-        viewModel.chartPageObserveLiveData.observe(viewLifecycleOwner) { page ->
+        chartViewModel.chartPageObserveLiveData.observe(viewLifecycleOwner) { page ->
             binding.prevPage.isEnabled = page > 1
         }
 
         networkStatus.observe(viewLifecycleOwner) { isConnected ->
             if (isConnected) {
-                viewModel.setNetworkStatus(value = true)
+                chartViewModel.setNetworkStatus(value = true)
             } else {
-                viewModel.setNetworkStatus(value = false)
+                chartViewModel.setNetworkStatus(value = false)
             }
         }
 
-        viewModel.chartNetworkLiveData.observe(viewLifecycleOwner) { status ->
-            if (status) viewModel.setScreenState(ChartViewState.ViewContentMain)
-            else viewModel.setScreenState(ChartViewState.NetworkError)
+        chartViewModel.chartNetworkLiveData.observe(viewLifecycleOwner) { status ->
+            if (status) chartViewModel.setScreenState(ChartViewState.ViewContentMain)
+            else chartViewModel.setScreenState(ChartViewState.NetworkError)
         }
 
-        viewModel.chartScreenState.observe(viewLifecycleOwner) { state ->
+        chartViewModel.chartScreenState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is ChartViewState.Error -> {
                     disableNavigationButtons(value = 0)
@@ -179,7 +180,7 @@ class ChartFragment : Fragment() {
             }
         }
 
-        viewModel.radioButtonCheckedLiveData.observe(viewLifecycleOwner) { radioModel ->
+        chartViewModel.radioButtonCheckedLiveData.observe(viewLifecycleOwner) { radioModel ->
             when (radioModel.radioButton) {
                 R.id.radioBtnYears -> {
                     binding.radioBtnYears.isChecked = true
@@ -193,7 +194,7 @@ class ChartFragment : Fragment() {
             }
         }
 
-        viewModel.barChartListLiveData.observe(viewLifecycleOwner) { barChartModelList ->
+        chartViewModel.barChartListLiveData.observe(viewLifecycleOwner) { barChartModelList ->
             initBarChart(barChartModelList)
         }
     }

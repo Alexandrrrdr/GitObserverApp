@@ -8,12 +8,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gitobserverapp.App
-import com.example.gitobserverapp.data.network.model.Item
 import com.example.gitobserverapp.databinding.FragmentMainBinding
 import com.example.gitobserverapp.presentation.main.main_helper.MainViewState
 import com.example.gitobserverapp.presentation.main.model.RepoItem
@@ -24,12 +23,16 @@ class MainFragment : Fragment(), RepoSearchAdapter.Listener {
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
+
     private lateinit var networkStatus: NetworkStatusHelper
     private val repoSearchAdapter: RepoSearchAdapter by lazy {
         RepoSearchAdapter(this)
     }
 
-    private val mainViewModel: MainViewModel by activityViewModels()
+    private lateinit var mainViewModel: MainViewModel
+
+    @Inject
+    lateinit var viewModelFactory: MainViewModelFactory
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -39,6 +42,7 @@ class MainFragment : Fragment(), RepoSearchAdapter.Listener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         networkStatus = NetworkStatusHelper(requireContext())
+        mainViewModel = ViewModelProvider(owner = this, viewModelFactory)[MainViewModel::class.java]
     }
 
     override fun onCreateView(
@@ -59,38 +63,30 @@ class MainFragment : Fragment(), RepoSearchAdapter.Listener {
     }
 
     private fun renderUi() {
-        mainViewModel.reposLiveData.observe(viewLifecycleOwner){ list ->
+        mainViewModel.reposLiveData.observe(viewLifecycleOwner) { list ->
             repoSearchAdapter.differ.submitList(list.items)
+            mainViewModel.setState(MainViewState.MainViewContentMain)
         }
 
-        mainViewModel.mainNetworkLiveData.observe(viewLifecycleOwner){ isConnected ->
-            if (isConnected) mainViewModel.setState(MainViewState.MainViewContentMain)
-            else mainViewModel.setState(MainViewState.NetworkError)
-        }
-
-        networkStatus.observe(viewLifecycleOwner){ status ->
-            if (status) {
-                mainViewModel.setNetworkStatus(value = true)
+        networkStatus.observe(viewLifecycleOwner) { isConnected ->
+            if (isConnected) {
+                mainViewModel.setState(MainViewState.MainViewContentMain)
             } else {
-                mainViewModel.setNetworkStatus(value = false)
+                mainViewModel.setState(MainViewState.NetworkError)
             }
         }
     }
 
     private fun startSearch() {
         binding.btnSearch.setOnClickListener {
-            if (mainViewModel.mainNetworkLiveData.value == false) {
-                mainViewModel.setState(MainViewState.NetworkError)
+            hideKeyboard(it)
+            mainViewModel.setState(MainViewState.Loading)
+            if (binding.edtTxtInput.text.isNullOrEmpty()) {
+                mainViewModel.setState(MainViewState.Error("Search field is empty"))
+                mainViewModel.setReposList(null)
             } else {
-                hideKeyboard(it)
-                mainViewModel.setState(MainViewState.Loading)
-                if (binding.edtTxtInput.text.isNullOrEmpty()) {
-                    mainViewModel.setState(MainViewState.Error("Search field is empty"))
-                    mainViewModel.setReposList(null)
-                } else {
-                    lifecycleScope.launchWhenCreated {
-                        mainViewModel.getRepos(binding.edtTxtInput.text.toString(), 1)
-                    }
+                lifecycleScope.launchWhenCreated {
+                    mainViewModel.getRepos(binding.edtTxtInput.text.toString(), 1)
                 }
             }
         }

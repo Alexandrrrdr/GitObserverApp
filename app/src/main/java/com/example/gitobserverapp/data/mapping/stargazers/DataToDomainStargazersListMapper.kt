@@ -1,13 +1,13 @@
 package com.example.gitobserverapp.data.mapping.stargazers
 
-import com.example.gitobserverapp.data.network.model.ListStargazersModel
+import com.example.gitobserverapp.data.network.model.ResultStargazersModel
 import com.example.gitobserverapp.domain.model.DomainStargazersListModel
 import com.example.gitobserverapp.domain.model.StargazersList
 import com.example.gitobserverapp.utils.BaseMap
 
-class DataToDomainStargazersListMapper: BaseMap<ListStargazersModel, DomainStargazersListModel>() {
-    override fun map(from: ListStargazersModel): DomainStargazersListModel {
-        val tmpList = ArrayList<StargazersList>()
+class DataToDomainStargazersListMapper: BaseMap<ResultStargazersModel, DomainStargazersListModel>() {
+    override fun map(from: ResultStargazersModel): DomainStargazersListModel {
+        val tmpList = mutableListOf<StargazersList>()
         for (i in from.data.indices){
             val value = StargazersList(
                 starred_at = from.data[i].starred_at,

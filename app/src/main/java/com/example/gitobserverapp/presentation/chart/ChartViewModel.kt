@@ -11,7 +11,7 @@ import com.example.gitobserverapp.presentation.mapping.stargazers.DomainToPresen
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class ChartViewModel : ViewModel() {
+class ChartViewModel(private val getStargazersUseCase: GetStargazersUseCase) : ViewModel() {
 
     private var _barChartListLiveData = MutableLiveData<List<BarChartModel>>()
     val barChartListLiveData: LiveData<List<BarChartModel>> get() = _barChartListLiveData
@@ -43,12 +43,12 @@ class ChartViewModel : ViewModel() {
 
     fun getStargazersList() {
         viewModelScope.launch {
-//            val domainStargazersList = getStargazersUseCase.getData(
-//                value_one = searchLiveData[0].repoOwnerName,
-//                value_two = searchLiveData[0].repoName,
-//                value_three = page
-//            )
-//            _stargazersLiveData.postValue(DomainToPresentationStargazersListMapper().map(domainStargazersList))
+            val domainStargazersList = getStargazersUseCase.getData(
+                value_one = searchLiveData[0].repoOwnerName,
+                value_two = searchLiveData[0].repoName,
+                value_three = page
+            )
+            _stargazersLiveData.postValue(DomainToPresentationStargazersListMapper().map(domainStargazersList))
 
         }
     }

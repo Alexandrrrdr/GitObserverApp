@@ -1,20 +1,21 @@
 package com.example.gitobserverapp.data.repository
 
+import com.example.gitobserverapp.data.mapping.stargazers.DataToDomainStargazersListMapper
 import com.example.gitobserverapp.data.network.GitRetrofitService
 import com.example.gitobserverapp.domain.model.DomainStargazersListModel
 import com.example.gitobserverapp.domain.model.StargazersList
 import com.example.gitobserverapp.domain.repository.DomainGetStargazersRepository
 import com.example.gitobserverapp.utils.Constants
-import javax.inject.Inject
 
-class StargazersRepositoryImpl @Inject constructor(var gitRetrofitService: GitRetrofitService) : DomainGetStargazersRepository {
+class StargazersRepositoryImpl(private var gitRetrofitService: GitRetrofitService):
+    DomainGetStargazersRepository {
 
     override suspend fun getData(
         owner_login: String,
         repo_name: String,
         page: Int
     ): DomainStargazersListModel {
-        val tmpList = arrayListOf<StargazersList>()
+        val tmpList = emptyList<StargazersList>()
         val apiResult = gitRetrofitService.getStarredData(
             owner_login = owner_login,
             repo_name = repo_name,
@@ -22,15 +23,7 @@ class StargazersRepositoryImpl @Inject constructor(var gitRetrofitService: GitRe
             page = page
         )
         if (apiResult.isSuccessful && apiResult.body() != null) {
-            for (i in apiResult.body()!!.data.indices) {
-                val value = StargazersList(
-                    id = apiResult.body()!!.data[i].user.id,
-                    login = apiResult.body()!!.data[i].user.login,
-                    avatar_url = apiResult.body()!!.data[i].user.avatar_url,
-                    starred_at = apiResult.body()!!.data[i].starred_at
-                )
-                tmpList.add(value)
-            }
+            return DataToDomainStargazersListMapper().map(apiResult.body()!!)
         }
         return DomainStargazersListModel(tmpList)
     }
