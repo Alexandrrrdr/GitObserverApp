@@ -113,6 +113,7 @@ class ChartFragment : Fragment() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun radioButtonClick() {
         binding.radioButtonGroup.setOnCheckedChangeListener { _, isChecked ->
 //            chartViewModel.setCheckedRadioButton(isChecked)
@@ -142,15 +143,10 @@ class ChartFragment : Fragment() {
 
         networkStatus.observe(viewLifecycleOwner) { isConnected ->
             if (isConnected) {
-                chartViewModel.setNetworkStatus(value = true)
+                chartViewModel.setScreenState(ChartViewState.ViewContentMain)
             } else {
-                chartViewModel.setNetworkStatus(value = false)
+                chartViewModel.setScreenState(ChartViewState.NetworkError)
             }
-        }
-
-        chartViewModel.chartNetworkLiveData.observe(viewLifecycleOwner) { status ->
-            if (status) chartViewModel.setScreenState(ChartViewState.ViewContentMain)
-            else chartViewModel.setScreenState(ChartViewState.NetworkError)
         }
 
         chartViewModel.chartViewState.observe(viewLifecycleOwner) { state ->
@@ -312,7 +308,6 @@ class ChartFragment : Fragment() {
     }
 
     private fun createBarChartData(list: List<BarChartModel>) {
-
         barEntryList.clear()
         barLabelList.clear()
         for (i in list.indices) {
@@ -327,7 +322,6 @@ class ChartFragment : Fragment() {
             )
         }
     }
-
 
     override fun onDestroy() {
         super.onDestroy()

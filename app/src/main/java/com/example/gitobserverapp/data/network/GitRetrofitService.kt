@@ -24,8 +24,8 @@ interface GitRetrofitService {
     @Headers("Accept: application/vnd.github.star+json")
     @GET("/repos/{owner_login}/{repo_name}/stargazers")
     suspend fun getStarredData(
-        @Path("owner_login") owner_login: String,
         @Path("repo_name") repo_name: String,
+        @Path("owner_login") owner_login: String,
         @Query("per_page") per_page: Int,
         @Query("page") page : Int
     ): Response<DataStargazersListModel>
