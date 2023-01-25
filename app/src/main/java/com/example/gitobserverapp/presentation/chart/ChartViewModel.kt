@@ -57,17 +57,23 @@ class ChartViewModel(private val getStargazersUseCase: GetStargazersUseCase) : V
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun checkLoadedPage(list: PresentationStargazersListModel) {
-        for (i in list.stargazers_list.indices){
             _chartViewState.postValue(ChartViewState.ViewContentMain)
             Log.d("info", "size is ${list.stargazers_list.size}")
-        }
+//            loadNewPage()
+
 //        if (list.stargazers_list.isNotEmpty()) {
 //            loadNewPage()
 //        } else {
 //
 //            compareYearsModel(stargazersLiveData.value!!.stargazers_list)
-////            parseChartData(list.stargazers_list)
 //        }
+        compareYearsModel(list = list.stargazers_list)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun loadNewPage() {
+        page++
+        getStargazersList()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -91,25 +97,9 @@ class ChartViewModel(private val getStargazersUseCase: GetStargazersUseCase) : V
             )
             startDate++
         }
-//        tmpMatchedList.addAll(tmpMatchedList.sortedBy { it.period })
         setBarChartYearsData(tmpMatchedList)
     }
 
-//    private fun addPeriodsAsNecessary(endDate: Int): List<PresentationStargazersListItem>{
-//        var date = endDate
-//        while (endDate < 2023){
-//            val tmpUsers = emptyList<PresentationStargazersListItem>()
-//
-//            date++
-//        }
-//        return
-//    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun loadNewPage() {
-        page++
-        getStargazersList()
-    }
 
 //    @RequiresApi(Build.VERSION_CODES.O)
 //    fun parseChartData(starredDataList: ArrayList<PresentationChartListItem>) {
