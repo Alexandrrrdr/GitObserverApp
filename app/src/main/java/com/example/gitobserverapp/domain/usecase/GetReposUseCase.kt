@@ -2,18 +2,19 @@ package com.example.gitobserverapp.domain.usecase
 
 import com.example.gitobserverapp.domain.model.DomainReposListModel
 import com.example.gitobserverapp.domain.repository.DomainGetRepoByNameRepository
-import com.example.gitobserverapp.domain.usecase.base.BaseUseCaseWithParams
-import javax.inject.Inject
+import com.example.gitobserverapp.domain.repository.DomainGetStargazersRepository
+import com.example.gitobserverapp.domain.usecase.base.BaseUseCaseRepoParams
+import com.example.gitobserverapp.domain.usecase.base.BaseUseCaseStargazers
 
 class GetReposUseCase (
     private val domainGetRepoByNameRepository: DomainGetRepoByNameRepository,
-): BaseUseCaseWithParams<String, String, Int, DomainReposListModel> {
+): BaseUseCaseRepoParams<String, Int, DomainReposListModel> {
 
     override suspend fun getData(
-        value_one: String,
-        value_two: String,
-        value_three: Int
+        repo_name: String,
+        page_number: Int
     ): DomainReposListModel {
-        return domainGetRepoByNameRepository.getData(searchWord = value_one, page = value_three)
+        return domainGetRepoByNameRepository.getData(searchWord = repo_name, page = page_number)
     }
+
 }

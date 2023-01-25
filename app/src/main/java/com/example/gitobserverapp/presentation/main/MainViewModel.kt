@@ -9,8 +9,6 @@ import com.example.gitobserverapp.presentation.main.main_helper.MainViewState
 import com.example.gitobserverapp.presentation.main.model.ReposListModel
 import com.example.gitobserverapp.presentation.mapping.repos.DomainToPresentationReposListMapper
 import kotlinx.coroutines.launch
-import javax.inject.Inject
-
 
 class MainViewModel(private val getReposUseCase: GetReposUseCase): ViewModel() {
 
@@ -28,9 +26,8 @@ class MainViewModel(private val getReposUseCase: GetReposUseCase): ViewModel() {
 
     fun getRepos(searchName: String, page: Int){
         viewModelScope.launch {
-            val domainReposList = getReposUseCase.getData(value_one = searchName, value_two = "", value_three = page)
+            val domainReposList = getReposUseCase.getData(repo_name = searchName, page_number = page)
             _reposLiveData.postValue(DomainToPresentationReposListMapper().map(domainReposList))
-
         }
     }
 

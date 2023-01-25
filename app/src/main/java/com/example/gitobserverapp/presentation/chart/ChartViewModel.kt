@@ -41,9 +41,9 @@ class ChartViewModel(private val getStargazersUseCase: GetStargazersUseCase) : V
         viewModelScope.launch {
             var tmp: PresentationStargazersListModel? = null
             val domainStargazersList = getStargazersUseCase.getData(
-                value_one = searchLiveData[0].repoName,
-                value_two = searchLiveData[0].repoOwnerName,
-                value_three = page
+                repo_name = searchLiveData[0].repoName,
+                owner_login = searchLiveData[0].repoOwnerName,
+                page_number = page
             )
             tmp = DomainToPresentationStargazersListMapper().map(domainStargazersList)
             _stargazersLiveData.postValue(tmp)

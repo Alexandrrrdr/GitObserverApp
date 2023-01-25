@@ -14,16 +14,16 @@ class StargazersRepositoryImpl(private var gitRetrofitService: GitRetrofitServic
 
     @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun getData(
-        owner_login: String,
         repo_name: String,
-        page: Int
+        owner_login: String,
+        page_number: Int
     ): DomainStargazersListModel {
         val tmpList = arrayListOf<DomainStargazersListItem>()
         val apiResult = gitRetrofitService.getStarredData(
-            owner_login = repo_name,
-            repo_name = owner_login,
+            repo_name = repo_name,
+            owner_login = owner_login,
             per_page = Constants.MAX_PER_PAGE,
-            page = page
+            page = page_number
         )
         if (apiResult.isSuccessful && apiResult.body() != null) {
             return DataToDomainStargazersListMapper().map(apiResult.body()!!)
