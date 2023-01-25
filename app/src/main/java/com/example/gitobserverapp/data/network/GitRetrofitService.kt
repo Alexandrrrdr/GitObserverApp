@@ -3,6 +3,7 @@ package com.example.gitobserverapp.data.network
 import androidx.annotation.IntRange
 import com.example.gitobserverapp.data.network.model.DataReposListModel
 import com.example.gitobserverapp.data.network.model.DataStargazersListItem
+import com.example.gitobserverapp.utils.Constants
 import com.example.gitobserverapp.utils.Constants.API_GET_REPOS
 import com.example.gitobserverapp.utils.Constants.DEF_PER_PAGE
 import com.example.gitobserverapp.utils.Constants.MAX_PER_PAGE

@@ -1,6 +1,7 @@
 package com.example.gitobserverapp.presentation.chart
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -10,7 +11,9 @@ import com.example.gitobserverapp.domain.usecase.GetStargazersUseCase
 import com.example.gitobserverapp.presentation.chart.chart_helper.ChartViewState
 import com.example.gitobserverapp.presentation.chart.model.*
 import com.example.gitobserverapp.presentation.mapping.stargazers.DomainToPresentationStargazersListMapper
+import com.example.gitobserverapp.utils.Constants
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 class ChartViewModel(private val getStargazersUseCase: GetStargazersUseCase) : ViewModel() {
 
@@ -39,29 +42,68 @@ class ChartViewModel(private val getStargazersUseCase: GetStargazersUseCase) : V
     @RequiresApi(Build.VERSION_CODES.O)
     fun getStargazersList() {
         viewModelScope.launch {
-            var tmp: PresentationStargazersListModel? = null
+            _chartViewState.postValue(ChartViewState.Loading)
+            val tmp: PresentationStargazersListModel
             val domainStargazersList = getStargazersUseCase.getData(
                 repo_name = searchLiveData[0].repoName,
                 owner_login = searchLiveData[0].repoOwnerName,
                 page_number = page
             )
             tmp = DomainToPresentationStargazersListMapper().map(domainStargazersList)
-            _stargazersLiveData.postValue(tmp)
-//            checkLoadedPage(tmp)
+//            _stargazersLiveData.postValue(tmp)
+            checkLoadedPage(tmp)
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun checkLoadedPage(list: PresentationStargazersListModel) {
-
-        _chartViewState.postValue(ChartViewState.Loading)
-        if (list.stargazers_list.isNotEmpty()) {
-            loadNewPage()
-        } else {
-//            compareYearsModel(stargazersLiveData.value!!.stargazers_list)
-//            parseChartData(list.stargazers_list)
+        for (i in list.stargazers_list.indices){
+            _chartViewState.postValue(ChartViewState.ViewContentMain)
+            Log.d("info", "size is ${list.stargazers_list.size}")
         }
+//        if (list.stargazers_list.isNotEmpty()) {
+//            loadNewPage()
+//        } else {
+//
+//            compareYearsModel(stargazersLiveData.value!!.stargazers_list)
+////            parseChartData(list.stargazers_list)
+//        }
     }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun compareYearsModel(list: List<PresentationStargazersListItem>) {
+
+        val tmpMatchedList = mutableListOf<BarChartModel>()
+        val endDate = list[list.lastIndex].starred_at.year
+        var startDate = list[Constants.ZERO_PAGE].starred_at.year
+
+        while (startDate <= endDate) {
+            val tmpUsers = mutableListOf<PresentationStargazersListItem>()
+            val list1 = list.filter { it.starred_at.year == startDate }
+            for (i in list1.indices) {
+                tmpUsers.add(i, list1[i])
+            }
+            tmpMatchedList.add(
+                element = BarChartModel(
+                    period = startDate,
+                    userInfo = tmpUsers
+                )
+            )
+            startDate++
+        }
+//        tmpMatchedList.addAll(tmpMatchedList.sortedBy { it.period })
+        setBarChartYearsData(tmpMatchedList)
+    }
+
+//    private fun addPeriodsAsNecessary(endDate: Int): List<PresentationStargazersListItem>{
+//        var date = endDate
+//        while (endDate < 2023){
+//            val tmpUsers = emptyList<PresentationStargazersListItem>()
+//
+//            date++
+//        }
+//        return
+//    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun loadNewPage() {
@@ -102,10 +144,6 @@ class ChartViewModel(private val getStargazersUseCase: GetStargazersUseCase) : V
         _chartPageObserveLiveData.value = 1
     }
 
-    fun setNetworkStatus(value: Boolean) {
-        _chartNetworkLiveData.postValue(value)
-    }
-
     fun setPageObserverLiveData(value: Int) {
         _chartPageObserveLiveData.postValue(+value)
     }
@@ -114,11 +152,7 @@ class ChartViewModel(private val getStargazersUseCase: GetStargazersUseCase) : V
         _chartViewState.postValue(chartViewState)
     }
 
-    fun setCheckedRadioButton(radioId: Int) {
-        _radioButtonCheckedLiveData.postValue(RadioButtonModel(radioId))
-    }
-
-    fun setBarChartYearsData(list: List<BarChartModel>) {
+    private fun setBarChartYearsData(list: List<BarChartModel>) {
         _barChartListLiveData.postValue(list)
     }
 }
