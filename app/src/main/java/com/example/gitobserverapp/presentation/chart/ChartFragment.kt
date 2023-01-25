@@ -21,6 +21,7 @@ import com.example.gitobserverapp.presentation.chart.chart_helper.ChartViewState
 import com.example.gitobserverapp.presentation.chart.model.BarChartModel
 import com.example.gitobserverapp.presentation.chart.model.PresentationChartListItem
 import com.example.gitobserverapp.presentation.details.DetailsViewModel
+import com.example.gitobserverapp.utils.Constants
 import com.example.gitobserverapp.utils.network.NetworkStatusHelper
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.XAxis
@@ -193,9 +194,40 @@ class ChartFragment : Fragment() {
             }
         }
 
+        chartViewModel.stargazersLiveData.observe(viewLifecycleOwner){ list ->
+            if (list != null) {
+                compareYearsModel(list.stargazers_list)
+            }
+        }
+
         chartViewModel.barChartListLiveData.observe(viewLifecycleOwner) { barChartModelList ->
             initBarChart(barChartModelList)
         }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun compareYearsModel(list: List<PresentationChartListItem>) {
+
+        val tmpMatchedList = mutableListOf<BarChartModel>()
+        val endDate = list[list.lastIndex].starred_at.year
+        var startDate = list[Constants.ZERO_PAGE].starred_at.year
+
+        while (startDate <= endDate) {
+            val tmpUsers = mutableListOf<PresentationChartListItem>()
+            val list1 = list.filter { it.starred_at.year == startDate }
+            for (i in list1.indices) {
+                tmpUsers.add(i, list1[i])
+            }
+            tmpMatchedList.add(
+                element = BarChartModel(
+                    period = startDate,
+                    userInfo = tmpUsers
+                )
+            )
+            startDate++
+        }
+//        tmpMatchedList.addAll(tmpMatchedList.sortedBy { it.period })
+        chartViewModel.setBarChartYearsData(tmpMatchedList)
     }
 
     private fun disableNavigationButtons(value: Int) {

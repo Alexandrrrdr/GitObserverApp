@@ -15,8 +15,8 @@ class GetStargazersUseCase(
         value_three: Int
     ): DomainStargazersListModel {
         return getStargazersRepository.getData(
-            owner_login = value_one,
-            repo_name = value_two,
+            repo_name = value_one,
+            owner_login = value_two,
             page = value_three
         )
     }

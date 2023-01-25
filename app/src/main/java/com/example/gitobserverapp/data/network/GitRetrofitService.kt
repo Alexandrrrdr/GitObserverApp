@@ -2,7 +2,7 @@ package com.example.gitobserverapp.data.network
 
 import androidx.annotation.IntRange
 import com.example.gitobserverapp.data.network.model.DataReposListModel
-import com.example.gitobserverapp.data.network.model.DataStargazersListModel
+import com.example.gitobserverapp.data.network.model.DataStargazersListItem
 import com.example.gitobserverapp.utils.Constants.API_GET_REPOS
 import com.example.gitobserverapp.utils.Constants.DEF_PER_PAGE
 import com.example.gitobserverapp.utils.Constants.MAX_PER_PAGE
@@ -28,5 +28,5 @@ interface GitRetrofitService {
         @Path("owner_login") owner_login: String,
         @Query("per_page") per_page: Int,
         @Query("page") page : Int
-    ): Response<DataStargazersListModel>
+    ): Response<List<DataStargazersListItem>>
 }

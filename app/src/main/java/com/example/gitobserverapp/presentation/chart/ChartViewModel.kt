@@ -10,7 +10,6 @@ import com.example.gitobserverapp.domain.usecase.GetStargazersUseCase
 import com.example.gitobserverapp.presentation.chart.chart_helper.ChartViewState
 import com.example.gitobserverapp.presentation.chart.model.*
 import com.example.gitobserverapp.presentation.mapping.stargazers.DomainToPresentationStargazersListMapper
-import com.example.gitobserverapp.utils.Constants.ZERO_PAGE
 import kotlinx.coroutines.launch
 
 class ChartViewModel(private val getStargazersUseCase: GetStargazersUseCase) : ViewModel() {
@@ -30,8 +29,8 @@ class ChartViewModel(private val getStargazersUseCase: GetStargazersUseCase) : V
     private var _chartPageObserveLiveData = MutableLiveData<Int>()
     val chartPageObserveLiveData: LiveData<Int> get() = _chartPageObserveLiveData
 
-    private var _stargazersLiveData: MutableLiveData<PresentationChartListModel?> = MutableLiveData<PresentationChartListModel?>()
-    val stargazersLiveData: MutableLiveData<PresentationChartListModel?> get() = _stargazersLiveData
+    private var _stargazersLiveData: MutableLiveData<PresentationStargazersListModel?> = MutableLiveData<PresentationStargazersListModel?>()
+    val stargazersLiveData: MutableLiveData<PresentationStargazersListModel?> get() = _stargazersLiveData
 
     private var searchLiveData = mutableListOf<SearchModel>()
 
@@ -40,20 +39,20 @@ class ChartViewModel(private val getStargazersUseCase: GetStargazersUseCase) : V
     @RequiresApi(Build.VERSION_CODES.O)
     fun getStargazersList() {
         viewModelScope.launch {
-            var tmp: PresentationChartListModel? = null
+            var tmp: PresentationStargazersListModel? = null
             val domainStargazersList = getStargazersUseCase.getData(
-                value_one = searchLiveData[0].repoOwnerName,
-                value_two = searchLiveData[0].repoName,
+                value_one = searchLiveData[0].repoName,
+                value_two = searchLiveData[0].repoOwnerName,
                 value_three = page
             )
             tmp = DomainToPresentationStargazersListMapper().map(domainStargazersList)
             _stargazersLiveData.postValue(tmp)
-            checkLoadedPage(tmp)
+//            checkLoadedPage(tmp)
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun checkLoadedPage(list: PresentationChartListModel) {
+    fun checkLoadedPage(list: PresentationStargazersListModel) {
 
         _chartViewState.postValue(ChartViewState.Loading)
         if (list.stargazers_list.isNotEmpty()) {
@@ -87,30 +86,7 @@ class ChartViewModel(private val getStargazersUseCase: GetStargazersUseCase) : V
 //        compareYearsModel(starParsedList)
 //    }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun compareYearsModel(list: ArrayList<PresentationChartListItem>) {
 
-        val tmpMatchedList = mutableListOf<BarChartModel>()
-        val endDate = list[list.lastIndex].starred_at.year
-        var startDate = list[ZERO_PAGE].starred_at.year
-
-        while (startDate <= endDate) {
-            val tmpUsers = mutableListOf<PresentationChartListItem>()
-            val list1 = list.filter { it.starred_at.year == startDate }
-            for (i in list1.indices) {
-                tmpUsers.add(i, list1[i])
-            }
-            tmpMatchedList.add(
-                element = BarChartModel(
-                    period = startDate,
-                    userInfo = tmpUsers
-                )
-            )
-            startDate++
-        }
-//        tmpMatchedList.addAll(tmpMatchedList.sortedBy { it.period })
-        setBarChartYearsData(tmpMatchedList)
-    }
 
     fun setSearchLiveData(repoOwnerName: String, repoName: String) {
         searchLiveData.add(
@@ -142,7 +118,7 @@ class ChartViewModel(private val getStargazersUseCase: GetStargazersUseCase) : V
         _radioButtonCheckedLiveData.postValue(RadioButtonModel(radioId))
     }
 
-    private fun setBarChartYearsData(list: List<BarChartModel>) {
+    fun setBarChartYearsData(list: List<BarChartModel>) {
         _barChartListLiveData.postValue(list)
     }
 }

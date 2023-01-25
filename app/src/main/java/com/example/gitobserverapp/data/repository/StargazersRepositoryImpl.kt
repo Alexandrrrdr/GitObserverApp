@@ -26,7 +26,6 @@ class StargazersRepositoryImpl(private var gitRetrofitService: GitRetrofitServic
             page = page
         )
         if (apiResult.isSuccessful && apiResult.body() != null) {
-
             return DataToDomainStargazersListMapper().map(apiResult.body()!!)
         }
         return DomainStargazersListModel(tmpList)

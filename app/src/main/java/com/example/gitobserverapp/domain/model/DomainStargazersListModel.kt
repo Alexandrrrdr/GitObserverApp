@@ -3,7 +3,7 @@ package com.example.gitobserverapp.domain.model
 import java.time.LocalDate
 
 data class DomainStargazersListModel(
-    val domainStargazersListItem: List<DomainStargazersListItem>
+    val stargazers_list: ArrayList<DomainStargazersListItem>
 )
 
 data class DomainStargazersListItem(

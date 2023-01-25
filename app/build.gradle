@@ -37,18 +37,18 @@ android {
 
 dependencies {
 
+    //Moxy
+    implementation 'com.arello-mobile:moxy-android:1.5.3'
+    implementation 'com.arello-mobile:moxy-app-compat:1.5.3'
+//    implementation 'com.android.support:appcompat-v7:27.1.1'
+    kapt 'com.arello-mobile:moxy-compiler:1.5.3'
+
     //Dagger
     def daggerVer = 2.44
     implementation "com.google.dagger:dagger:$daggerVer"
     implementation "com.google.dagger:dagger-android-support:$daggerVer"
     kapt "com.google.dagger:dagger-android-processor:$daggerVer"
     kapt "com.google.dagger:dagger-compiler:$daggerVer"
-
-//    kapt "com.google.dagger:dagger-compiler:2.44"
-//    implementation "com.google.dagger:dagger:2.44"
-//    implementation "com.google.dagger:dagger-android:2.44"
-//    implementation "com.google.dagger:dagger-android-support:2.44"
-//    kapt "com.google.dagger:dagger-android-processor:2.44"
 
     //Pagination
     implementation 'androidx.paging:paging-common-ktx:3.1.1'

@@ -2,16 +2,15 @@ package com.example.gitobserverapp.data.mapping.stargazers
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import com.example.gitobserverapp.data.network.model.DataStargazersListModel
+import com.example.gitobserverapp.data.network.model.DataStargazersListItem
 import com.example.gitobserverapp.domain.model.DomainStargazersListModel
 import com.example.gitobserverapp.domain.model.DomainStargazersListItem
-import com.example.gitobserverapp.utils.BaseMap
 import java.time.*
 
-class DataToDomainStargazersListMapper: BaseMap<DataStargazersListModel, DomainStargazersListModel>() {
+class DataToDomainStargazersListMapper() {
     @RequiresApi(Build.VERSION_CODES.O)
-    override fun map(from: DataStargazersListModel): DomainStargazersListModel {
-        val tmpList = mutableListOf<DomainStargazersListItem>()
+    fun map(from: List<DataStargazersListItem>): DomainStargazersListModel {
+        val tmpList = arrayListOf<DomainStargazersListItem>()
         for (i in from.indices){
             val value = DomainStargazersListItem(
                 starred_at = dateConverter(from[i].starred_at),
@@ -21,7 +20,7 @@ class DataToDomainStargazersListMapper: BaseMap<DataStargazersListModel, DomainS
             )
             tmpList.add(i, value)
         }
-        return DomainStargazersListModel(tmpList)
+        return DomainStargazersListModel(stargazers_list = tmpList)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

@@ -2,21 +2,21 @@ package com.example.gitobserverapp.presentation.mapping.stargazers
 
 import com.example.gitobserverapp.domain.model.DomainStargazersListModel
 import com.example.gitobserverapp.presentation.chart.model.PresentationChartListItem
-import com.example.gitobserverapp.presentation.chart.model.PresentationChartListModel
+import com.example.gitobserverapp.presentation.chart.model.PresentationStargazersListModel
 import com.example.gitobserverapp.utils.BaseMap
 
-class DomainToPresentationStargazersListMapper: BaseMap<DomainStargazersListModel, PresentationChartListModel>() {
-    override fun map(from: DomainStargazersListModel): PresentationChartListModel {
+class DomainToPresentationStargazersListMapper: BaseMap<DomainStargazersListModel, PresentationStargazersListModel>() {
+    override fun map(from: DomainStargazersListModel): PresentationStargazersListModel {
         val tmpList = arrayListOf<PresentationChartListItem>()
-        for (i in from.domainStargazersListItem.indices){
+        for (i in from.stargazers_list.indices){
             val value = PresentationChartListItem(
-                starred_at = from.domainStargazersListItem[i].starred_at,
-                id = from.domainStargazersListItem[i].id,
-                login = from.domainStargazersListItem[i].login,
-                avatar_url = from.domainStargazersListItem[i].avatar_url
+                starred_at = from.stargazers_list[i].starred_at,
+                id = from.stargazers_list[i].id,
+                login = from.stargazers_list[i].login,
+                avatar_url = from.stargazers_list[i].avatar_url
             )
             tmpList.add(i, value)
         }
-        return PresentationChartListModel(stargazers_list = tmpList)
+        return PresentationStargazersListModel(stargazers_list = tmpList)
     }
 }

@@ -2,7 +2,7 @@ package com.example.gitobserverapp.presentation.chart.model
 
 import java.time.LocalDate
 
-data class PresentationChartListModel(
+data class PresentationStargazersListModel(
     val stargazers_list: ArrayList<PresentationChartListItem>
 )
 
