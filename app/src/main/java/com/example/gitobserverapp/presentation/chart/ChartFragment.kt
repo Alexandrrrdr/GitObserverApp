@@ -316,9 +316,15 @@ class ChartFragment : Fragment() {
     private fun createBarChartData(list: List<BarChartModel>) {
         barEntryList.clear()
         barLabelList.clear()
-        for (i in list.indices) {
 
-            barLabelList.add(i, list[i].period.toString())
+        val tmpList = arrayListOf<Int>()
+        for (i in list.indices){
+            tmpList.add(list[i].period)
+        }
+        val reverseList: List<Int> = tmpList.reversed()
+
+        for (i in list.indices) {
+            barLabelList.add(i, reverseList[i].toString())
             Log.d("info", "${list[i].period}")
             barEntryList.add(
                 BarEntry(
