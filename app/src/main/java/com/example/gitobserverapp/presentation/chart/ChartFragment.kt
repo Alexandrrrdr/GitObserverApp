@@ -20,7 +20,6 @@ import com.example.gitobserverapp.databinding.FragmentChartBinding
 import com.example.gitobserverapp.presentation.chart.chart_helper.ChartViewState
 import com.example.gitobserverapp.presentation.chart.model.BarChartModel
 import com.example.gitobserverapp.presentation.chart.model.PresentationStargazersListItem
-import com.example.gitobserverapp.presentation.chart.model.PresentationStargazersListModel
 import com.example.gitobserverapp.presentation.details.DetailsViewModel
 import com.example.gitobserverapp.utils.network.NetworkStatusHelper
 import com.github.mikephil.charting.charts.BarChart
@@ -56,7 +55,7 @@ class ChartFragment : Fragment() {
 
     //Start creating barCharts
     private lateinit var barDataSet: BarDataSet
-    private lateinit var barChart: BarChart
+    private lateinit var barchartGraph: BarChart
     private var barEntryList = mutableListOf<BarEntry>()
     private var barLabelList = mutableListOf<String>()
 
@@ -240,9 +239,9 @@ class ChartFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun initBarChart(list: List<BarChartModel>) {
 
-        barChart = binding.barChart
+        barchartGraph = binding.barChart
         createBarChartData(list)
-        barDataSet = BarDataSet(barEntryList, "Test")
+        barDataSet = BarDataSet(barEntryList, "")
         val barData = BarData(barDataSet)
 
         //Hide unnecessary labels if no data in AXis
@@ -256,22 +255,24 @@ class ChartFragment : Fragment() {
             }
         })
 
-        barChart.data = barData
+        barchartGraph.data = barData
         barDataSet.setColors(ColorTemplate.COLORFUL_COLORS, 250)
         barDataSet.valueTextSize = 14f
         barDataSet.valueTextColor = Color.BLACK
-        barChart.description.isEnabled = false
-        barChart.axisRight.isEnabled = false
-        barChart.isDragEnabled = false
-        if (barEntryList.size > 5){
-            barChart.setVisibleXRangeMaximum(5f)
-        } else {
-            barChart.setVisibleXRangeMaximum(barEntryList.size.toFloat())
-        }
-        barChart.animateY(1000)
-        barChart.animateX(1000)
+        barchartGraph.description.isEnabled = false
+        barchartGraph.axisRight.isEnabled = false
+        barchartGraph.isDragEnabled = false
 
-        val xAxis: XAxis = barChart.xAxis
+        //Check size of list
+//        if (barEntryList.size > 5){
+            barchartGraph.setVisibleXRangeMaximum(13f)
+//        } else {
+//            barChart.setVisibleXRangeMaximum(barEntryList.size.toFloat())
+//        }
+        barchartGraph.animateY(1000)
+        barchartGraph.animateX(1000)
+
+        val xAxis: XAxis = barchartGraph.xAxis
 
         //set labels
         xAxis.valueFormatter = IndexAxisValueFormatter(barLabelList)
@@ -283,19 +284,19 @@ class ChartFragment : Fragment() {
         xAxis.textColor = Color.BLACK
         xAxis.textSize = 14f
 
-        val axisLeft: YAxis = barChart.axisLeft
+        val axisLeft: YAxis = barchartGraph.axisLeft
         axisLeft.granularity = 5f
         axisLeft.axisMinimum = 0f
 
-        val axisRight: YAxis = barChart.axisRight
+        val axisRight: YAxis = barchartGraph.axisRight
         axisRight.granularity = 1f
         axisRight.axisMinimum = 0f
-        barChart.invalidate()
+        barchartGraph.invalidate()
 
-        barChart.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
+        barchartGraph.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
             override fun onValueSelected(e: Entry?, h: Highlight?) {
                 //getting index of selected bar
-                val x = barChart.data.getDataSetForEntry(e).getEntryIndex(e as BarEntry)
+                val x = barchartGraph.data.getDataSetForEntry(e).getEntryIndex(e as BarEntry)
                 val year = barLabelList[x]
                 val userList = barEntryList[x].data
 
@@ -324,7 +325,7 @@ class ChartFragment : Fragment() {
 
         for (i in list.indices) {
             barLabelList.add(i, list[i].period.toString())
-            Log.d("info", "${list[i].period}")
+//            Log.d("info", "Size is ${list[i].userInfo.size}")
             barEntryList.add(
                 BarEntry(
                     i.toFloat(),

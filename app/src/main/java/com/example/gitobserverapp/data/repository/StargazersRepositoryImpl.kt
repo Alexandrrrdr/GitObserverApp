@@ -1,6 +1,7 @@
 package com.example.gitobserverapp.data.repository
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import com.example.gitobserverapp.data.mapping.stargazers.DataToDomainStargazersListMapper
 import com.example.gitobserverapp.data.network.GitRetrofitService
@@ -9,8 +10,9 @@ import com.example.gitobserverapp.domain.model.DomainStargazersListModel
 import com.example.gitobserverapp.domain.repository.DomainGetStargazersRepository
 import com.example.gitobserverapp.utils.Constants
 import retrofit2.Response
+import javax.inject.Inject
 
-class StargazersRepositoryImpl(private var gitRetrofitService: GitRetrofitService) :
+class StargazersRepositoryImpl @Inject constructor(private var gitRetrofitService: GitRetrofitService) :
     DomainGetStargazersRepository {
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -28,6 +30,9 @@ class StargazersRepositoryImpl(private var gitRetrofitService: GitRetrofitServic
         )
         var tmpPage = 2
         while (requestResult.body()?.isNotEmpty() == true) {
+
+//            Log.d("info", requestResult.body()!!.size.toString())
+
             tmpList.addAll(requestResult.body()!!)
             requestResult = loadPageAndNext(
                 gitRetrofitService = gitRetrofitService,
@@ -116,9 +121,5 @@ class StargazersRepositoryImpl(private var gitRetrofitService: GitRetrofitServic
 //        setBarChartYearsData(tmpMatchedList)
 //    }
 //
-//    @RequiresApi(Build.VERSION_CODES.O)
-//    private fun dateConverter(value: String): LocalDate {
-//        val instant = Instant.parse(value)
-//        return LocalDateTime.ofInstant(instant, ZoneId.of(ZoneOffset.UTC.id)).toLocalDate()
-//    }
+
 }

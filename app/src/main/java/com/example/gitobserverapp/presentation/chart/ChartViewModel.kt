@@ -13,7 +13,7 @@ import com.example.gitobserverapp.presentation.chart.model.*
 import com.example.gitobserverapp.presentation.mapping.stargazers.DomainToPresentationStargazersListMapper
 import com.example.gitobserverapp.utils.Constants
 import kotlinx.coroutines.launch
-import java.time.LocalDate
+import java.time.*
 
 class ChartViewModel(private val getStargazersUseCase: GetStargazersUseCase) : ViewModel() {
 
@@ -43,66 +43,38 @@ class ChartViewModel(private val getStargazersUseCase: GetStargazersUseCase) : V
     fun getStargazersList() {
         viewModelScope.launch {
             _chartViewState.postValue(ChartViewState.Loading)
-            val tmp: PresentationStargazersListModel
+            val tmpPresentationMapped: PresentationStargazersListModel
             val domainStargazersList = getStargazersUseCase.getData(
                 repo_name = searchLiveData[0].repoName,
                 owner_login = searchLiveData[0].repoOwnerName,
                 page_number = page
             )
-            tmp = DomainToPresentationStargazersListMapper().map(domainStargazersList)
-            checkLoadedPage(tmp)
+            tmpPresentationMapped = DomainToPresentationStargazersListMapper().map(domainStargazersList)
+            compareYearsModel(tmpPresentationMapped.stargazers_list)
         }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun checkLoadedPage(list: PresentationStargazersListModel) {
-        _chartViewState.postValue(ChartViewState.ViewContentMain)
-        compareYearsModel(list = list.stargazers_list)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun compareYearsModel(list: List<PresentationStargazersListItem>) {
-
-        val tmpMatchedList = mutableListOf<BarChartModel>()
         var endDate = list[list.lastIndex].starred_at.year
         val startDate = list[Constants.ZERO_PAGE].starred_at.year
 
-        while (endDate >= startDate) {
-            val tmpUsers = mutableListOf<PresentationStargazersListItem>()
-            val list1 = list.filter { it.starred_at.year == endDate }
-            for (i in list1.indices) {
-                tmpUsers.add(i, list1[i])
-            }
-            tmpMatchedList.add(
+        val matchedListForBarChartModel = mutableListOf<BarChartModel>()
+        while (endDate > startDate) {
+            val usersForBarChartData = mutableListOf<PresentationStargazersListItem>()
+
+            usersForBarChartData.addAll(list.filter { it.starred_at.year == endDate })
+            matchedListForBarChartModel.add(
                 element = BarChartModel(
                     period = endDate,
-                    userInfo = tmpUsers
+                    userInfo = usersForBarChartData
                 )
             )
             endDate--
         }
-        setBarChartYearsData(tmpMatchedList)
+        setScreenState(ChartViewState.ViewContentMain)
+        setBarChartYearsData(matchedListForBarChartModel)
     }
-
-
-//    @RequiresApi(Build.VERSION_CODES.O)
-//    fun parseChartData(starredDataList: ArrayList<PresentationChartListItem>) {
-//        val starParsedList = mutableListOf<PresentationChartListItem>()
-//        var starredModel: PresentationChartListItem
-//
-//        for (i in starredDataList.indices) {
-//            starredModel = PresentationChartListItem(
-//                starred_at = starredDataList[i].starred_at,
-//                id = starredDataList[i].id,
-//                login = starredDataList[i].login,
-//                avatar_url = starredDataList[i].avatar_url
-//            )
-//            starParsedList.add(i, starredModel)
-//        }
-//        compareYearsModel(starParsedList)
-//    }
-
-
 
     fun setSearchLiveData(repoOwnerName: String, repoName: String) {
         searchLiveData.add(

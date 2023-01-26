@@ -6,9 +6,11 @@ import com.example.gitobserverapp.domain.model.DomainReposListModel
 import com.example.gitobserverapp.domain.model.Items
 import com.example.gitobserverapp.domain.repository.DomainGetRepoByNameRepository
 import com.example.gitobserverapp.presentation.chart.chart_helper.ChartViewState
+import com.example.gitobserverapp.presentation.main.main_helper.MainViewState
 import com.example.gitobserverapp.utils.Constants
+import javax.inject.Inject
 
-class ReposRepositoryImpl(var gitRetrofitService: GitRetrofitService):
+class ReposRepositoryImpl @Inject constructor(var gitRetrofitService: GitRetrofitService):
     DomainGetRepoByNameRepository {
 
     override suspend fun getData(searchWord: String, page: Int): DomainReposListModel {
@@ -29,15 +31,18 @@ class ReposRepositoryImpl(var gitRetrofitService: GitRetrofitService):
             }
             //Validation failed, or the endpoint has been spammed
             422 -> {
-                ChartViewState.Error("Validation failed, or the endpoint has been spammed")
+                MainViewState.Error("Validation failed, or the endpoint has been spammed")
             }
             //Requires authentication
             401 -> {
-                ChartViewState.Error("Requires authentication")
+                MainViewState.Error("Requires authentication")
             }
             //Forbidden
             403 -> {
-                ChartViewState.Error("Forbidden")
+                MainViewState.Error("Forbidden")
+            }
+            else -> {
+                MainViewState.Error("Some error")
             }
         }
         return DomainReposListModel(tmpList)

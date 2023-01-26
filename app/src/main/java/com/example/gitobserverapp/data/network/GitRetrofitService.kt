@@ -12,6 +12,7 @@ import retrofit2.http.*
 
 interface GitRetrofitService {
 
+//    @Headers("Accept: application/vnd.github+json")
     @GET(API_GET_REPOS)
     suspend fun getRepos(
         @Query("q") q: String,

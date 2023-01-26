@@ -1,7 +1,7 @@
 package com.example.gitobserverapp.domain.model
 
 data class DomainReposListModel(
-    val items: List<Items>,
+    val items: List<Items>
 )
 
 data class Items(

@@ -27,7 +27,10 @@ class NetworkModule {
         logging.level = HttpLoggingInterceptor.Level.BODY
         return OkHttpClient.Builder()
             .addInterceptor(logging)
-            .addInterceptor { chain: Interceptor.Chain -> val request = chain.request().newBuilder().addHeader("Authorization", GIT_TOKEN).build()
+            .addInterceptor { chain: Interceptor.Chain -> val request = chain
+                .request()
+                .newBuilder()
+                .addHeader("Authorization", GIT_TOKEN).build()
                 return@addInterceptor chain.proceed(request)
             }
             .build()
