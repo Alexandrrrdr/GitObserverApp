@@ -12,7 +12,7 @@ object Constants {
     const val DEF_PER_PAGE = 30
     const val START_PAGE = 1
     const val ZERO_PAGE = 0
-    const val GIT_TOKEN = "Bearer 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"
+    const val GIT_TOKEN = "Bearer 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"
 
     const val MAX_X_VALUE = 13
     const val GROUPS = 2

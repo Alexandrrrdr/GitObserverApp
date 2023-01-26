@@ -11,6 +11,7 @@ class DataToDomainStargazersListMapper() {
     @RequiresApi(Build.VERSION_CODES.O)
     fun map(from: List<DataStargazersListItem>): DomainStargazersListModel {
         val tmpList = arrayListOf<DomainStargazersListItem>()
+
         for (i in from.indices){
             val value = DomainStargazersListItem(
                 starred_at = dateConverter(from[i].starred_at),

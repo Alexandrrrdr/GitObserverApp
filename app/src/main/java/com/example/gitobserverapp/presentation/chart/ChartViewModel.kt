@@ -32,8 +32,8 @@ class ChartViewModel(private val getStargazersUseCase: GetStargazersUseCase) : V
     private var _chartPageObserveLiveData = MutableLiveData<Int>()
     val chartPageObserveLiveData: LiveData<Int> get() = _chartPageObserveLiveData
 
-    private var _stargazersLiveData: MutableLiveData<PresentationStargazersListModel?> = MutableLiveData<PresentationStargazersListModel?>()
-    val stargazersLiveData: MutableLiveData<PresentationStargazersListModel?> get() = _stargazersLiveData
+    private var _stargazersLiveData: MutableLiveData<PresentationStargazersListModel> = MutableLiveData<PresentationStargazersListModel>()
+    val stargazersLiveData: MutableLiveData<PresentationStargazersListModel> get() = _stargazersLiveData
 
     private var searchLiveData = mutableListOf<SearchModel>()
 
@@ -50,52 +50,36 @@ class ChartViewModel(private val getStargazersUseCase: GetStargazersUseCase) : V
                 page_number = page
             )
             tmp = DomainToPresentationStargazersListMapper().map(domainStargazersList)
-//            _stargazersLiveData.postValue(tmp)
             checkLoadedPage(tmp)
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun checkLoadedPage(list: PresentationStargazersListModel) {
-            _chartViewState.postValue(ChartViewState.ViewContentMain)
-            Log.d("info", "size is ${list.stargazers_list.size}")
-//            loadNewPage()
-
-//        if (list.stargazers_list.isNotEmpty()) {
-//            loadNewPage()
-//        } else {
-//
-//            compareYearsModel(stargazersLiveData.value!!.stargazers_list)
-//        }
+        _chartViewState.postValue(ChartViewState.ViewContentMain)
         compareYearsModel(list = list.stargazers_list)
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun loadNewPage() {
-        page++
-        getStargazersList()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun compareYearsModel(list: List<PresentationStargazersListItem>) {
 
         val tmpMatchedList = mutableListOf<BarChartModel>()
-        val endDate = list[list.lastIndex].starred_at.year
-        var startDate = list[Constants.ZERO_PAGE].starred_at.year
+        var endDate = list[list.lastIndex].starred_at.year
+        val startDate = list[Constants.ZERO_PAGE].starred_at.year
 
-        while (startDate <= endDate) {
+        while (endDate >= startDate) {
             val tmpUsers = mutableListOf<PresentationStargazersListItem>()
-            val list1 = list.filter { it.starred_at.year == startDate }
+            val list1 = list.filter { it.starred_at.year == endDate }
             for (i in list1.indices) {
                 tmpUsers.add(i, list1[i])
             }
             tmpMatchedList.add(
                 element = BarChartModel(
-                    period = startDate,
+                    period = endDate,
                     userInfo = tmpUsers
                 )
             )
-            startDate++
+            endDate--
         }
         setBarChartYearsData(tmpMatchedList)
     }

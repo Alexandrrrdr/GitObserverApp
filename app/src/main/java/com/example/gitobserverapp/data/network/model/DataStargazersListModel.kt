@@ -1,7 +1,7 @@
 package com.example.gitobserverapp.data.network.model
 
 data class DataStargazersListModel(
-    val items: ArrayList<DataStargazersListItem>
+    val items: List<DataStargazersListItem>
 )
 
 data class DataStargazersListItem(

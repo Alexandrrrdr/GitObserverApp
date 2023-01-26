@@ -20,6 +20,7 @@ import com.example.gitobserverapp.databinding.FragmentChartBinding
 import com.example.gitobserverapp.presentation.chart.chart_helper.ChartViewState
 import com.example.gitobserverapp.presentation.chart.model.BarChartModel
 import com.example.gitobserverapp.presentation.chart.model.PresentationStargazersListItem
+import com.example.gitobserverapp.presentation.chart.model.PresentationStargazersListModel
 import com.example.gitobserverapp.presentation.details.DetailsViewModel
 import com.example.gitobserverapp.utils.network.NetworkStatusHelper
 import com.github.mikephil.charting.charts.BarChart
@@ -262,7 +263,11 @@ class ChartFragment : Fragment() {
         barChart.description.isEnabled = false
         barChart.axisRight.isEnabled = false
         barChart.isDragEnabled = false
-        barChart.setVisibleXRangeMaximum(10f)
+        if (barEntryList.size > 5){
+            barChart.setVisibleXRangeMaximum(5f)
+        } else {
+            barChart.setVisibleXRangeMaximum(barEntryList.size.toFloat())
+        }
         barChart.animateY(1000)
         barChart.animateX(1000)
 
@@ -317,14 +322,8 @@ class ChartFragment : Fragment() {
         barEntryList.clear()
         barLabelList.clear()
 
-        val tmpList = arrayListOf<Int>()
-        for (i in list.indices){
-            tmpList.add(list[i].period)
-        }
-        val reverseList: List<Int> = tmpList.reversed()
-
         for (i in list.indices) {
-            barLabelList.add(i, reverseList[i].toString())
+            barLabelList.add(i, list[i].period.toString())
             Log.d("info", "${list[i].period}")
             barEntryList.add(
                 BarEntry(

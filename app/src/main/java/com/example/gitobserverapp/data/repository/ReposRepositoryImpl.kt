@@ -8,7 +8,7 @@ import com.example.gitobserverapp.domain.repository.DomainGetRepoByNameRepositor
 import com.example.gitobserverapp.presentation.chart.chart_helper.ChartViewState
 import com.example.gitobserverapp.utils.Constants
 
-class ReposRepositoryImpl(var gitRetrofitService: GitRetrofitService) :
+class ReposRepositoryImpl(var gitRetrofitService: GitRetrofitService):
     DomainGetRepoByNameRepository {
 
     override suspend fun getData(searchWord: String, page: Int): DomainReposListModel {

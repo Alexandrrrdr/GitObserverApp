@@ -4,12 +4,13 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.example.gitobserverapp.data.mapping.stargazers.DataToDomainStargazersListMapper
 import com.example.gitobserverapp.data.network.GitRetrofitService
+import com.example.gitobserverapp.data.network.model.DataStargazersListItem
 import com.example.gitobserverapp.domain.model.DomainStargazersListModel
-import com.example.gitobserverapp.domain.model.DomainStargazersListItem
 import com.example.gitobserverapp.domain.repository.DomainGetStargazersRepository
 import com.example.gitobserverapp.utils.Constants
+import retrofit2.Response
 
-class StargazersRepositoryImpl(private var gitRetrofitService: GitRetrofitService):
+class StargazersRepositoryImpl(private var gitRetrofitService: GitRetrofitService) :
     DomainGetStargazersRepository {
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -18,22 +19,43 @@ class StargazersRepositoryImpl(private var gitRetrofitService: GitRetrofitServic
         owner_login: String,
         page_number: Int
     ): DomainStargazersListModel {
-        val tmpList = arrayListOf<DomainStargazersListItem>()
-        val apiResult = gitRetrofitService.getStarredData(
+        val tmpList = mutableListOf<DataStargazersListItem>()
+        var requestResult = loadPageAndNext(
+            gitRetrofitService = gitRetrofitService,
+            repo_name = repo_name,
+            owner_login = owner_login,
+            page_number = page_number
+        )
+        var tmpPage = 2
+        while (requestResult.body()?.isNotEmpty() == true) {
+            tmpList.addAll(requestResult.body()!!)
+            requestResult = loadPageAndNext(
+                gitRetrofitService = gitRetrofitService,
+                repo_name = repo_name,
+                owner_login = owner_login,
+                page_number = tmpPage)
+            tmpPage++
+        }
+        return DataToDomainStargazersListMapper().map(tmpList)
+    }
+
+    override suspend fun saveData(domainStargazersListModel: DomainStargazersListModel) {
+        TODO("Not yet implemented")
+    }
+
+    private suspend fun loadPageAndNext(
+        gitRetrofitService: GitRetrofitService,
+        repo_name: String,
+        owner_login: String,
+        page_number: Int
+    ): Response<List<DataStargazersListItem>> {
+        return gitRetrofitService.getStarredData(
             repo_name = repo_name,
             owner_login = owner_login,
             per_page = Constants.MAX_PER_PAGE,
             page = page_number
         )
-        if (apiResult.isSuccessful && apiResult.body() != null) {
-            return DataToDomainStargazersListMapper().map(apiResult.body()!!)
-        }
-        return DomainStargazersListModel(tmpList)
     }
-
-        override suspend fun saveData(domainStargazersListModel: DomainStargazersListModel) {
-            TODO("Not yet implemented")
-        }
 
 //    @RequiresApi(Build.VERSION_CODES.O)
 //    fun checkLoadedPage(list: DataStargazersListModel) {
