@@ -193,12 +193,6 @@ class ChartFragment : Fragment() {
             }
         }
 
-//        chartViewModel.stargazersLiveData.observe(viewLifecycleOwner){ list ->
-//            if (list != null) {
-//                compareYearsModel(list.stargazers_list)
-//            }
-//        }
-
         chartViewModel.barChartListLiveData.observe(viewLifecycleOwner) { barChartModelList ->
             initBarChart(barChartModelList)
         }
@@ -325,7 +319,6 @@ class ChartFragment : Fragment() {
 
         for (i in list.indices) {
             barLabelList.add(i, list[i].period.toString())
-//            Log.d("info", "Size is ${list[i].userInfo.size}")
             barEntryList.add(
                 BarEntry(
                     i.toFloat(),
