@@ -19,7 +19,7 @@ class ReposRepositoryImpl @Inject constructor(var gitRetrofitService: GitRetrofi
             q = searchWord,
             sort = Constants.SORT_BY,
             page = page,
-            per_page = Constants.DEF_PER_PAGE)
+            per_page = Constants.MAX_PER_PAGE)
         when(apiResult.code()){
             //Ok
             200 -> {
