@@ -7,7 +7,6 @@ object Constants {
     const val MAX_PER_PAGE = 100
     const val DEF_PER_PAGE = 30
     const val ZERO_PAGE = 0
-    const val GIT_TOKEN = "Bearer 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"
-
-
+    const val START_PAGE = 1
+    const val GIT_TOKEN = "Bearer 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"
 }

@@ -1,7 +1,6 @@
 package com.example.gitobserverapp.presentation.chart
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -13,7 +12,7 @@ import com.example.gitobserverapp.presentation.chart.model.*
 import com.example.gitobserverapp.presentation.mapping.stargazers.DomainToPresentationStargazersListMapper
 import com.example.gitobserverapp.utils.Constants
 import kotlinx.coroutines.launch
-import java.time.*
+import java.time.LocalDate
 
 class ChartViewModel(private val getStargazersUseCase: GetStargazersUseCase) : ViewModel() {
 
@@ -37,10 +36,12 @@ class ChartViewModel(private val getStargazersUseCase: GetStargazersUseCase) : V
 
     private var searchLiveData = mutableListOf<SearchModel>()
 
-    private var page = 1
+    init {
+        _chartPageObserveLiveData.value = 1
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun getStargazersList() {
+    fun getStargazersList(page: Int) {
         viewModelScope.launch {
             _chartViewState.postValue(ChartViewState.Loading)
             val tmpPresentationMapped: PresentationStargazersListModel
@@ -56,34 +57,52 @@ class ChartViewModel(private val getStargazersUseCase: GetStargazersUseCase) : V
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun compareYearsModel(list: List<PresentationStargazersListItem>) {
-        var endDate = list[list.lastIndex].starred_at.year
-        val startDate = list[Constants.ZERO_PAGE].starred_at.year
-        var todayYear = LocalDate.now().year
+
+        var endDateYear = list[list.lastIndex].starred_at.year
+        var startDateYear = list[Constants.ZERO_PAGE].starred_at.year
+        var todayDateYear = LocalDate.now().year
         val matchedListForBarChartModel = mutableListOf<BarChartModel>()
 
-        if (todayYear > endDate){
-            while (todayYear > endDate){
+        //If last stargazers starred date less than today year 2023 i fill empty data
+        if (todayDateYear >= endDateYear){
+            while (todayDateYear > endDateYear){
                 matchedListForBarChartModel.add(
                     element = BarChartModel(
-                        period = todayYear,
+                        period = todayDateYear,
                         userInfo = emptyList()
                     )
                 )
-                todayYear--
+                todayDateYear--
             }
         }
 
-        while (endDate > startDate) {
+        //stargazers started
+        while (endDateYear >= startDateYear) {
             val usersForBarChartData = mutableListOf<PresentationStargazersListItem>()
-
-            usersForBarChartData.addAll(list.filter { it.starred_at.year == endDate })
+            usersForBarChartData.addAll(list.filter { it.starred_at.year == endDateYear })
             matchedListForBarChartModel.add(
                 element = BarChartModel(
-                    period = endDate,
+                    period = endDateYear,
                     userInfo = usersForBarChartData
                 )
             )
-            endDate--
+            endDateYear--
+        }
+
+        val differ = todayDateYear - startDateYear
+        var tmpStartDay = 0
+        if ((differ % 5) != 0){
+            tmpStartDay = startDateYear - (5 - (differ % 5))
+
+            while (startDateYear >= tmpStartDay) {
+                matchedListForBarChartModel.add(
+                    element = BarChartModel(
+                        period = startDateYear,
+                        userInfo = emptyList()
+                    )
+                )
+                startDateYear--
+            }
         }
 
         setScreenState(ChartViewState.ViewContentMain)
@@ -98,10 +117,6 @@ class ChartViewModel(private val getStargazersUseCase: GetStargazersUseCase) : V
                 repoName = repoName
             )
         )
-    }
-
-    init {
-        _chartPageObserveLiveData.value = 1
     }
 
     fun setPageObserverLiveData(value: Int) {

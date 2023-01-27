@@ -6,10 +6,15 @@ import androidx.annotation.RequiresApi
 import com.example.gitobserverapp.data.mapping.stargazers.DataToDomainStargazersListMapper
 import com.example.gitobserverapp.data.network.GitRetrofitService
 import com.example.gitobserverapp.data.network.model.DataStargazersListItem
+import com.example.gitobserverapp.domain.model.DomainStargazersListItem
 import com.example.gitobserverapp.domain.model.DomainStargazersListModel
 import com.example.gitobserverapp.domain.repository.DomainGetStargazersRepository
+import com.example.gitobserverapp.presentation.chart.chart_helper.ChartViewState
+import com.example.gitobserverapp.presentation.chart.model.BarChartModel
+import com.example.gitobserverapp.presentation.chart.model.PresentationStargazersListItem
 import com.example.gitobserverapp.utils.Constants
 import retrofit2.Response
+import java.time.LocalDate
 import javax.inject.Inject
 
 class StargazersRepositoryImpl @Inject constructor(private var gitRetrofitService: GitRetrofitService) :
@@ -31,8 +36,6 @@ class StargazersRepositoryImpl @Inject constructor(private var gitRetrofitServic
         var tmpPage = 2
         while (requestResult.body()?.isNotEmpty() == true) {
 
-//            Log.d("info", requestResult.body()!!.size.toString())
-
             tmpList.addAll(requestResult.body()!!)
             requestResult = loadPageAndNext(
                 gitRetrofitService = gitRetrofitService,
@@ -41,6 +44,9 @@ class StargazersRepositoryImpl @Inject constructor(private var gitRetrofitServic
                 page_number = tmpPage)
             tmpPage++
         }
+
+
+
         return DataToDomainStargazersListMapper().map(tmpList)
     }
 
@@ -61,65 +67,4 @@ class StargazersRepositoryImpl @Inject constructor(private var gitRetrofitServic
             page = page_number
         )
     }
-
-//    @RequiresApi(Build.VERSION_CODES.O)
-//    fun checkLoadedPage(list: DataStargazersListModel) {
-//        if (list.isNotEmpty()) {
-//
-//        } else {
-//            parseChartData(requestBodyList, repoName = searchLiveData[Constants.ZERO_PAGE].repoName)
-//        }
-//    }
-//
-//    @RequiresApi(Build.VERSION_CODES.O)
-//    private fun loadNewPage() {
-//        page++
-//        getStargazersList()
-//    }
-//
-//    //Parse date format from String to LocalDate
-//    @RequiresApi(Build.VERSION_CODES.O)
-//    fun parseChartData(starredDataList: List<ListStargazersModel>, repoName: String) {
-//        val starParsedList = mutableListOf<StargazerModel>()
-//        var starredModel: StargazerModel
-//
-//        for (i in starredDataList.indices) {
-//            val localDate = dateConverter(starredDataList[i].data[i].starred_at)
-//            starredModel = StargazerModel(
-//                user = starredDataList[i].data[i].user,
-//                starredAt = localDate,
-//                repoName = repoName
-//            )
-//            starParsedList.add(i, starredModel)
-//        }
-//        _chartScreenState.postValue(ChartViewState.ViewContentMain)
-//        compareYearsModel(starParsedList)
-//    }
-//
-//    @RequiresApi(Build.VERSION_CODES.O)
-//    private fun compareYearsModel(list: List<StargazerModel>) {
-//
-//        val tmpMatchedList = mutableListOf<BarChartModel>()
-//        val endDate = list[list.lastIndex].starredAt.year
-//        var startDate = list[Constants.ZERO_PAGE].starredAt.year
-//
-//        while (startDate <= endDate) {
-//            val tmpUsers = mutableListOf<User>()
-//            val list1 = list.filter { it.starredAt.year == startDate }
-//            for (i in list1.indices) {
-//                tmpUsers.add(i, list1[i].user)
-//            }
-//            tmpMatchedList.add(
-//                element = BarChartModel(
-//                    period = startDate,
-//                    userInfo = tmpUsers
-//                )
-//            )
-//            startDate++
-//        }
-////        tmpMatchedList.addAll(tmpMatchedList.sortedBy { it.period })
-//        setBarChartYearsData(tmpMatchedList)
-//    }
-//
-
 }
