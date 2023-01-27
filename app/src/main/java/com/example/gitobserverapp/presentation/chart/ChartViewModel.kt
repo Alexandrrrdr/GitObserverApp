@@ -58,8 +58,21 @@ class ChartViewModel(private val getStargazersUseCase: GetStargazersUseCase) : V
     private fun compareYearsModel(list: List<PresentationStargazersListItem>) {
         var endDate = list[list.lastIndex].starred_at.year
         val startDate = list[Constants.ZERO_PAGE].starred_at.year
-
+        var todayYear = LocalDate.now().year
         val matchedListForBarChartModel = mutableListOf<BarChartModel>()
+
+        if (todayYear > endDate){
+            while (todayYear > endDate){
+                matchedListForBarChartModel.add(
+                    element = BarChartModel(
+                        period = todayYear,
+                        userInfo = emptyList()
+                    )
+                )
+                todayYear--
+            }
+        }
+
         while (endDate > startDate) {
             val usersForBarChartData = mutableListOf<PresentationStargazersListItem>()
 
@@ -72,6 +85,7 @@ class ChartViewModel(private val getStargazersUseCase: GetStargazersUseCase) : V
             )
             endDate--
         }
+
         setScreenState(ChartViewState.ViewContentMain)
         setBarChartYearsData(matchedListForBarChartModel)
     }

@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,6 +20,7 @@ import com.example.gitobserverapp.presentation.chart.chart_helper.ChartViewState
 import com.example.gitobserverapp.presentation.chart.model.BarChartModel
 import com.example.gitobserverapp.presentation.chart.model.PresentationStargazersListItem
 import com.example.gitobserverapp.presentation.details.DetailsViewModel
+import com.example.gitobserverapp.utils.Constants
 import com.example.gitobserverapp.utils.network.NetworkStatusHelper
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.XAxis
@@ -49,6 +49,7 @@ class ChartFragment : Fragment() {
     private var repoOwnerName = ""
     private var repoCreatedAt = ""
     private var page = 1
+    private var amountOfPagesForGraph = 0
 
     //    private lateinit var internet: InternetConnectionLiveData
     private lateinit var networkStatus: NetworkStatusHelper
@@ -58,6 +59,7 @@ class ChartFragment : Fragment() {
     private lateinit var barchartGraph: BarChart
     private var barEntryList = mutableListOf<BarEntry>()
     private var barLabelList = mutableListOf<String>()
+    private var barChartListFromViewModel = mutableListOf<BarChartModel>()
 
 
     private lateinit var chartViewModel: ChartViewModel
@@ -91,7 +93,7 @@ class ChartFragment : Fragment() {
 
         chartViewModel.setSearchLiveData(repoOwnerName = repoOwnerName, repoName = repoName)
 
-        radioButtonClick()
+        radioButtonClickListener()
         nextPageClick()
         prevPageClick()
         renderUi()
@@ -102,6 +104,7 @@ class ChartFragment : Fragment() {
         binding.prevPage.setOnClickListener {
             chartViewModel.setPageObserverLiveData(page - 1)
             page--
+            initBarChart(list = barChartListFromViewModel, page = page)
         }
     }
 
@@ -110,19 +113,14 @@ class ChartFragment : Fragment() {
         binding.nextPage.setOnClickListener {
             chartViewModel.setPageObserverLiveData(page + 1)
             page++
+            initBarChart(list = barChartListFromViewModel, page = page)
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun radioButtonClick() {
-        binding.radioButtonGroup.setOnCheckedChangeListener { _, isChecked ->
-//            chartViewModel.setCheckedRadioButton(isChecked)
-//                chartViewModel.getStargazersList()
-        }
-
+    private fun radioButtonClickListener() {
         binding.radioBtnYears.setOnClickListener {
             chartViewModel.getStargazersList()
-
         }
 
         binding.radioBtnMonths.setOnClickListener{
@@ -194,7 +192,8 @@ class ChartFragment : Fragment() {
         }
 
         chartViewModel.barChartListLiveData.observe(viewLifecycleOwner) { barChartModelList ->
-            initBarChart(barChartModelList)
+            barChartListFromViewModel.addAll(barChartModelList)
+            initBarChart(barChartModelList, 1)
         }
     }
 
@@ -231,10 +230,10 @@ class ChartFragment : Fragment() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun initBarChart(list: List<BarChartModel>) {
+    private fun initBarChart(list: List<BarChartModel>, page: Int) {
 
         barchartGraph = binding.barChart
-        createBarChartData(list)
+        createBarChartData(list, page)
         barDataSet = BarDataSet(barEntryList, "")
         val barData = BarData(barDataSet)
 
@@ -257,12 +256,12 @@ class ChartFragment : Fragment() {
         barchartGraph.axisRight.isEnabled = false
         barchartGraph.isDragEnabled = false
 
-        //Check size of list
-//        if (barEntryList.size > 5){
-            barchartGraph.setVisibleXRangeMaximum(13f)
-//        } else {
-//            barChart.setVisibleXRangeMaximum(barEntryList.size.toFloat())
-//        }
+        //Showing depend on page number
+        if (barLabelList.size >= 5){
+            barchartGraph.setVisibleXRangeMaximum(5f)
+        } else {
+            barchartGraph.setVisibleXRangeMaximum(barLabelList.size.toFloat())
+        }
         barchartGraph.animateY(1000)
         barchartGraph.animateX(1000)
 
@@ -295,12 +294,20 @@ class ChartFragment : Fragment() {
                 val userList = barEntryList[x].data
 
                 if (userList is List<*>){
-                    getViaPoints(userList)?.let {
-                        detailsViewModel.setUserList(it)
+                    getViaPoints(userList)?.let { list ->
+                        if (list.isNotEmpty()) {
+                            detailsViewModel.setUserList(list)
+                            val direction =
+                                ChartFragmentDirections.actionChartFragmentToDetailsFragment(
+                                    timePeriod = year,
+                                    amountUsers = barEntryList.size
+                                )
+                            findNavController().navigate(directions = direction)
+                        }
+                        Snackbar.make(binding.root, "No users in this period", Snackbar.LENGTH_SHORT).show()
                     }
                 }
-                val direction = ChartFragmentDirections.actionChartFragmentToDetailsFragment(timePeriod = year, amountUsers = barEntryList.size)
-                findNavController().navigate(directions = direction)
+
             }
             override fun onNothingSelected() {}
         })
@@ -313,12 +320,23 @@ class ChartFragment : Fragment() {
             .apply { if (size != list.size) return null }
     }
 
-    private fun createBarChartData(list: List<BarChartModel>) {
+    private fun createBarChartData(list: List<BarChartModel>, page: Int) {
         barEntryList.clear()
         barLabelList.clear()
 
+        val leftItems = list.size % 5
+        val maxPage
+
         for (i in list.indices) {
             barLabelList.add(i, list[i].period.toString())
+            if (list[i].userInfo.isEmpty()){
+                barEntryList.add(
+                    BarEntry(
+                        i.toFloat(),
+                        list[i].userInfo.size.toFloat()
+                    )
+                )
+            }
             barEntryList.add(
                 BarEntry(
                     i.toFloat(),
