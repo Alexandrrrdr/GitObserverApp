@@ -272,11 +272,6 @@ class ChartFragment : Fragment() {
 
         //Showing depend on page number
         barchartGraph.setVisibleXRangeMaximum(5f)
-//        if (barLabelList.size >= 5){
-//            barchartGraph.setVisibleXRangeMaximum(5f)
-//        } else {
-//            barchartGraph.setVisibleXRangeMaximum(barLabelList.size.toFloat())
-//        }
         barchartGraph.animateY(1000)
         barchartGraph.animateX(1000)
 

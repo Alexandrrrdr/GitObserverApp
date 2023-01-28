@@ -63,8 +63,8 @@ class ChartViewModel(private val getStargazersUseCase: GetStargazersUseCase) : V
         var todayDateYear = LocalDate.now().year
         val matchedListForBarChartModel = mutableListOf<BarChartModel>()
 
-        //If last stargazers starred date less than today year 2023 i fill empty data
-        if (todayDateYear >= endDateYear){
+        //If last stargazers starred date less than today year 2023 i fill empty data until starred
+        if (todayDateYear > endDateYear){
             while (todayDateYear > endDateYear){
                 matchedListForBarChartModel.add(
                     element = BarChartModel(
@@ -90,21 +90,19 @@ class ChartViewModel(private val getStargazersUseCase: GetStargazersUseCase) : V
         }
 
         val differ = todayDateYear - startDateYear
-        var tmpStartDay = 0
         if ((differ % 5) != 0){
-            tmpStartDay = startDateYear - (5 - (differ % 5))
+            val tmpStartDay = startDateYear - (5 - (differ % 5))
 
-            while (startDateYear >= tmpStartDay) {
+            while (startDateYear > tmpStartDay) {
+                startDateYear--
                 matchedListForBarChartModel.add(
                     element = BarChartModel(
                         period = startDateYear,
                         userInfo = emptyList()
                     )
                 )
-                startDateYear--
             }
         }
-
         setScreenState(ChartViewState.ViewContentMain)
         setBarChartYearsData(matchedListForBarChartModel)
     }
