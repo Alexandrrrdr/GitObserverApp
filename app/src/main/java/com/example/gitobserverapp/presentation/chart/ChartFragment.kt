@@ -106,7 +106,7 @@ class ChartFragment : Fragment() {
         binding.prevPage.setOnClickListener {
             chartViewModel.setPageObserverLiveData(page - 1)
             page--
-//            initBarChart(list = barChartListFromViewModel, page = page)
+            prepareListForChart(page = page, list = barChartListFromViewModel)
         }
     }
 
@@ -115,7 +115,7 @@ class ChartFragment : Fragment() {
         binding.nextPage.setOnClickListener {
             chartViewModel.setPageObserverLiveData(page + 1)
             page++
-//            initBarChart(list = barChartListFromViewModel, page = page)
+            prepareListForChart(page = page, list = barChartListFromViewModel)
         }
     }
 
@@ -326,49 +326,13 @@ class ChartFragment : Fragment() {
             .apply { if (size != list.size) return null }
     }
 
-
-    //TODO something wrong here
     private fun createBarChartData(list: List<BarChartModel>) {
         barEntryList.clear()
         barLabelList.clear()
-        val tmpListBarCharts = mutableListOf<BarChartModel>()
-
-        setBarLists(page = page, list = list)
-//        if (page == lastPage) {
-//            tmpListBarCharts.addAll(list)
-//            setBarLists(tmpListBarCharts = tmpListBarCharts, list =  list)
-//        } else {
-//            when(page){
-//                1-> {
-//                    tmpListBarCharts.addAll(list.slice(0..4))
-//                    setBarLists(tmpListBarCharts = tmpListBarCharts, list = list)
-//                }
-//                2 -> {
-//                    tmpListBarCharts.addAll(list.slice(5..9))
-//                    setBarLists(tmpListBarCharts = tmpListBarCharts, list = list)
-//                }
-//                3 -> {
-//                    tmpListBarCharts.addAll(list.slice(10..14))
-//                    setBarLists(tmpListBarCharts = tmpListBarCharts, list = list)
-//                }
-//                4 -> {
-//                    tmpListBarCharts.addAll(list.slice(15..19))
-//                    setBarLists(tmpListBarCharts = tmpListBarCharts, list = list)
-//                }
-//                5 -> {
-//                    tmpListBarCharts.addAll(list.slice(20..24))
-//                    setBarLists(tmpListBarCharts = tmpListBarCharts, list = list)
-//                }
-//                6 -> {
-//                    tmpListBarCharts.addAll(list.slice(25..29))
-//                    setBarLists(tmpListBarCharts = tmpListBarCharts, list = list)
-//                }
-//            }
-//        }
+        setBarLists(list = list)
     }
 
-    //TODO what is it doing here...
-    private fun setBarLists(page: Int, list: List<BarChartModel>){
+    private fun setBarLists(list: List<BarChartModel>){
         for (i in list.indices) {
             barLabelList.add(i, list[i].period.toString())
 
@@ -389,6 +353,36 @@ class ChartFragment : Fragment() {
                     list[i].userInfo
                 )
             )
+        }
+    }
+
+    private fun prepareListForChart(page: Int, list: List<BarChartModel>){
+        val tmpList = mutableListOf<BarChartModel>()
+        when(page){
+            1 -> {
+                tmpList.addAll(list.slice(0..4))
+                Log.d("info", "${tmpList[0].userInfo.size}")
+            }
+            2 -> {
+                tmpList.addAll(list.slice(5..9))
+                Log.d("info", "${tmpList[0].userInfo.size}")
+            }
+            3 -> {
+                tmpList.addAll(list.slice(10..14))
+                Log.d("info", "${tmpList[0].userInfo.size}")
+            }
+            4 -> {
+                tmpList.addAll(list.slice(15..19))
+                Log.d("info", "${tmpList[0].userInfo.size}")
+            }
+            5 -> {
+                tmpList.addAll(list.slice(20..24))
+                Log.d("info", "${tmpList[0].userInfo.size}")
+            }
+            6 -> {
+                tmpList.addAll(list.slice(25..29))
+                Log.d("info", "${tmpList[0].userInfo.size}")
+            }
         }
     }
 
