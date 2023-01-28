@@ -336,7 +336,7 @@ class ChartFragment : Fragment() {
         for (i in list.indices) {
             barLabelList.add(i, list[i].period.toString())
 
-            Log.d("info", "${list[i].period}")
+//            Log.d("info", "${list[i].period}")
 
             if (list[i].userInfo.isEmpty()){
                 barEntryList.add(
@@ -358,32 +358,43 @@ class ChartFragment : Fragment() {
 
     private fun prepareListForChart(page: Int, list: List<BarChartModel>){
         val tmpList = mutableListOf<BarChartModel>()
-        when(page){
-            1 -> {
-                tmpList.addAll(list.slice(0..4))
-                Log.d("info", "${tmpList[0].userInfo.size}")
-            }
-            2 -> {
-                tmpList.addAll(list.slice(5..9))
-                Log.d("info", "${tmpList[0].userInfo.size}")
-            }
-            3 -> {
-                tmpList.addAll(list.slice(10..14))
-                Log.d("info", "${tmpList[0].userInfo.size}")
-            }
-            4 -> {
-                tmpList.addAll(list.slice(15..19))
-                Log.d("info", "${tmpList[0].userInfo.size}")
-            }
-            5 -> {
-                tmpList.addAll(list.slice(20..24))
-                Log.d("info", "${tmpList[0].userInfo.size}")
-            }
-            6 -> {
-                tmpList.addAll(list.slice(25..29))
-                Log.d("info", "${tmpList[0].userInfo.size}")
-            }
+
+        for (i in list.indices){
+            Log.d("info", "${list[i].period}")
         }
+//        Log.d("info", "incoming list ${list.size}")
+//        when(page){
+//            1 -> {
+//                tmpList.clear()
+//                tmpList.addAll(list.slice(0..4))
+//                Log.d("info", "${tmpList.size}")
+//            }
+//            2 -> {
+//                tmpList.clear()
+//                tmpList.addAll(list.slice(5..9))
+//                Log.d("info", "${tmpList.size}")
+//            }
+//            3 -> {
+//                tmpList.clear()
+//                tmpList.addAll(list.slice(10..14))
+//                Log.d("info", "${tmpList.size}")
+//            }
+//            4 -> {
+//                tmpList.clear()
+//                tmpList.addAll(list.slice(15..19))
+//                Log.d("info", "${tmpList.size}")
+//            }
+//            5 -> {
+//                tmpList.clear()
+//                tmpList.addAll(list.slice(20..24))
+//                Log.d("info", "${tmpList.size}")
+//            }
+//            6 -> {
+//                tmpList.clear()
+//                tmpList.addAll(list.slice(25..29))
+//                Log.d("info", "page is $page last page is $lastPage")
+//            }
+//        }
     }
 
     private fun setLastPage(list: List<BarChartModel>){

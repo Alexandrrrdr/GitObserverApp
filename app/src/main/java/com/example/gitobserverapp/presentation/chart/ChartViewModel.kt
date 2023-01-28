@@ -1,6 +1,7 @@
 package com.example.gitobserverapp.presentation.chart
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -89,12 +90,12 @@ class ChartViewModel(private val getStargazersUseCase: GetStargazersUseCase) : V
             endDateYear--
         }
 
-        val differ = todayDateYear - startDateYear
-        if ((differ % 5) != 0){
+        val differ = (LocalDate.now().year - startDateYear) % 5
+        if (differ != 0){
             val tmpStartDay = startDateYear - (5 - (differ % 5))
-
             while (startDateYear > tmpStartDay) {
                 startDateYear--
+
                 matchedListForBarChartModel.add(
                     element = BarChartModel(
                         period = startDateYear,
