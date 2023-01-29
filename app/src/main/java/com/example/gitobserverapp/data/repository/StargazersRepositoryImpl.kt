@@ -44,9 +44,6 @@ class StargazersRepositoryImpl @Inject constructor(private var gitRetrofitServic
                 page_number = tmpPage)
             tmpPage++
         }
-
-
-
         return DataToDomainStargazersListMapper().map(tmpList)
     }
 

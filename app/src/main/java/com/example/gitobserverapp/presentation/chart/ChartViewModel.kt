@@ -37,10 +37,6 @@ class ChartViewModel(private val getStargazersUseCase: GetStargazersUseCase) : V
 
     private var searchLiveData = mutableListOf<SearchModel>()
 
-    init {
-        _chartPageObserveLiveData.value = 1
-    }
-
     @RequiresApi(Build.VERSION_CODES.O)
     fun getStargazersList(page: Int) {
         viewModelScope.launch {
@@ -63,6 +59,13 @@ class ChartViewModel(private val getStargazersUseCase: GetStargazersUseCase) : V
         var startDateYear = list[Constants.ZERO_PAGE].starred_at.year
         var todayDateYear = LocalDate.now().year
         val matchedListForBarChartModel = mutableListOf<BarChartModel>()
+        var amountOfDates = 0
+        for (i in startDateYear..todayDateYear){
+            amountOfDates++
+        }
+        Log.d("info", "amount of dates $amountOfDates")
+        Log.d("info", "start date is $startDateYear")
+
 
         //If last stargazers starred date less than today year 2023 i fill empty data until starred
         if (todayDateYear > endDateYear){
@@ -90,12 +93,9 @@ class ChartViewModel(private val getStargazersUseCase: GetStargazersUseCase) : V
             endDateYear--
         }
 
-        val differ = (LocalDate.now().year - startDateYear) % 5
-        if (differ != 0){
-            val tmpStartDay = startDateYear - (5 - (differ % 5))
-            while (startDateYear > tmpStartDay) {
-                startDateYear--
-
+        if (amountOfDates < 5){
+            val tmpLeftDates = 5 -amountOfDates
+            for (i in 1..tmpLeftDates){
                 matchedListForBarChartModel.add(
                     element = BarChartModel(
                         period = startDateYear,
@@ -103,7 +103,23 @@ class ChartViewModel(private val getStargazersUseCase: GetStargazersUseCase) : V
                     )
                 )
             }
+        } else {
+            val differ = amountOfDates % 5
+            if (differ != 0){
+                val tmpStartDay = startDateYear - (5 - differ)
+                while (startDateYear > (tmpStartDay)) {
+                    startDateYear--
+
+                    matchedListForBarChartModel.add(
+                        element = BarChartModel(
+                            period = startDateYear,
+                            userInfo = emptyList()
+                        )
+                    )
+                }
+            }
         }
+
         setScreenState(ChartViewState.ViewContentMain)
         setBarChartYearsData(matchedListForBarChartModel)
     }
