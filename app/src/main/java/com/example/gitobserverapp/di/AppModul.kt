@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData
 import com.example.gitobserverapp.domain.usecase.GetReposUseCase
 import com.example.gitobserverapp.domain.usecase.GetStargazersUseCase
 import com.example.gitobserverapp.presentation.chart.ChartViewModelFactory
-import com.example.gitobserverapp.presentation.main.MainViewModelFactory
 import com.example.gitobserverapp.utils.network.NetworkStatusHelper
 import dagger.Module
 import dagger.Provides
@@ -18,10 +17,10 @@ class AppModul(private val context: Context) {
         return context
     }
 
-    @Provides
-    fun provideMainViewModelFactory(getReposUseCase: GetReposUseCase): MainViewModelFactory {
-        return MainViewModelFactory(getReposUseCase = getReposUseCase)
-    }
+//    @Provides
+//    fun provideMainViewModelFactory(getReposUseCase: GetReposUseCase): MainViewModelFactory {
+//        return MainViewModelFactory(getReposUseCase = getReposUseCase)
+//    }
 
     @Provides
     fun provideChartViewModelFactory(getStargazersUseCase: GetStargazersUseCase): ChartViewModelFactory{
