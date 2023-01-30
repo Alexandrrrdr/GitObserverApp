@@ -74,11 +74,11 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.14.2'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.5.3'
     implementation 'androidx.navigation:navigation-ui-ktx:2.5.3'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.14.2'
+    kapt 'com.github.bumptech.glide:compiler:4.14.2'
 
     //Room
     implementation "androidx.room:room-runtime:2.5.0"
-    annotationProcessor "androidx.room:room-compiler:2.5.0"
+    kapt "androidx.room:room-compiler:2.5.0"
 
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.appcompat:appcompat:1.6.0'
@@ -89,12 +89,15 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
     //Moxy
+//    implementation 'com.arello-mobile:moxy:1.5.5'
 //    implementation 'com.arello-mobile:moxy-android:1.5.5'
 //    implementation 'com.arello-mobile:moxy-app-compat:1.5.5'
-//    //noinspection GradleCompatible
-//    implementation 'com.android.support:appcompat-v7:27.1.1'
-//    implementation 'com.arello-mobile:moxy:1.5.5'
-    kapt 'com.arello-mobile:moxy-compiler:1.5.5'
-    implementation 'tech.schoolhelper:moxy-x-androidx:1.7.0'
-    implementation 'tech.schoolhelper:moxy-x-material:1.7.0'
+//    implementation 'tech.schoolhelper:moxy-x-androidx:1.7.0'
+//    kapt 'com.arello-mobile:moxy-compiler:1.5.5'
+//    implementation 'tech.schoolhelper:moxy-x-material:1.7.0'
+
+    //MOXY
+    implementation "com.github.moxy-community:moxy:2.2.2"
+    kapt "com.github.moxy-community:moxy-compiler:2.2.2"
+    implementation "com.github.moxy-community:moxy-androidx:2.2.2"
 }

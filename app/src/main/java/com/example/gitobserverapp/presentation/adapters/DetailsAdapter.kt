@@ -1,4 +1,4 @@
-package com.example.gitobserverapp.presentation.details
+package com.example.gitobserverapp.presentation.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

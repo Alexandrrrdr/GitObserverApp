@@ -1,4 +1,4 @@
-package com.example.gitobserverapp.presentation.main
+package com.example.gitobserverapp.presentation.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -9,7 +9,7 @@ import com.bumptech.glide.Glide
 import com.example.gitobserverapp.databinding.RecItemBinding
 import com.example.gitobserverapp.presentation.main.model.RepoItem
 
-class RepoSearchAdapter(private val listener: Listener): RecyclerView.Adapter<RepoSearchAdapter.ViewHolder>() {
+class MainSearchAdapters(private val listener: Listener): RecyclerView.Adapter<MainSearchAdapters.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = let { RecItemBinding.inflate(LayoutInflater.from(parent.context), parent, false) }

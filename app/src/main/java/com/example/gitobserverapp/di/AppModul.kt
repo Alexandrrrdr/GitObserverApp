@@ -1,10 +1,9 @@
 package com.example.gitobserverapp.di
 
 import android.content.Context
-import androidx.lifecycle.LiveData
-import com.example.gitobserverapp.domain.usecase.GetReposUseCase
 import com.example.gitobserverapp.domain.usecase.GetStargazersUseCase
-import com.example.gitobserverapp.presentation.chart.ChartViewModelFactory
+import com.example.gitobserverapp.presentation.ui.ChartViewModelFactory
+//import com.example.gitobserverapp.presentation.ui.ChartViewModelFactory
 import com.example.gitobserverapp.utils.network.NetworkStatusHelper
 import dagger.Module
 import dagger.Provides
@@ -23,7 +22,7 @@ class AppModul(private val context: Context) {
 //    }
 
     @Provides
-    fun provideChartViewModelFactory(getStargazersUseCase: GetStargazersUseCase): ChartViewModelFactory{
+    fun provideChartViewModelFactory(getStargazersUseCase: GetStargazersUseCase): ChartViewModelFactory {
         return ChartViewModelFactory(getStargazersUseCase = getStargazersUseCase)
     }
 

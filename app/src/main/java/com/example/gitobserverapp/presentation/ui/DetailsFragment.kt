@@ -1,8 +1,7 @@
-package com.example.gitobserverapp.presentation.details
+package com.example.gitobserverapp.presentation.ui
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +10,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gitobserverapp.databinding.FragmentDetailsBinding
-import com.example.gitobserverapp.presentation.chart.ChartFragmentArgs
+import com.example.gitobserverapp.presentation.adapters.DetailsAdapter
 
 class DetailsFragment : Fragment() {
 

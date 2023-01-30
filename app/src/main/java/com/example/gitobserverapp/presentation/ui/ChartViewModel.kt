@@ -1,4 +1,4 @@
-package com.example.gitobserverapp.presentation.chart
+package com.example.gitobserverapp.presentation.ui
 
 import android.os.Build
 import android.util.Log

@@ -1,9 +1,9 @@
-package com.example.gitobserverapp.presentation.main
+package com.example.gitobserverapp.presentation.views
 
-import com.arellomobile.mvp.MvpView
-import com.arellomobile.mvp.viewstate.strategy.AddToEndStrategy
-import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
 import com.example.gitobserverapp.presentation.main.model.RepoItem
+import moxy.MvpView
+import moxy.viewstate.strategy.AddToEndStrategy
+import moxy.viewstate.strategy.StateStrategyType
 
 @StateStrategyType(value = AddToEndStrategy::class)
 interface MainSearchView: MvpView {

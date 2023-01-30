@@ -1,9 +1,9 @@
 package com.example.gitobserverapp.di
 
-import com.example.gitobserverapp.presentation.chart.ChartFragment
-import com.example.gitobserverapp.presentation.chart.ChartViewModel
+import com.example.gitobserverapp.presentation.ui.ChartFragment
+import com.example.gitobserverapp.presentation.ui.ChartViewModel
 //import com.example.gitobserverapp.presentation.main.MainFragment
-import com.example.gitobserverapp.presentation.main.MainSearchFragment
+import com.example.gitobserverapp.presentation.ui.MainSearchFragment
 import dagger.Component
 import javax.inject.Singleton
 
@@ -12,6 +12,6 @@ import javax.inject.Singleton
 interface AppComponent {
 //    fun inject(mainFragment: MainFragment)
     fun inject(chartFragment: ChartFragment)
-//    fun inject(chartViewModel: ChartViewModel)
+    fun inject(chartViewModel: ChartViewModel)
     fun inject(mainSearchFragment: MainSearchFragment)
 }

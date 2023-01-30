@@ -1,34 +1,36 @@
-package com.example.gitobserverapp.presentation.main
+package com.example.gitobserverapp.presentation.ui
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
-import androidx.navigation.fragment.findNavController
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.arellomobile.mvp.MvpAppCompatFragment
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.example.gitobserverapp.App
 import com.example.gitobserverapp.R
 import com.example.gitobserverapp.databinding.FragmentMainBinding
 import com.example.gitobserverapp.domain.usecase.GetReposUseCase
+import com.example.gitobserverapp.presentation.presenters.MainSearchPresenter
+import com.example.gitobserverapp.presentation.adapters.MainSearchAdapters
 import com.example.gitobserverapp.presentation.main.model.RepoItem
+import com.example.gitobserverapp.presentation.views.MainSearchView
 import com.example.gitobserverapp.utils.Constants
+import kotlinx.coroutines.*
+import moxy.MvpAppCompatFragment
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
+import okhttp3.Dispatcher
 import javax.inject.Inject
 
-class MainSearchFragment(
-
-): Fragment(), MainSearchView, RepoSearchAdapter.Listener {
+class MainSearchFragment: MvpAppCompatFragment(), MainSearchView, MainSearchAdapters.Listener {
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
 
-    private val repoSearchAdapter: RepoSearchAdapter by lazy {
-        RepoSearchAdapter(this)
+    private val mainSearchAdapters: MainSearchAdapters by lazy {
+        MainSearchAdapters(this)
     }
 
     @Inject lateinit var getReposUseCase: GetReposUseCase
@@ -37,7 +39,7 @@ class MainSearchFragment(
     lateinit var mainSearchPresenter: MainSearchPresenter
 
     @ProvidePresenter
-    fun provideMainSearchPresenter(): MainSearchPresenter{
+    fun provideMainSearchPresenter(): MainSearchPresenter {
         return MainSearchPresenter(getReposUseCase = getReposUseCase)
     }
 
@@ -60,7 +62,8 @@ class MainSearchFragment(
         recyclerViewInit()
 
         binding.btnSearch.setOnClickListener {
-            mainSearchPresenter.loadData(searchName = binding.edtTxtInput.text.toString(), page = Constants.START_PAGE)
+                mainSearchPresenter.loadData(searchName = binding.edtTxtInput.text.toString(), page = Constants.START_PAGE)
+
         }
     }
 
@@ -69,7 +72,7 @@ class MainSearchFragment(
         binding.txtError.visibility = View.GONE
         binding.networkError.root.visibility = View.GONE
         binding.btnSearch.isEnabled = false
-        repoSearchAdapter.differ.submitList(emptyList())
+        mainSearchAdapters.differ.submitList(emptyList())
     }
 
     override fun showSuccess(list: List<RepoItem>) {
@@ -77,7 +80,7 @@ class MainSearchFragment(
         binding.networkError.root.visibility = View.GONE
         binding.txtError.visibility = View.GONE
         binding.btnSearch.isEnabled = true
-        repoSearchAdapter.differ.submitList(list)
+        mainSearchAdapters.differ.submitList(list)
     }
 
     override fun showError(error: String) {
@@ -86,7 +89,7 @@ class MainSearchFragment(
         binding.txtError.visibility = View.VISIBLE
         binding.txtError.text = error
         binding.btnSearch.isEnabled = true
-        repoSearchAdapter.differ.submitList(emptyList())
+        mainSearchAdapters.differ.submitList(emptyList())
     }
 
     override fun showNetworkError() {
@@ -94,7 +97,7 @@ class MainSearchFragment(
         binding.networkError.root.visibility = View.VISIBLE
         binding.txtError.visibility = View.GONE
         binding.btnSearch.isEnabled = false
-        repoSearchAdapter.differ.submitList(emptyList())
+        mainSearchAdapters.differ.submitList(emptyList())
     }
 
     override fun onClick(item: RepoItem) {
@@ -106,13 +109,12 @@ class MainSearchFragment(
             repoOwnerName = repoOwnerLogin,
             repoCreatedAt = repoCreatedAt
         )
-
+        requireActivity().findNavController(R.id.fragment_holder).navigate(directions = direction)
     }
 
     private fun recyclerViewInit() {
         binding.recView.layoutManager = LinearLayoutManager(requireActivity())
         binding.recView.setHasFixedSize(true)
-        binding.recView.adapter = repoSearchAdapter
+        binding.recView.adapter = mainSearchAdapters
     }
-
 }
