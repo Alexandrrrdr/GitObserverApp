@@ -2,7 +2,9 @@ package com.example.gitobserverapp.di
 
 import com.example.gitobserverapp.data.network.GitRetrofitService
 import com.example.gitobserverapp.utils.Constants
-import com.example.gitobserverapp.utils.Constants.GIT_TOKEN
+import com.example.gitobserverapp.utils.Constants.END_YOKEN
+import com.example.gitobserverapp.utils.Constants.GIT_YOKEN
+import com.example.gitobserverapp.utils.Constants.START_YOKEN
 import dagger.Module
 import dagger.Provides
 import okhttp3.*
@@ -30,7 +32,7 @@ class NetworkModule {
             .addInterceptor { chain: Interceptor.Chain -> val request = chain
                 .request()
                 .newBuilder()
-                .addHeader("Authorization", GIT_TOKEN).build()
+                .addHeader("Authorization", GIT_YOKEN + START_YOKEN + END_YOKEN).build()
                 return@addInterceptor chain.proceed(request)
             }
             .build()

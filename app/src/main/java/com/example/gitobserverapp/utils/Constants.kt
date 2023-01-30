@@ -8,5 +8,7 @@ object Constants {
     const val DEF_PER_PAGE = 30
     const val ZERO_PAGE = 0
     const val START_PAGE = 1
-    const val GIT_TOKEN = "Bearer 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"
+    const val GIT_YOKEN = "Bearer "
+    const val START_YOKEN = "ghp_hWq5DYHKUNiLKIc8"
+    const val END_YOKEN = "rv1NpAnVKGGShT4XT6xQ"
 }
