@@ -1,8 +1,8 @@
 package com.example.gitobserverapp.presentation.mapping.repos
 
 import com.example.gitobserverapp.domain.model.DomainReposListModel
-import com.example.gitobserverapp.presentation.main.model.RepoItem
-import com.example.gitobserverapp.presentation.main.model.ReposListModel
+import com.example.gitobserverapp.presentation.screens.main.RepoItem
+import com.example.gitobserverapp.presentation.screens.main.ReposListModel
 import com.example.gitobserverapp.utils.BaseMap
 
 class DomainToPresentationReposListMapper: BaseMap<DomainReposListModel, ReposListModel>() {

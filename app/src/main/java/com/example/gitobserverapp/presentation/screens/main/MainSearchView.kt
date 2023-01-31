@@ -1,6 +1,5 @@
-package com.example.gitobserverapp.presentation.views
+package com.example.gitobserverapp.presentation.screens.main
 
-import com.example.gitobserverapp.presentation.main.model.RepoItem
 import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndStrategy
 import moxy.viewstate.strategy.StateStrategyType

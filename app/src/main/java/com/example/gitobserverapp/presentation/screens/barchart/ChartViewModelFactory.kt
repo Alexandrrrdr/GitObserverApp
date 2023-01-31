@@ -1,4 +1,4 @@
-package com.example.gitobserverapp.presentation.ui
+package com.example.gitobserverapp.presentation.screens.barchart
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

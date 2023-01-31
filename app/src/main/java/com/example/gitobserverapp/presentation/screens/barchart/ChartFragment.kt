@@ -1,4 +1,4 @@
-package com.example.gitobserverapp.presentation.ui
+package com.example.gitobserverapp.presentation.screens.barchart
 
 import android.content.Context
 import android.graphics.Color
@@ -19,6 +19,7 @@ import com.example.gitobserverapp.databinding.FragmentChartBinding
 import com.example.gitobserverapp.presentation.chart.chart_helper.ChartViewState
 import com.example.gitobserverapp.presentation.chart.model.BarChartModel
 import com.example.gitobserverapp.presentation.chart.model.PresentationStargazersListItem
+import com.example.gitobserverapp.presentation.screens.details.DetailsViewModel
 import com.example.gitobserverapp.utils.Constants
 import com.example.gitobserverapp.utils.network.NetworkStatusHelper
 import com.github.mikephil.charting.charts.BarChart

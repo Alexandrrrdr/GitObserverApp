@@ -5,8 +5,7 @@ import com.example.gitobserverapp.data.network.GitRetrofitService
 import com.example.gitobserverapp.domain.model.DomainReposListModel
 import com.example.gitobserverapp.domain.model.Items
 import com.example.gitobserverapp.domain.repository.DomainGetRepoByNameRepository
-import com.example.gitobserverapp.presentation.chart.chart_helper.ChartViewState
-import com.example.gitobserverapp.presentation.main.main_helper.MainViewState
+import com.example.gitobserverapp.presentation.main_old.main_helper.MainViewState
 import com.example.gitobserverapp.utils.Constants
 import javax.inject.Inject
 

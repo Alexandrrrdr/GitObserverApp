@@ -1,4 +1,4 @@
-package com.example.gitobserverapp.presentation.adapters
+package com.example.gitobserverapp.presentation.screens.main
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.gitobserverapp.databinding.RecItemBinding
-import com.example.gitobserverapp.presentation.main.model.RepoItem
 
 class MainSearchAdapters(private val listener: Listener): RecyclerView.Adapter<MainSearchAdapters.ViewHolder>() {
 

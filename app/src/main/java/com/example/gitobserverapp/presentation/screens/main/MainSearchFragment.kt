@@ -1,8 +1,7 @@
-package com.example.gitobserverapp.presentation.ui
+package com.example.gitobserverapp.presentation.screens.main
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,16 +11,10 @@ import com.example.gitobserverapp.App
 import com.example.gitobserverapp.R
 import com.example.gitobserverapp.databinding.FragmentMainBinding
 import com.example.gitobserverapp.domain.usecase.GetReposUseCase
-import com.example.gitobserverapp.presentation.presenters.MainSearchPresenter
-import com.example.gitobserverapp.presentation.adapters.MainSearchAdapters
-import com.example.gitobserverapp.presentation.main.model.RepoItem
-import com.example.gitobserverapp.presentation.views.MainSearchView
 import com.example.gitobserverapp.utils.Constants
-import kotlinx.coroutines.*
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
-import okhttp3.Dispatcher
 import javax.inject.Inject
 
 class MainSearchFragment: MvpAppCompatFragment(), MainSearchView, MainSearchAdapters.Listener {

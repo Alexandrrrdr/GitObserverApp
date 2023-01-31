@@ -1,4 +1,4 @@
-package com.example.gitobserverapp.presentation.ui
+package com.example.gitobserverapp.presentation.screens.details
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

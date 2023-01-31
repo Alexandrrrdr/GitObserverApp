@@ -2,7 +2,7 @@ package com.example.gitobserverapp.di
 
 import android.content.Context
 import com.example.gitobserverapp.domain.usecase.GetStargazersUseCase
-import com.example.gitobserverapp.presentation.ui.ChartViewModelFactory
+import com.example.gitobserverapp.presentation.screens.barchart.ChartViewModelFactory
 //import com.example.gitobserverapp.presentation.ui.ChartViewModelFactory
 import com.example.gitobserverapp.utils.network.NetworkStatusHelper
 import dagger.Module

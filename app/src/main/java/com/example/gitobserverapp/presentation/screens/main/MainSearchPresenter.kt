@@ -1,13 +1,12 @@
-package com.example.gitobserverapp.presentation.presenters
+package com.example.gitobserverapp.presentation.screens.main
 
 import android.util.Log
 import com.example.gitobserverapp.domain.usecase.GetReposUseCase
-import com.example.gitobserverapp.presentation.main.model.RepoItem
 import com.example.gitobserverapp.presentation.mapping.repos.DomainToPresentationReposListMapper
-import com.example.gitobserverapp.presentation.views.MainSearchView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import moxy.InjectViewState
 import moxy.MvpPresenter
 
@@ -24,15 +23,21 @@ class MainSearchPresenter(
             viewState.showError("Search field is empty")
             return
         }
+
         viewState.showLoading()
         CoroutineScope(Dispatchers.IO).launch {
-            val domainReposList =
+            val domainReposList = withContext(Dispatchers.IO) {
                 getReposUseCase.getData(repo_name = searchName, page_number = page)
-            Log.d("info", "Test request ${domainReposList.items.size}")
-
-            reposList.addAll(DomainToPresentationReposListMapper().map(domainReposList).items)
+            }
+            if (domainReposList.items.isNotEmpty()) {
+                withContext(Dispatchers.Main){
+                    reposList.addAll(DomainToPresentationReposListMapper().map(domainReposList).items)
+                    viewState.showSuccess(reposList)
+                    Log.d("info", "Test request ${domainReposList.items.size}")
+                }
+            } else {
+                viewState.showError("No data from server")
+            }
         }
-        viewState.showSuccess(reposList)
-
     }
 }

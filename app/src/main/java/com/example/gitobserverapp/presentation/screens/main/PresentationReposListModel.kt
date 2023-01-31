@@ -1,4 +1,4 @@
-package com.example.gitobserverapp.presentation.main.model
+package com.example.gitobserverapp.presentation.screens.main
 
 data class ReposListModel(
     val items: List<RepoItem>

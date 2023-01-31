@@ -1,9 +1,8 @@
 package com.example.gitobserverapp.di
 
-import com.example.gitobserverapp.presentation.ui.ChartFragment
-import com.example.gitobserverapp.presentation.ui.ChartViewModel
-//import com.example.gitobserverapp.presentation.main.MainFragment
-import com.example.gitobserverapp.presentation.ui.MainSearchFragment
+import com.example.gitobserverapp.presentation.screens.barchart.ChartFragment
+import com.example.gitobserverapp.presentation.screens.barchart.ChartViewModel
+import com.example.gitobserverapp.presentation.screens.main.MainSearchFragment
 import dagger.Component
 import javax.inject.Singleton
 
