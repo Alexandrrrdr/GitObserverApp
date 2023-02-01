@@ -8,6 +8,7 @@ import com.example.gitobserverapp.utils.BaseMap
 class DomainToPresentationReposListMapper: BaseMap<DomainReposListModel, ReposListModel>() {
     override fun map(from: DomainReposListModel): ReposListModel {
         val tmpList = mutableListOf<RepoItem>()
+        val tmpConnectivity = from.hasNetwork
         for (i in from.items.indices){
             val value = RepoItem(
                 created_at = from.items[i].created_at,
@@ -19,6 +20,6 @@ class DomainToPresentationReposListMapper: BaseMap<DomainReposListModel, ReposLi
             )
             tmpList.add(i, value)
         }
-        return ReposListModel(tmpList)
+        return ReposListModel(tmpConnectivity, tmpList)
     }
 }

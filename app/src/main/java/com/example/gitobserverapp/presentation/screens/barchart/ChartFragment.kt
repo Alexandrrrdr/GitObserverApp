@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -16,10 +15,12 @@ import androidx.navigation.fragment.navArgs
 import com.example.gitobserverapp.App
 import com.example.gitobserverapp.R
 import com.example.gitobserverapp.databinding.FragmentChartBinding
+import com.example.gitobserverapp.domain.usecase.GetStargazersUseCase
 import com.example.gitobserverapp.presentation.chart.chart_helper.ChartViewState
 import com.example.gitobserverapp.presentation.chart.model.BarChartModel
 import com.example.gitobserverapp.presentation.chart.model.PresentationStargazersListItem
 import com.example.gitobserverapp.presentation.screens.details.DetailsViewModel
+import com.example.gitobserverapp.presentation.screens.main.MainSearchPresenter
 import com.example.gitobserverapp.utils.Constants
 import com.example.gitobserverapp.utils.network.NetworkStatusHelper
 import com.github.mikephil.charting.charts.BarChart
@@ -35,10 +36,23 @@ import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.github.mikephil.charting.utils.ColorTemplate
 import com.google.android.material.snackbar.Snackbar
+import moxy.MvpAppCompatFragment
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 import javax.inject.Inject
 
 
-class ChartFragment : Fragment() {
+class ChartFragment: MvpAppCompatFragment(), ChartView {
+
+    @Inject lateinit var getStargazersUseCase: GetStargazersUseCase
+
+    @InjectPresenter
+    lateinit var chartViewPresenter: ChartViewPresenter
+
+    @ProvidePresenter
+    fun provideChartViewPresenter(): ChartViewPresenter {
+        return ChartViewPresenter(getStargazersUseCase = getStargazersUseCase)
+    }
 
     private var _binding: FragmentChartBinding? = null
     private val binding get() = _binding!!
@@ -120,7 +134,7 @@ class ChartFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun radioButtonClickListener() {
         binding.radioBtnYears.setOnClickListener {
-            chartViewModel.getStargazersList(page = Constants.START_PAGE)
+            chartViewPresenter.getStargazersList(repoName = repoName, repoOwnerName = repoOwnerName, page = Constants.START_PAGE)
         }
 
         binding.radioBtnMonths.setOnClickListener{
@@ -139,40 +153,23 @@ class ChartFragment : Fragment() {
             binding.prevPage.isEnabled = page > 1
         }
 
-        networkStatus.observe(viewLifecycleOwner) { isConnected ->
-            if (isConnected) {
-                chartViewModel.setScreenState(ChartViewState.ViewContentMain)
-            } else {
-                chartViewModel.setScreenState(ChartViewState.NetworkError)
-            }
-        }
+//        networkStatus.checkNetwork(viewLifecycleOwner) { isConnected ->
+//            if (isConnected) {
+//                chartViewModel.setScreenState(ChartViewState.ViewContentMain)
+//            } else {
+//                chartViewModel.setScreenState(ChartViewState.NetworkError)
+//            }
+//        }
 
         chartViewModel.chartViewState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is ChartViewState.Error -> {
-                    disableNavigationButtons(value = 0)
-                    disableRadioButtons(value = false)
-                    binding.txtNetworkStatus.text = state.error
-                    binding.txtNetworkStatus.visibility = View.VISIBLE
-                    binding.progBarChart.visibility = View.GONE
                 }
                 is ChartViewState.Loading -> {
-                    disableNavigationButtons(value = 0)
-                    disableRadioButtons(value = false)
-                    binding.txtNetworkStatus.visibility = View.GONE
-                    binding.progBarChart.visibility = View.VISIBLE
                 }
                 is ChartViewState.ViewContentMain -> {
-                    disableNavigationButtons(value = 1)
-                    disableRadioButtons(value = true)
-                    binding.txtNetworkStatus.visibility = View.GONE
-                    binding.progBarChart.visibility = View.GONE
                 }
                 is ChartViewState.NetworkError -> {
-                    disableNavigationButtons(value = 0)
-                    disableRadioButtons(value = false)
-                    binding.txtNetworkStatus.visibility = View.VISIBLE
-                    binding.progBarChart.visibility = View.GONE
                 }
             }
         }
@@ -227,6 +224,37 @@ class ChartFragment : Fragment() {
                 binding.radioBtnWeeks.isEnabled = false
             }
         }
+    }
+
+    override fun showLoadPage() {
+        disableNavigationButtons(value = 0)
+        disableRadioButtons(value = false)
+        binding.txtNetworkStatus.visibility = View.GONE
+        binding.progBarChart.visibility = View.VISIBLE
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun showSuccessPage(list: List<BarChartModel>) {
+        disableNavigationButtons(value = 1)
+        disableRadioButtons(value = true)
+        binding.txtNetworkStatus.visibility = View.GONE
+        binding.progBarChart.visibility = View.GONE
+        initBarChart(list = list, page = page)
+    }
+
+    override fun showErrorPage(error: String) {
+        disableNavigationButtons(value = 0)
+        disableRadioButtons(value = false)
+        binding.txtNetworkStatus.text = error
+        binding.txtNetworkStatus.visibility = View.VISIBLE
+        binding.progBarChart.visibility = View.GONE
+    }
+
+    override fun showNetworkErrorPage() {
+        disableNavigationButtons(value = 0)
+        disableRadioButtons(value = false)
+        binding.txtNetworkStatus.visibility = View.VISIBLE
+        binding.progBarChart.visibility = View.GONE
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

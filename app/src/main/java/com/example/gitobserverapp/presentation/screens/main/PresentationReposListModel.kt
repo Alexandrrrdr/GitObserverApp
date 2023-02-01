@@ -1,6 +1,7 @@
 package com.example.gitobserverapp.presentation.screens.main
 
 data class ReposListModel(
+    val hasNetwork: Boolean,
     val items: List<RepoItem>
 )
 

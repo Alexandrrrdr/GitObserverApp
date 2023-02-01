@@ -1,6 +1,7 @@
 package com.example.gitobserverapp.domain.model
 
 data class DomainReposListModel(
+    val hasNetwork: Boolean,
     val items: List<Items>
 )
 

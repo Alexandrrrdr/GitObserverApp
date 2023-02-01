@@ -18,6 +18,6 @@ class DataToDomainRepoListMapper: BaseMap<DataReposListModel, DomainReposListMod
                     owner_login = from.items[i].owner.login)
                 tmpList.add(i, value)
             }
-        return DomainReposListModel(tmpList)
+        return DomainReposListModel(hasNetwork = true, tmpList)
     }
 }

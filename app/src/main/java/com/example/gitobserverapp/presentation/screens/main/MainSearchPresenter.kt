@@ -29,14 +29,16 @@ class MainSearchPresenter(
             val domainReposList = withContext(Dispatchers.IO) {
                 getReposUseCase.getData(repo_name = searchName, page_number = page)
             }
-            if (domainReposList.items.isNotEmpty()) {
+            if (domainReposList.hasNetwork) {
                 withContext(Dispatchers.Main){
                     reposList.addAll(DomainToPresentationReposListMapper().map(domainReposList).items)
                     viewState.showSuccess(reposList)
                     Log.d("info", "Test request ${domainReposList.items.size}")
                 }
             } else {
-                viewState.showError("No data from server")
+                withContext(Dispatchers.Main){
+                    viewState.showError("No data from server")
+                }
             }
         }
     }
