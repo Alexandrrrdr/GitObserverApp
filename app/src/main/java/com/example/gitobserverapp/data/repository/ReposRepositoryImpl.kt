@@ -27,7 +27,7 @@ class ReposRepositoryImpl @Inject constructor(
             q = searchWord,
             sort = Constants.SORT_BY,
             page = page,
-            per_page = Constants.MAX_PER_PAGE
+            per_page = Constants.DEF_PER_PAGE
         )
         if (apiResult.code() == 200 && apiResult.isSuccessful) {
             return DataToDomainRepoListMapper().map(apiResult.body()!!)
