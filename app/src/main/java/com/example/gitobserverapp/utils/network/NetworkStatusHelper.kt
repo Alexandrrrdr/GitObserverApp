@@ -4,8 +4,11 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class NetworkStatusHelper(private val context: Context): ConnectivityObserver {
+@Singleton
+class NetworkStatusHelper @Inject constructor(private val context: Context): ConnectivityObserver {
 
     override fun checkNetwork(): Boolean {
         val connectivityManager: ConnectivityManager =

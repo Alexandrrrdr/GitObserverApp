@@ -1,4 +1,4 @@
-package com.example.gitobserverapp.presentation.screens.barchart
+package com.example.gitobserverapp.presentation.delete_later
 
 import android.os.Build
 import android.util.Log

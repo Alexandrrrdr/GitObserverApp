@@ -1,13 +1,11 @@
 package com.example.gitobserverapp.data.repository
 
-import android.app.Application
 import android.content.Context
 import com.example.gitobserverapp.data.mapping.repos.DataToDomainRepoListMapper
 import com.example.gitobserverapp.data.network.GitRetrofitService
 import com.example.gitobserverapp.domain.model.DomainReposListModel
 import com.example.gitobserverapp.domain.model.Items
 import com.example.gitobserverapp.domain.repository.DomainGetRepoByNameRepository
-import com.example.gitobserverapp.presentation.main_old.main_helper.MainViewState
 import com.example.gitobserverapp.utils.Constants
 import com.example.gitobserverapp.utils.network.NetworkStatusHelper
 import javax.inject.Inject

@@ -17,7 +17,7 @@ import retrofit2.Response
 import java.time.LocalDate
 import javax.inject.Inject
 
-class StargazersRepositoryImpl @Inject constructor(private var gitRetrofitService: GitRetrofitService) :
+class StargazersRepositoryImpl @Inject constructor(private val gitRetrofitService: GitRetrofitService) :
     DomainGetStargazersRepository {
 
     @RequiresApi(Build.VERSION_CODES.O)

@@ -4,25 +4,20 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.gitobserverapp.App
-import com.example.gitobserverapp.R
 import com.example.gitobserverapp.databinding.FragmentChartBinding
 import com.example.gitobserverapp.domain.usecase.GetStargazersUseCase
-import com.example.gitobserverapp.presentation.chart.chart_helper.ChartViewState
 import com.example.gitobserverapp.presentation.chart.model.BarChartModel
 import com.example.gitobserverapp.presentation.chart.model.PresentationStargazersListItem
 import com.example.gitobserverapp.presentation.screens.details.DetailsViewModel
-import com.example.gitobserverapp.presentation.screens.main.MainSearchPresenter
-import com.example.gitobserverapp.utils.Constants
-import com.example.gitobserverapp.utils.network.NetworkStatusHelper
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
@@ -42,7 +37,8 @@ import moxy.presenter.ProvidePresenter
 import javax.inject.Inject
 
 
-class ChartFragment: MvpAppCompatFragment(), ChartView {
+class ChartFragment():
+    MvpAppCompatFragment(), ChartView {
 
     @Inject lateinit var getStargazersUseCase: GetStargazersUseCase
 
@@ -63,22 +59,15 @@ class ChartFragment: MvpAppCompatFragment(), ChartView {
     private var repoOwnerName = ""
     private var repoCreatedAt = ""
     private var page = 1
-    private var amountOfPagesForGraph = 0
-
-    //    private lateinit var internet: InternetConnectionLiveData
-    private lateinit var networkStatus: NetworkStatusHelper
+    private var lastPage = 1
 
     //Start creating barCharts
     private lateinit var barDataSet: BarDataSet
     private lateinit var barchartGraph: BarChart
     private var barEntryList = mutableListOf<BarEntry>()
     private var barLabelList = mutableListOf<String>()
-    private var barChartListFromViewModel = mutableListOf<BarChartModel>()
 
-
-    private lateinit var chartViewModel: ChartViewModel
-    @Inject
-    lateinit var chartViewModelFactory: ChartViewModelFactory
+    //TODO change LiveData to something other. For example Dagger implementation some class for change by data
     private val detailsViewModel: DetailsViewModel by activityViewModels()
 
     override fun onAttach(context: Context) {
@@ -91,8 +80,6 @@ class ChartFragment: MvpAppCompatFragment(), ChartView {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentChartBinding.inflate(inflater, container, false)
-        networkStatus = NetworkStatusHelper(requireContext())
-        chartViewModel = ViewModelProvider(this, chartViewModelFactory)[ChartViewModel::class.java]
         return binding.root
     }
 
@@ -105,97 +92,58 @@ class ChartFragment: MvpAppCompatFragment(), ChartView {
         repoCreatedAt = args.repoCreatedAt
         binding.repoName.text = repoName
 
-        chartViewModel.setSearchLiveData(repoOwnerName = repoOwnerName, repoName = repoName)
-
         radioButtonClickListener()
         nextPageClick()
         prevPageClick()
-        renderUi()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun prevPageClick() {
         binding.prevPage.setOnClickListener {
-            chartViewModel.setPageObserverLiveData(page - 1)
             page--
-            initBarChart(list = barChartListFromViewModel, page = page)
+            chartViewPresenter.prepareListForChart(page = page)
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun nextPageClick() {
         binding.nextPage.setOnClickListener {
-            chartViewModel.setPageObserverLiveData(page + 1)
             page++
-            initBarChart(list = barChartListFromViewModel, page = page)
+            chartViewPresenter.prepareListForChart(page = page)
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun radioButtonClickListener() {
         binding.radioBtnYears.setOnClickListener {
-            chartViewPresenter.getStargazersList(repoName = repoName, repoOwnerName = repoOwnerName, page = Constants.START_PAGE)
+            chartViewPresenter.getStargazersList(repoName = repoName, repoOwnerName = repoOwnerName)
         }
-
         binding.radioBtnMonths.setOnClickListener{
             Snackbar.make(binding.root, "Months", Snackbar.LENGTH_LONG).show()
         }
-
         binding.radioBtnWeeks.setOnClickListener {
             Snackbar.make(binding.root, "Weeks", Snackbar.LENGTH_LONG).show()
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun renderUi() {
-
-        chartViewModel.chartPageObserveLiveData.observe(viewLifecycleOwner) { page ->
-            binding.prevPage.isEnabled = page > 1
-        }
-
-//        networkStatus.checkNetwork(viewLifecycleOwner) { isConnected ->
-//            if (isConnected) {
-//                chartViewModel.setScreenState(ChartViewState.ViewContentMain)
-//            } else {
-//                chartViewModel.setScreenState(ChartViewState.NetworkError)
-//            }
-//        }
-
-        chartViewModel.chartViewState.observe(viewLifecycleOwner) { state ->
-            when (state) {
-                is ChartViewState.Error -> {
-                }
-                is ChartViewState.Loading -> {
-                }
-                is ChartViewState.ViewContentMain -> {
-                }
-                is ChartViewState.NetworkError -> {
-                }
+    private fun navigationButtonsController(lastPage: Int, page: Int) {
+            if (page == 1 && lastPage == 1) {
+                disableNavigationButtons(0)
+            } else if (page == lastPage && page != 1) {
+                disableNavigationButtons(3)
+            } else if (page == 1 && lastPage > 1) {
+                disableNavigationButtons(1)
+            } else if (page != 1 && page != lastPage) {
+                disableNavigationButtons(2)
             }
-        }
-
-        chartViewModel.radioButtonCheckedLiveData.observe(viewLifecycleOwner) { radioModel ->
-            when (radioModel.radioButton) {
-                R.id.radioBtnYears -> {
-                    binding.radioBtnYears.isChecked = true
-                }
-                R.id.radioBtnMonths -> {
-                    binding.radioBtnMonths.isChecked = true
-                }
-                R.id.radioBtnWeeks -> {
-                    binding.radioBtnWeeks.isChecked = true
-                }
-            }
-        }
-
-        chartViewModel.barChartListLiveData.observe(viewLifecycleOwner) { barChartModelList ->
-            barChartListFromViewModel.addAll(barChartModelList)
-            initBarChart(barChartModelList, 1)
-        }
     }
 
     private fun disableNavigationButtons(value: Int) {
         when (value) {
+            3 -> {
+                binding.nextPage.isEnabled = false
+                binding.prevPage.isEnabled = true
+            }
             2 -> {
                 binding.nextPage.isEnabled = true
                 binding.prevPage.isEnabled = true
@@ -234,12 +182,16 @@ class ChartFragment: MvpAppCompatFragment(), ChartView {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    override fun showSuccessPage(list: List<BarChartModel>) {
+    override fun showSuccessPage(list: List<BarChartModel>, lastPage: Int, page: Int) {
         disableNavigationButtons(value = 1)
         disableRadioButtons(value = true)
         binding.txtNetworkStatus.visibility = View.GONE
         binding.progBarChart.visibility = View.GONE
-        initBarChart(list = list, page = page)
+        this.lastPage = lastPage
+        this.page = page
+        Log.d("info", " page is - $page, last page is - $lastPage")
+        navigationButtonsController(lastPage = lastPage, page = page)
+        initBarChart(list = list)
     }
 
     override fun showErrorPage(error: String) {
@@ -258,10 +210,10 @@ class ChartFragment: MvpAppCompatFragment(), ChartView {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun initBarChart(list: List<BarChartModel>, page: Int) {
+    private fun initBarChart(list: List<BarChartModel>) {
 
         barchartGraph = binding.barChart
-        createBarChartData(list, page)
+        createBarChartData(list)
         barDataSet = BarDataSet(barEntryList, "")
         val barData = BarData(barDataSet)
 
@@ -284,12 +236,8 @@ class ChartFragment: MvpAppCompatFragment(), ChartView {
         barchartGraph.axisRight.isEnabled = false
         barchartGraph.isDragEnabled = false
 
-        //Showing depend on page number
-        if (barLabelList.size >= 5){
-            barchartGraph.setVisibleXRangeMaximum(5f)
-        } else {
-            barchartGraph.setVisibleXRangeMaximum(barLabelList.size.toFloat())
-        }
+        barchartGraph.setVisibleXRangeMaximum(5f)
+        barchartGraph.setVisibleXRangeMinimum(5f)
         barchartGraph.animateY(1000)
         barchartGraph.animateX(1000)
 
@@ -328,14 +276,12 @@ class ChartFragment: MvpAppCompatFragment(), ChartView {
                             val direction =
                                 ChartFragmentDirections.actionChartFragmentToDetailsFragment(
                                     timePeriod = year,
-                                    amountUsers = barEntryList.size
+                                    amountUsers = userList.size
                                 )
                             findNavController().navigate(directions = direction)
                         }
-                        Snackbar.make(binding.root, "No users in this period", Snackbar.LENGTH_SHORT).show()
                     }
                 }
-
             }
             override fun onNothingSelected() {}
         })
@@ -348,11 +294,9 @@ class ChartFragment: MvpAppCompatFragment(), ChartView {
             .apply { if (size != list.size) return null }
     }
 
-    private fun createBarChartData(list: List<BarChartModel>, page: Int) {
+    private fun createBarChartData(list: List<BarChartModel>) {
         barEntryList.clear()
         barLabelList.clear()
-
-        val leftItems = list.size % 5
 
         for (i in list.indices) {
             barLabelList.add(i, list[i].period.toString())
