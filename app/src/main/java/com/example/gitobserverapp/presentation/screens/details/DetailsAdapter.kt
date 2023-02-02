@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.gitobserverapp.R
 import com.example.gitobserverapp.databinding.DetailsItemBinding
-import com.example.gitobserverapp.presentation.chart.model.PresentationStargazersListItem
+import com.example.gitobserverapp.presentation.screens.barchart.PresentationStargazersListItem
 
 class DetailsAdapter(): RecyclerView.Adapter<DetailsAdapter.ViewHolder>() {
 

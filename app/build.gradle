@@ -67,9 +67,9 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-livedata-core:$viewModelVer"
 
     //Retrofit + moshi converter
-    def reetroMoshiVer = '2.9.0'
-    implementation "com.squareup.retrofit2:retrofit:$reetroMoshiVer"
-    implementation "com.squareup.retrofit2:converter-moshi:$reetroMoshiVer"
+    def retroMoshiVer = '2.9.0'
+    implementation "com.squareup.retrofit2:retrofit:$retroMoshiVer"
+    implementation "com.squareup.retrofit2:converter-moshi:$retroMoshiVer"
 
     //Coroutines
     def coroutineVer = '1.6.4'

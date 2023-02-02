@@ -12,6 +12,7 @@ import com.example.gitobserverapp.R
 import com.example.gitobserverapp.databinding.FragmentMainBinding
 import com.example.gitobserverapp.domain.usecase.GetReposUseCase
 import com.example.gitobserverapp.utils.Constants
+import com.example.gitobserverapp.utils.ExtensionHideKeyboard.hideKeyboard
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
@@ -55,8 +56,8 @@ class MainSearchFragment: MvpAppCompatFragment(), MainSearchView, MainSearchAdap
         recyclerViewInit()
 
         binding.btnSearch.setOnClickListener {
-                mainSearchPresenter.loadData(searchName = binding.edtTxtInput.text.toString(), page = Constants.START_PAGE)
-
+            mainSearchPresenter.loadData(searchName = binding.edtTxtInput.text.toString(), page = Constants.START_PAGE)
+            hideKeyboard()
         }
     }
 

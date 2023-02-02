@@ -1,8 +1,8 @@
 package com.example.gitobserverapp.presentation.mapping.stargazers
 
 import com.example.gitobserverapp.domain.model.DomainStargazersListModel
-import com.example.gitobserverapp.presentation.chart.model.PresentationStargazersListItem
-import com.example.gitobserverapp.presentation.chart.model.PresentationStargazersListModel
+import com.example.gitobserverapp.presentation.screens.barchart.PresentationStargazersListItem
+import com.example.gitobserverapp.presentation.screens.barchart.PresentationStargazersListModel
 import com.example.gitobserverapp.utils.BaseMap
 
 class DomainToPresentationStargazersListMapper: BaseMap<DomainStargazersListModel, PresentationStargazersListModel>() {

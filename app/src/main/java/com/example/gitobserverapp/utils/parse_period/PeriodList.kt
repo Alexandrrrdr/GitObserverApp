@@ -3,7 +3,7 @@
 //import android.os.Build
 //import androidx.annotation.RequiresApi
 //import com.example.gitobserverapp.data.network.model.starred.User
-//import com.example.gitobserverapp.presentation.chart.model.BarChartModel
+//import com.example.gitobserverapp.presentation.screens.barchart.BarChartModel
 //import com.example.gitobserverapp.presentation.chart.model.UserModel
 //import java.time.LocalDate
 //import java.util.Comparator

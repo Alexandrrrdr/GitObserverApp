@@ -1,6 +1,7 @@
 package com.example.gitobserverapp.presentation.screens.barchart
 
 import android.content.Context
+import android.content.Context.INPUT_METHOD_SERVICE
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -8,16 +9,19 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.gitobserverapp.App
 import com.example.gitobserverapp.databinding.FragmentChartBinding
 import com.example.gitobserverapp.domain.usecase.GetStargazersUseCase
-import com.example.gitobserverapp.presentation.chart.model.BarChartModel
-import com.example.gitobserverapp.presentation.chart.model.PresentationStargazersListItem
 import com.example.gitobserverapp.presentation.screens.details.DetailsViewModel
+import com.example.gitobserverapp.utils.ExtensionHideKeyboard
+import com.example.gitobserverapp.utils.ExtensionHideKeyboard.hideKeyboard
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
@@ -91,6 +95,7 @@ class ChartFragment():
         repoOwnerName = args.repoOwnerName
         repoCreatedAt = args.repoCreatedAt
         binding.repoName.text = repoName
+        navigationButtonsController(lastPage = lastPage, page = page)
 
         radioButtonClickListener()
         nextPageClick()
@@ -183,13 +188,12 @@ class ChartFragment():
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun showSuccessPage(list: List<BarChartModel>, lastPage: Int, page: Int) {
-        disableNavigationButtons(value = 1)
+//        disableNavigationButtons(value = 1)
         disableRadioButtons(value = true)
         binding.txtNetworkStatus.visibility = View.GONE
         binding.progBarChart.visibility = View.GONE
         this.lastPage = lastPage
         this.page = page
-        Log.d("info", " page is - $page, last page is - $lastPage")
         navigationButtonsController(lastPage = lastPage, page = page)
         initBarChart(list = list)
     }
@@ -212,6 +216,8 @@ class ChartFragment():
     @RequiresApi(Build.VERSION_CODES.O)
     private fun initBarChart(list: List<BarChartModel>) {
 
+        barEntryList.addAll(emptyList())
+        barLabelList.addAll(emptyList())
         barchartGraph = binding.barChart
         createBarChartData(list)
         barDataSet = BarDataSet(barEntryList, "")
@@ -254,20 +260,16 @@ class ChartFragment():
         xAxis.textSize = 14f
 
         val axisLeft: YAxis = barchartGraph.axisLeft
-        axisLeft.granularity = 5f
+        axisLeft.granularity = 1f
         axisLeft.axisMinimum = 0f
-
-        val axisRight: YAxis = barchartGraph.axisRight
-        axisRight.granularity = 1f
-        axisRight.axisMinimum = 0f
-        barchartGraph.invalidate()
 
         barchartGraph.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
             override fun onValueSelected(e: Entry?, h: Highlight?) {
                 //getting index of selected bar
-                val x = barchartGraph.data.getDataSetForEntry(e).getEntryIndex(e as BarEntry)
+//                val x = barchartGraph.data.getDataSetForEntry(e).getEntryIndex(e as BarEntry)
+                val x = e!!.x.toInt()
                 val year = barLabelList[x]
-                val userList = barEntryList[x].data
+                val userList: Any? = barEntryList[x].data
 
                 if (userList is List<*>){
                     getViaPoints(userList)?.let { list ->
@@ -283,7 +285,9 @@ class ChartFragment():
                     }
                 }
             }
-            override fun onNothingSelected() {}
+            override fun onNothingSelected() {
+                Snackbar.make(binding.root, "Field is Empty", Snackbar.LENGTH_SHORT).show()
+            }
         })
     }
 
@@ -295,8 +299,6 @@ class ChartFragment():
     }
 
     private fun createBarChartData(list: List<BarChartModel>) {
-        barEntryList.clear()
-        barLabelList.clear()
 
         for (i in list.indices) {
             barLabelList.add(i, list[i].period.toString())
@@ -307,14 +309,15 @@ class ChartFragment():
                         list[i].userInfo.size.toFloat()
                     )
                 )
-            }
-            barEntryList.add(
-                BarEntry(
-                    i.toFloat(),
-                    list[i].userInfo.size.toFloat(),
-                    list[i].userInfo
+            } else {
+                barEntryList.add(
+                    BarEntry(
+                        i.toFloat(),
+                        list[i].userInfo.size.toFloat(),
+                        list[i].userInfo
+                    )
                 )
-            )
+            }
         }
     }
 

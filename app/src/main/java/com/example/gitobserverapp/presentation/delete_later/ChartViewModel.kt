@@ -8,9 +8,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.gitobserverapp.domain.usecase.GetStargazersUseCase
-import com.example.gitobserverapp.presentation.chart.chart_helper.ChartViewState
 import com.example.gitobserverapp.presentation.chart.model.*
 import com.example.gitobserverapp.presentation.mapping.stargazers.DomainToPresentationStargazersListMapper
+import com.example.gitobserverapp.presentation.screens.barchart.BarChartModel
+import com.example.gitobserverapp.presentation.screens.barchart.PresentationStargazersListItem
+import com.example.gitobserverapp.presentation.screens.barchart.PresentationStargazersListModel
 import com.example.gitobserverapp.utils.Constants
 import kotlinx.coroutines.launch
 import java.time.LocalDate

@@ -33,7 +33,6 @@ class MainSearchPresenter(
                 withContext(Dispatchers.Main){
                     reposList.addAll(DomainToPresentationReposListMapper().map(domainReposList).items)
                     viewState.showSuccess(reposList)
-                    Log.d("info", "Test request ${domainReposList.items.size}")
                 }
             } else {
                 withContext(Dispatchers.Main){

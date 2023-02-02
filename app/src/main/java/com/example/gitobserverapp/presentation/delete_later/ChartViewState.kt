@@ -1,4 +1,4 @@
-package com.example.gitobserverapp.presentation.chart.chart_helper
+package com.example.gitobserverapp.presentation.delete_later
 
 sealed class ChartViewState{
     object Loading: ChartViewState()

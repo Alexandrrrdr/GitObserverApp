@@ -1,9 +1,9 @@
-package com.example.gitobserverapp.presentation.chart.model
+package com.example.gitobserverapp.presentation.screens.barchart
 
 import java.time.LocalDate
 
 data class PresentationStargazersListModel(
-    val stargazers_list: ArrayList<PresentationStargazersListItem>
+    val stargazers_list: List<PresentationStargazersListItem>
 )
 
 data class PresentationStargazersListItem(
