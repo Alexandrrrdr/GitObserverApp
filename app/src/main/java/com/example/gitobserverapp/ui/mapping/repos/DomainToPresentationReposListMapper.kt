@@ -2,11 +2,11 @@ package com.example.gitobserverapp.ui.mapping.repos
 
 import com.example.gitobserverapp.domain.model.DomainReposListModel
 import com.example.gitobserverapp.ui.screens.main.RepoItem
-import com.example.gitobserverapp.ui.screens.main.ReposListModel
+import com.example.gitobserverapp.ui.screens.main.PresentationReposListModel
 import com.example.gitobserverapp.utils.BaseMap
 
-class DomainToPresentationReposListMapper: BaseMap<DomainReposListModel, ReposListModel>() {
-    override fun map(from: DomainReposListModel): ReposListModel {
+class DomainToPresentationReposListMapper: BaseMap<DomainReposListModel, PresentationReposListModel>() {
+    override fun map(from: DomainReposListModel): PresentationReposListModel {
         val tmpList = mutableListOf<RepoItem>()
         val tmpConnectivity = from.hasNetwork
         for (i in from.items.indices){
@@ -20,6 +20,6 @@ class DomainToPresentationReposListMapper: BaseMap<DomainReposListModel, ReposLi
             )
             tmpList.add(i, value)
         }
-        return ReposListModel(tmpConnectivity, tmpList)
+        return PresentationReposListModel(tmpConnectivity, tmpList)
     }
 }

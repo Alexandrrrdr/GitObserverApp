@@ -182,7 +182,6 @@ class ChartFragment():
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun showSuccessPage(list: List<BarChartModel>, lastPage: Int, page: Int) {
-//        disableNavigationButtons(value = 1)
         disableRadioButtons(value = true)
         binding.txtNetworkStatus.visibility = View.GONE
         binding.progBarChart.visibility = View.GONE

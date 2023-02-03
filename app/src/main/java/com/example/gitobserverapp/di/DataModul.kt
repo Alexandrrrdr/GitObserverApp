@@ -14,8 +14,8 @@ import dagger.Provides
 class DataModul {
 
     @Provides
-    fun provideDomainReposRepository(gitRetrofitService: GitRetrofitService, networkStatusHelper: NetworkStatusHelper, context: Context): DomainGetRepoByNameRepository{
-        return ReposRepositoryImpl(gitRetrofitService = gitRetrofitService, networkStatusHelper = networkStatusHelper, context = context)
+    fun provideDomainReposRepository(gitRetrofitService: GitRetrofitService, networkStatusHelper: NetworkStatusHelper): DomainGetRepoByNameRepository{
+        return ReposRepositoryImpl(gitRetrofitService = gitRetrofitService, networkStatusHelper = networkStatusHelper)
     }
 
     @Provides

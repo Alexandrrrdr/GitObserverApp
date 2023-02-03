@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gitobserverapp.App
@@ -12,7 +13,7 @@ import com.example.gitobserverapp.R
 import com.example.gitobserverapp.databinding.FragmentMainBinding
 import com.example.gitobserverapp.domain.usecase.GetReposUseCase
 import com.example.gitobserverapp.utils.Constants
-import com.example.gitobserverapp.utils.ExtensionHideKeyboard.hideKeyboard
+import com.example.gitobserverapp.utils.Extensions.hideKeyboard
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
@@ -59,6 +60,10 @@ class MainSearchFragment: MvpAppCompatFragment(), MainSearchView, MainSearchAdap
             mainSearchPresenter.loadData(searchName = binding.edtTxtInput.text.toString(), page = Constants.START_PAGE)
             hideKeyboard()
         }
+
+        binding.btnCheckAgain.setOnClickListener {
+            mainSearchPresenter.loadData(searchName = "", page = Constants.START_PAGE)
+        }
     }
 
     override fun showLoading() {
@@ -66,6 +71,7 @@ class MainSearchFragment: MvpAppCompatFragment(), MainSearchView, MainSearchAdap
         binding.txtError.visibility = View.GONE
         binding.networkError.root.visibility = View.GONE
         binding.btnSearch.isEnabled = false
+        binding.btnCheckAgain.isVisible = false
         mainSearchAdapters.differ.submitList(emptyList())
     }
 
@@ -74,6 +80,7 @@ class MainSearchFragment: MvpAppCompatFragment(), MainSearchView, MainSearchAdap
         binding.networkError.root.visibility = View.GONE
         binding.txtError.visibility = View.GONE
         binding.btnSearch.isEnabled = true
+        binding.btnCheckAgain.isVisible = false
         mainSearchAdapters.differ.submitList(list)
     }
 
@@ -83,6 +90,7 @@ class MainSearchFragment: MvpAppCompatFragment(), MainSearchView, MainSearchAdap
         binding.txtError.visibility = View.VISIBLE
         binding.txtError.text = error
         binding.btnSearch.isEnabled = true
+        binding.btnCheckAgain.isVisible = false
         mainSearchAdapters.differ.submitList(emptyList())
     }
 
@@ -91,6 +99,7 @@ class MainSearchFragment: MvpAppCompatFragment(), MainSearchView, MainSearchAdap
         binding.networkError.root.visibility = View.VISIBLE
         binding.txtError.visibility = View.GONE
         binding.btnSearch.isEnabled = false
+        binding.btnCheckAgain.isVisible = true
         mainSearchAdapters.differ.submitList(emptyList())
     }
 

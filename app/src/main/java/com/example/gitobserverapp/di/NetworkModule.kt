@@ -5,12 +5,16 @@ import com.example.gitobserverapp.utils.Constants
 import com.example.gitobserverapp.utils.Constants.END_YOKEN
 import com.example.gitobserverapp.utils.Constants.GIT_YOKEN
 import com.example.gitobserverapp.utils.Constants.START_YOKEN
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
 import dagger.Provides
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import java.util.*
 import javax.inject.Singleton
 
 @Module
@@ -18,8 +22,18 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideMoshiConverter(): MoshiConverterFactory{
-        return MoshiConverterFactory.create()
+    fun provideMoshi(): Moshi {
+        return Moshi.Builder()
+            .add(Date::class.java, Rfc3339DateJsonAdapter())
+            .addLast(KotlinJsonAdapterFactory())
+            .build()
+    }
+
+
+    @Provides
+    @Singleton
+    fun provideMoshiConverter(moshi: Moshi): MoshiConverterFactory{
+        return MoshiConverterFactory.create(moshi)
     }
 
     @Provides

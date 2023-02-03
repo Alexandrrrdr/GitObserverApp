@@ -25,17 +25,20 @@ class MainSearchPresenter(
 
         viewState.showLoading()
         CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
-            val domainReposList = withContext(Dispatchers.IO) {
-                getReposUseCase.getData(repo_name = searchName, page_number = page)
-            }
+            val domainReposList = async { getReposUseCase.getData(repo_name = searchName, page_number = page) }.await()
+
             if (domainReposList.hasNetwork) {
                 withContext(Dispatchers.Main){
-                    reposList.addAll(DomainToPresentationReposListMapper().map(domainReposList).items)
-                    viewState.showSuccess(reposList)
+                    if (domainReposList.items.isNotEmpty()){
+                        reposList.addAll(DomainToPresentationReposListMapper().map(domainReposList).items)
+                        viewState.showSuccess(reposList)
+                    } else {
+                        viewState.showError("No data from server")
+                    }
                 }
             } else {
                 withContext(Dispatchers.Main){
-                    viewState.showError("No data from server")
+                    viewState.showNetworkError()
                 }
             }
         }

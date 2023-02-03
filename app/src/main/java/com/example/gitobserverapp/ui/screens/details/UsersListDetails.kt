@@ -1,4 +1,4 @@
-package com.example.gitobserverapp.ui.details.model
+package com.example.gitobserverapp.ui.screens.details
 
 data class UsersListDetails(
     val users: List<User>

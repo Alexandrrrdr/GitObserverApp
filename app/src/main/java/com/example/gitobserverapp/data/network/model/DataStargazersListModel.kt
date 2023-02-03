@@ -6,10 +6,10 @@ data class DataStargazersListModel(
 
 data class DataStargazersListItem(
     val starred_at: String,
-    val user: User
+    val user: UserOld
 )
 
-data class User(
+data class UserOld(
     val id: Int,
     val login: String,
     val avatar_url: String

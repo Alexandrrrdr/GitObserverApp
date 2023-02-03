@@ -1,7 +1,7 @@
 package com.example.gitobserverapp.data.network.model
 
-data class DataReposListModel(
-    val items: List<Item>,
+data class DataReposListModel<ITEM>(
+    val items: List<ITEM>,
     val total_count: Int
 )
 

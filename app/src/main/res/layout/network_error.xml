@@ -34,4 +34,5 @@
         android:text="@string/check_internet"
         android:textColor="@color/white"
         app:layout_constraintTop_toBottomOf="@+id/errorTextView" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
