@@ -3,8 +3,8 @@ package com.example.gitobserverapp.data.repository
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.example.gitobserverapp.data.mapping.stargazers.DataToDomainStargazersListMapper
-import com.example.gitobserverapp.data.network.GitRetrofitService
-import com.example.gitobserverapp.data.network.model.DataStargazersListItem
+import com.example.gitobserverapp.data.remote.GitRetrofitService
+import com.example.gitobserverapp.data.remote.model.DataStargazersListItem
 import com.example.gitobserverapp.domain.model.DomainStargazersListModel
 import com.example.gitobserverapp.domain.repository.DomainGetStargazersRepository
 import com.example.gitobserverapp.utils.Constants

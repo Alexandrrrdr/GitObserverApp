@@ -1,9 +1,7 @@
 package com.example.gitobserverapp.data.repository
 
-import android.content.Context
-import android.util.Log
 import com.example.gitobserverapp.data.mapping.repos.DataToDomainRepoListMapper
-import com.example.gitobserverapp.data.network.GitRetrofitService
+import com.example.gitobserverapp.data.remote.GitRetrofitService
 import com.example.gitobserverapp.domain.model.DomainReposListModel
 import com.example.gitobserverapp.domain.model.Items
 import com.example.gitobserverapp.domain.repository.DomainGetRepoByNameRepository

@@ -1,6 +1,6 @@
 package com.example.gitobserverapp.di
 
-import com.example.gitobserverapp.data.network.GitRetrofitService
+import com.example.gitobserverapp.data.remote.GitRetrofitService
 import com.example.gitobserverapp.utils.Constants
 import com.example.gitobserverapp.utils.Constants.END_YOKEN
 import com.example.gitobserverapp.utils.Constants.GIT_YOKEN

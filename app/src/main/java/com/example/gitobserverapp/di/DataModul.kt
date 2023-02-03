@@ -1,7 +1,6 @@
 package com.example.gitobserverapp.di
 
-import android.content.Context
-import com.example.gitobserverapp.data.network.GitRetrofitService
+import com.example.gitobserverapp.data.remote.GitRetrofitService
 import com.example.gitobserverapp.data.repository.ReposRepositoryImpl
 import com.example.gitobserverapp.data.repository.StargazersRepositoryImpl
 import com.example.gitobserverapp.domain.repository.DomainGetRepoByNameRepository

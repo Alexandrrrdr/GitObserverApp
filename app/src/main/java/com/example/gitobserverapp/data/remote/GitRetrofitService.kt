@@ -1,7 +1,7 @@
-package com.example.gitobserverapp.data.network
+package com.example.gitobserverapp.data.remote
 
-import com.example.gitobserverapp.data.network.model.DataReposListModel
-import com.example.gitobserverapp.data.network.model.DataStargazersListItem
+import com.example.gitobserverapp.data.remote.model.DataReposListModel
+import com.example.gitobserverapp.data.remote.model.DataStargazersListItem
 import com.example.gitobserverapp.utils.Constants.API_GET_REPOS
 import retrofit2.Response
 import retrofit2.http.*

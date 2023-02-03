@@ -1,6 +1,6 @@
 package com.example.gitobserverapp.data.mapping.repos
 
-import com.example.gitobserverapp.data.network.model.DataReposListModel
+import com.example.gitobserverapp.data.remote.model.DataReposListModel
 import com.example.gitobserverapp.domain.model.DomainReposListModel
 import com.example.gitobserverapp.domain.model.Items
 import com.example.gitobserverapp.utils.BaseMap

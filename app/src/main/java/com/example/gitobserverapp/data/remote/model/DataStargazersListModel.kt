@@ -1,4 +1,4 @@
-package com.example.gitobserverapp.data.network.model
+package com.example.gitobserverapp.data.remote.model
 
 data class DataStargazersListModel(
     val items: List<DataStargazersListItem>

@@ -2,7 +2,7 @@ package com.example.gitobserverapp.data.mapping.stargazers
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import com.example.gitobserverapp.data.network.model.DataStargazersListItem
+import com.example.gitobserverapp.data.remote.model.DataStargazersListItem
 import com.example.gitobserverapp.domain.model.DomainStargazersListModel
 import com.example.gitobserverapp.domain.model.DomainStargazersListItem
 import java.time.*
