@@ -70,9 +70,11 @@ dependencies {
     def retroMoshiVer = '2.9.0'
     implementation "com.squareup.retrofit2:retrofit:$retroMoshiVer"
     implementation "com.squareup.retrofit2:converter-moshi:$retroMoshiVer"
-    implementation("com.squareup.moshi:moshi-kotlin:1.14.0")
-    implementation 'com.squareup.moshi:moshi-adapters:1.14.0'
 
+    //Moshi
+    def moshiVer = '1.14.0'
+    implementation "com.squareup.moshi:moshi-kotlin:$moshiVer"
+    implementation "com.squareup.moshi:moshi-adapters:$moshiVer"
 
     //Coroutines
     def coroutineVer = '1.6.4'
