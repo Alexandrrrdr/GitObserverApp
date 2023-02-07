@@ -1,5 +1,7 @@
 package com.example.gitobserverapp.ui.screens.main
 
+import com.example.gitobserverapp.data.remote.model.GitResponse
+import com.example.gitobserverapp.data.remote.model.RemoteRepo
 import com.example.gitobserverapp.domain.usecase.GetReposUseCase
 import com.example.gitobserverapp.ui.mapping.repos.DomainToPresentationReposListMapper
 import kotlinx.coroutines.*
@@ -13,34 +15,52 @@ class MainSearchPresenter(
 
 
     fun loadData(searchName: String, page: Int) {
-        val reposList = mutableListOf<RepoItem>()
+
+        var reposList = emptyList<RemoteRepo>()
 
         if (searchName.isEmpty()) {
             viewState.showError("Search field is empty")
             return
         }
-        val coroutineExceptionHandler = CoroutineExceptionHandler{_, throwable ->
-            throwable.printStackTrace()
-        }
+//        val coroutineExceptionHandler = CoroutineExceptionHandler{_, throwable ->
+//            throwable.printStackTrace()
+//        }
 
-        viewState.showLoading()
-        CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
-            val domainReposList = async { getReposUseCase.getData(repo_name = searchName, page_number = page) }.await()
+        CoroutineScope(Dispatchers.IO
+//                + coroutineExceptionHandler
+        ).launch {
 
-            if (domainReposList.hasNetwork) {
-                withContext(Dispatchers.Main){
-                    if (domainReposList.items.isNotEmpty()){
-                        reposList.addAll(DomainToPresentationReposListMapper().map(domainReposList).items)
+            try {
+                viewState.showLoading()
+
+                when(val repoResult = getReposUseCase.getData(repo_name = searchName, page_number = page)){
+                    is GitResponse.Success -> {
+                        reposList = repoResult.data!!
                         viewState.showSuccess(reposList)
-                    } else {
-                        viewState.showError("No data from server")
+                    }
+                    is GitResponse.Error -> {
+                        viewState.showError(error = repoResult.message.toString())
                     }
                 }
-            } else {
-                withContext(Dispatchers.Main){
-                    viewState.showNetworkError()
-                }
+            } catch (e: Exception){
+
             }
+//            val domainReposList = async { getReposUseCase.getData(repo_name = searchName, page_number = page) }.await()
+//
+//            if (domainReposList.) {
+//                withContext(Dispatchers.Main){
+//                    if (domainReposList.items.isNotEmpty()){
+//                        reposList.addAll(DomainToPresentationReposListMapper().map(domainReposList).items)
+//                        viewState.showSuccess(reposList)
+//                    } else {
+//                        viewState.showError("No data from server")
+//                    }
+//                }
+//            } else {
+//                withContext(Dispatchers.Main){
+//                    viewState.showNetworkError()
+//                }
+//            }
         }
     }
 }

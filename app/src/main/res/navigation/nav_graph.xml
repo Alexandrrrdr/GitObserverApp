@@ -28,9 +28,6 @@
         <argument
             android:name="repoOwnerName"
             app:argType="string" />
-        <argument
-            android:name="repoCreatedAt"
-            app:argType="string" />
         <action
             android:id="@+id/action_chartFragment_to_detailsFragment"
             app:destination="@id/detailsFragment" />

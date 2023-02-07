@@ -10,6 +10,7 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gitobserverapp.App
 import com.example.gitobserverapp.R
+import com.example.gitobserverapp.data.remote.model.RemoteRepo
 import com.example.gitobserverapp.databinding.FragmentMainBinding
 import com.example.gitobserverapp.domain.usecase.GetReposUseCase
 import com.example.gitobserverapp.utils.Constants
@@ -75,7 +76,7 @@ class MainSearchFragment: MvpAppCompatFragment(), MainSearchView, MainSearchAdap
         mainSearchAdapters.differ.submitList(emptyList())
     }
 
-    override fun showSuccess(list: List<RepoItem>) {
+    override fun showSuccess(list: List<RemoteRepo>) {
         binding.progBarMain.visibility = View.GONE
         binding.networkError.root.visibility = View.GONE
         binding.txtError.visibility = View.GONE
@@ -103,14 +104,12 @@ class MainSearchFragment: MvpAppCompatFragment(), MainSearchView, MainSearchAdap
         mainSearchAdapters.differ.submitList(emptyList())
     }
 
-    override fun onClick(item: RepoItem) {
-        val repoCreatedAt: String = item.created_at
-        val repoOwnerLogin: String = item.owner_login
-        val repoName: String = item.repo_name
+    override fun onClick(item: RemoteRepo) {
+        val repoOwnerLogin: String = item.owner.name
+        val repoName: String = item.name
         val direction = MainSearchFragmentDirections.actionMainFragmentToChartFragment(
             repoName = repoName,
-            repoOwnerName = repoOwnerLogin,
-            repoCreatedAt = repoCreatedAt
+            repoOwnerName = repoOwnerLogin
         )
         requireActivity().findNavController(R.id.fragment_holder).navigate(directions = direction)
     }

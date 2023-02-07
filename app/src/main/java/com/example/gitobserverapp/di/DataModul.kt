@@ -2,9 +2,9 @@ package com.example.gitobserverapp.di
 
 import com.example.gitobserverapp.data.remote.GitRetrofitService
 import com.example.gitobserverapp.data.repository.ReposImplList
-import com.example.gitobserverapp.data.repository.StargazersRepositoryImpl
+import com.example.gitobserverapp.data.repository.StarUsersImpl
 import com.example.gitobserverapp.domain.repository.GetRepoListByName
-import com.example.gitobserverapp.domain.repository.DomainGetStargazersRepository
+import com.example.gitobserverapp.domain.repository.GetStarUsers
 import dagger.Module
 import dagger.Provides
 
@@ -17,7 +17,7 @@ class DataModul {
     }
 
     @Provides
-    fun provideDomainStargazersRepository(gitRetrofitService: GitRetrofitService): DomainGetStargazersRepository{
-        return StargazersRepositoryImpl(gitRetrofitService = gitRetrofitService)
+    fun provideDomainStargazersRepository(gitRetrofitService: GitRetrofitService): GetStarUsers{
+        return StarUsersImpl(gitRetrofitService = gitRetrofitService)
     }
 }

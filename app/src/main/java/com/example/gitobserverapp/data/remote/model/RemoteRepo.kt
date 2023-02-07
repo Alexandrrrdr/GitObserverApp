@@ -8,5 +8,6 @@ class RemoteRepo(
     override val name: String,
     override val owner: RemoteUser,
     @Json(name = "stargazers_count")
-    override val starsCount: Int
+    override val starsCount: Int,
+    override val id: Int
 ): Repo

@@ -87,7 +87,6 @@ class ChartFragment():
 
         repoName = args.repoName
         repoOwnerName = args.repoOwnerName
-        repoCreatedAt = args.repoCreatedAt
         binding.repoName.text = repoName
         navigationButtonsController(lastPage = lastPage, page = page)
 

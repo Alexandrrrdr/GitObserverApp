@@ -6,13 +6,13 @@ import com.example.gitobserverapp.data.mapping.stargazers.DataToDomainStargazers
 import com.example.gitobserverapp.data.remote.GitRetrofitService
 import com.example.gitobserverapp.data.remote.model.DataStargazersListItem
 import com.example.gitobserverapp.domain.model.DomainStargazersListModel
-import com.example.gitobserverapp.domain.repository.DomainGetStargazersRepository
+import com.example.gitobserverapp.domain.repository.GetStarUsers
 import com.example.gitobserverapp.utils.Constants
 import retrofit2.Response
 import javax.inject.Inject
 
-class StargazersRepositoryImpl @Inject constructor(private val gitRetrofitService: GitRetrofitService) :
-    DomainGetStargazersRepository {
+class StarUsersImpl @Inject constructor(private val gitRetrofitService: GitRetrofitService) :
+    GetStarUsers {
 
     @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun getData(
