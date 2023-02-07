@@ -7,7 +7,7 @@ import moxy.viewstate.strategy.StateStrategyType
 @StateStrategyType(value = AddToEndStrategy::class)
 interface MainSearchView: MvpView {
     fun showLoading()
-    fun showSuccess(list: List<RepoItem>)
+    fun showSuccess(list: List<MainRepo>)
     fun showError(error: String)
     fun showNetworkError()
 }

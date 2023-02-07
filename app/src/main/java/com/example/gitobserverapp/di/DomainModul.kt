@@ -1,6 +1,6 @@
 package com.example.gitobserverapp.di
 
-import com.example.gitobserverapp.domain.repository.DomainGetRepoByNameRepository
+import com.example.gitobserverapp.domain.repository.GetRepoListByName
 import com.example.gitobserverapp.domain.repository.DomainGetStargazersRepository
 import com.example.gitobserverapp.domain.usecase.GetReposUseCase
 import com.example.gitobserverapp.domain.usecase.GetStargazersUseCase
@@ -11,8 +11,8 @@ import dagger.Provides
 class DomainModul {
 
     @Provides
-    fun provideGetReposUseCase(domainGetRepoByNameRepository: DomainGetRepoByNameRepository): GetReposUseCase {
-        return GetReposUseCase(domainGetRepoByNameRepository = domainGetRepoByNameRepository)
+    fun provideGetReposUseCase(getRepoListByName: GetRepoListByName): GetReposUseCase {
+        return GetReposUseCase(domainGetRepoByNameRepository = getRepoListByName)
     }
 
     @Provides

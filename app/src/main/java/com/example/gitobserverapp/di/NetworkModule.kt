@@ -29,7 +29,6 @@ class NetworkModule {
             .build()
     }
 
-
     @Provides
     @Singleton
     fun provideMoshiConverter(moshi: Moshi): MoshiConverterFactory{

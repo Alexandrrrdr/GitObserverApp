@@ -15,5 +15,7 @@
     <string name="check_network_chart">Check network connection</string>
     <string name="no_data_from_server">No data from server</string>
     <string name="check_network_connection">Check network connection</string>
+    <string name="details_total_amount">Total amount of users: </string>
+    <string name="details_period">Period: </string>
 
 </resources>
