@@ -3,6 +3,7 @@ package com.example.gitobserverapp.ui.screens.barchart
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.example.gitobserverapp.domain.usecase.GetStargazersUseCase
+import com.example.gitobserverapp.ui.mapping.stargazers.DomainToPresentationStargazersListMapper
 import com.example.gitobserverapp.utils.Constants
 import com.example.gitobserverapp.utils.Constants.START_PAGE
 import kotlinx.coroutines.*

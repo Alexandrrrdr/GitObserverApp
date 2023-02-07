@@ -3,7 +3,6 @@ package com.example.gitobserverapp.ui.screens.main
 import com.example.gitobserverapp.data.remote.model.GitResponse
 import com.example.gitobserverapp.data.remote.model.RemoteRepo
 import com.example.gitobserverapp.domain.usecase.GetReposUseCase
-import com.example.gitobserverapp.ui.mapping.repos.DomainToPresentationReposListMapper
 import kotlinx.coroutines.*
 import moxy.InjectViewState
 import moxy.MvpPresenter
@@ -22,29 +21,30 @@ class MainSearchPresenter(
             viewState.showError("Search field is empty")
             return
         }
-//        val coroutineExceptionHandler = CoroutineExceptionHandler{_, throwable ->
-//            throwable.printStackTrace()
-//        }
+        val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
+            throwable.printStackTrace()
+        }
+        viewState.showLoading()
+        CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
 
-        CoroutineScope(Dispatchers.IO
-//                + coroutineExceptionHandler
-        ).launch {
 
-            try {
-                viewState.showLoading()
+            val repoResult: GitResponse<List<RemoteRepo>> = async { getReposUseCase.getData(repo_name = searchName, page_number = page) }.await()
 
-                when(val repoResult = getReposUseCase.getData(repo_name = searchName, page_number = page)){
-                    is GitResponse.Success -> {
+
+            when (repoResult) {
+                is GitResponse.Success -> {
+                    withContext(Dispatchers.Main) {
                         reposList = repoResult.data!!
                         viewState.showSuccess(reposList)
                     }
-                    is GitResponse.Error -> {
+                }
+                is GitResponse.Error -> {
+                    withContext(Dispatchers.Main) {
                         viewState.showError(error = repoResult.message.toString())
                     }
                 }
-            } catch (e: Exception){
-
             }
+
 //            val domainReposList = async { getReposUseCase.getData(repo_name = searchName, page_number = page) }.await()
 //
 //            if (domainReposList.) {

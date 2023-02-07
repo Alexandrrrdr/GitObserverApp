@@ -1,5 +1,5 @@
 package com.example.gitobserverapp.utils
 
-interface BaseMap<T> {
-    fun mapToDomain(): T
+interface BaseMap<From, To> {
+    fun map(from: From): To
 }

@@ -38,9 +38,6 @@ class StarUsersImpl @Inject constructor(private val gitRetrofitService: GitRetro
                 page_number = tmpPage)
             tmpPage++
         }
-
-
-
         return DataToDomainStargazersListMapper().map(tmpList)
     }
 
