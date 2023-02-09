@@ -13,6 +13,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.gitobserverapp.App
+import com.example.gitobserverapp.data.remote.model.RemoteStarGroup
 import com.example.gitobserverapp.databinding.FragmentChartBinding
 import com.example.gitobserverapp.domain.usecase.GetStargazersUseCase
 import com.example.gitobserverapp.ui.screens.details.DetailsViewModel
@@ -264,13 +265,14 @@ class ChartFragment():
                 if (userList is List<*>){
                     getViaPoints(userList)?.let { list ->
                         if (list.isNotEmpty()) {
-                            detailsViewModel.setUserList(list)
-                            val direction =
-                                ChartFragmentDirections.actionChartFragmentToDetailsFragment(
-                                    timePeriod = year,
-                                    amountUsers = userList.size
-                                )
-                            findNavController().navigate(directions = direction)
+                            Snackbar.make(binding.root, "$year, ${userList.size}", Snackbar.LENGTH_LONG).show()
+//                            detailsViewModel.setUserList(list)
+//                            val direction =
+//                                ChartFragmentDirections.actionChartFragmentToDetailsFragment(
+//                                    timePeriod = year,
+//                                    amountUsers = userList.size
+//                                )
+//                            findNavController().navigate(directions = direction)
                         }
                     }
                 }
@@ -282,9 +284,9 @@ class ChartFragment():
     }
 
     //Check BarChart data.object after click on line
-    private fun getViaPoints(list: List<*>): List<PresentationStargazersListItem>? {
-        list.forEach { if (it !is PresentationStargazersListItem) return null }
-        return list.filterIsInstance<PresentationStargazersListItem>()
+    private fun getViaPoints(list: List<*>): List<RemoteStarGroup>? {
+        list.forEach { if (it !is RemoteStarGroup) return null }
+        return list.filterIsInstance<RemoteStarGroup>()
             .apply { if (size != list.size) return null }
     }
 

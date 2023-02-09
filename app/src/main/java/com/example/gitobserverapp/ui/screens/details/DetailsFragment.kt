@@ -10,6 +10,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gitobserverapp.R
+import com.example.gitobserverapp.data.remote.model.RemoteStarGroup
 import com.example.gitobserverapp.databinding.FragmentDetailsBinding
 import com.example.gitobserverapp.ui.screens.barchart.PresentationStargazersListItem
 import moxy.MvpAppCompatFragment
@@ -78,7 +79,7 @@ class DetailsFragment : MvpAppCompatFragment(), DetailsView {
 
 
     //TODO Pass data from chart fragment
-    override fun showList(list: List<PresentationStargazersListItem>, period: Int, amount: Int) {
+    override fun showList(list: List<RemoteStarGroup>, period: Int, amount: Int) {
         detailsAdapter.differ.submitList(list)
         binding.txtDetailsHeader.text = requireActivity().resources.getText(R.string.details_period)
         binding.totalAmount.text = requireActivity().resources.getText(R.string.details_total_amount)

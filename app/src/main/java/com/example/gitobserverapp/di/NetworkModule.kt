@@ -25,7 +25,7 @@ class NetworkModule {
     @Singleton
     fun provideMoshi(): Moshi {
         return Moshi.Builder()
-            .add(Date::class.java, Rfc3339DateJsonAdapter())
+            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
             .addLast(KotlinJsonAdapterFactory())
             .build()
     }

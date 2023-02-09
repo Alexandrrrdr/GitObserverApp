@@ -1,5 +1,5 @@
 package com.example.gitobserverapp.domain.model
 
-interface Result {
+interface RepoResult {
     val repoList: List<Repo>
 }

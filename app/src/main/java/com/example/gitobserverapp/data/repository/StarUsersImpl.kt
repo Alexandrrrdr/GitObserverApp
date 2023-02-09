@@ -1,47 +1,59 @@
 package com.example.gitobserverapp.data.repository
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
-import com.example.gitobserverapp.data.mapping.stargazers.DataToDomainStargazersListMapper
 import com.example.gitobserverapp.data.remote.GitRetrofitService
-import com.example.gitobserverapp.data.remote.model.DataStargazersListItem
-import com.example.gitobserverapp.domain.model.DomainStargazersListModel
+import com.example.gitobserverapp.data.remote.GitResponse
+import com.example.gitobserverapp.data.remote.model.RemoteStarGroup
 import com.example.gitobserverapp.domain.repository.GetStarUsers
+import com.example.gitobserverapp.utils.BaseRepo
 import com.example.gitobserverapp.utils.Constants
-import retrofit2.Response
 import javax.inject.Inject
 
 class StarUsersImpl @Inject constructor(private val gitRetrofitService: GitRetrofitService) :
-    GetStarUsers {
+    GetStarUsers, BaseRepo() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun getData(
         repo_name: String,
         owner_login: String,
         page_number: Int
-    ): DomainStargazersListModel {
-        val tmpList = mutableListOf<DataStargazersListItem>()
-        var requestResult = loadPageAndNext(
-            gitRetrofitService = gitRetrofitService,
+    ): GitResponse<List<RemoteStarGroup>> {
+
+//        val tmpList = mutableListOf<RemoteStarGroup>()
+//        var requestResult = loadPageAndNext(
+//            gitRetrofitService = gitRetrofitService,
+//            repo_name = repo_name,
+//            owner_login = owner_login,
+//            page_number = page_number
+//        )
+//
+//        var tmpPage = 2
+//        while (requestResult.data?.isNotEmpty() == true) {
+//            tmpList.addAll(requestResult.data!!)
+//            requestResult = loadPageAndNext(
+//                gitRetrofitService = gitRetrofitService,
+//                repo_name = repo_name,
+//                owner_login = owner_login,
+//                page_number = tmpPage
+//            )
+//            tmpPage++
+//        }
+
+//        Log.d("info", "${requestResult.data?.size}")
+
+        val tmp = handleResponse { gitRetrofitService.getStarredData(
             repo_name = repo_name,
             owner_login = owner_login,
-            page_number = page_number
-        )
-        var tmpPage = 2
-        while (requestResult.body()?.isNotEmpty() == true) {
-
-            tmpList.addAll(requestResult.body()!!)
-            requestResult = loadPageAndNext(
-                gitRetrofitService = gitRetrofitService,
-                repo_name = repo_name,
-                owner_login = owner_login,
-                page_number = tmpPage)
-            tmpPage++
-        }
-        return DataToDomainStargazersListMapper().map(tmpList)
+            per_page = Constants.MAX_PER_PAGE,
+            page = page_number
+        ) }
+        Log.d("info", "starUserimpl - ${tmp.data?.size}")
+        return tmp
     }
 
-    override suspend fun saveData(domainStargazersListModel: DomainStargazersListModel) {
+    override suspend fun saveData(starGroupList: List<RemoteStarGroup>) {
         TODO("Not yet implemented")
     }
 
@@ -50,12 +62,14 @@ class StarUsersImpl @Inject constructor(private val gitRetrofitService: GitRetro
         repo_name: String,
         owner_login: String,
         page_number: Int
-    ): Response<List<DataStargazersListItem>> {
-        return gitRetrofitService.getStarredData(
+    ): GitResponse<List<RemoteStarGroup>> {
+        return handleResponse { gitRetrofitService.getStarredData(
             repo_name = repo_name,
             owner_login = owner_login,
             per_page = Constants.MAX_PER_PAGE,
             page = page_number
-        )
+        )}
     }
+
+
 }

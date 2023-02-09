@@ -1,7 +1,7 @@
 package com.example.gitobserverapp.ui.screens.main
 
-import com.example.gitobserverapp.data.remote.model.GitResponse
-import com.example.gitobserverapp.data.remote.model.RemoteResult
+import com.example.gitobserverapp.data.remote.GitResponse
+import com.example.gitobserverapp.data.remote.model.RemoteRepoResult
 import com.example.gitobserverapp.domain.usecase.GetReposUseCase
 import kotlinx.coroutines.*
 import moxy.InjectViewState
@@ -27,7 +27,7 @@ class MainSearchPresenter @Inject constructor(
         }
 
         CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
-            val repoResult: GitResponse<RemoteResult> =
+            val repoResult: GitResponse<RemoteRepoResult> =
                         getReposUseCase.getData(
                             repo_name = searchName,
                             page_number = page

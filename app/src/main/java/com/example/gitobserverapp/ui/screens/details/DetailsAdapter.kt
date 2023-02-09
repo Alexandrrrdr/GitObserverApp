@@ -1,5 +1,6 @@
 package com.example.gitobserverapp.ui.screens.details
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
@@ -7,17 +8,18 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.gitobserverapp.R
+import com.example.gitobserverapp.data.remote.model.RemoteStarGroup
 import com.example.gitobserverapp.databinding.DetailsItemBinding
 import com.example.gitobserverapp.ui.screens.barchart.PresentationStargazersListItem
 
 class DetailsAdapter(): RecyclerView.Adapter<DetailsAdapter.ViewHolder>() {
 
     inner class ViewHolder(private val binding: DetailsItemBinding): RecyclerView.ViewHolder(binding.root){
-        fun bind(userData: PresentationStargazersListItem){
-            binding.txtViewName.text = userData.login
-            binding.txtViewUserId.text = userData.id.toString()
+        fun bind(userData: RemoteStarGroup){
+            binding.txtViewName.text = userData.users.login
+            binding.txtViewUserId.text = userData.users.login
             Glide.with(itemView)
-                .load(userData.avatar_url)
+                .load(userData.users.avatarUrl)
                 .placeholder(R.drawable.ic_image_placeholder)
                 .into(binding.imgViewStar)
         }
@@ -34,13 +36,14 @@ class DetailsAdapter(): RecyclerView.Adapter<DetailsAdapter.ViewHolder>() {
 
     override fun getItemCount(): Int = differ.currentList.size
 
-    private val diffUtil = object : DiffUtil.ItemCallback<PresentationStargazersListItem>(){
-        override fun areItemsTheSame(oldItem: PresentationStargazersListItem, newItem: PresentationStargazersListItem): Boolean {
-            return oldItem.id == newItem.id
+    private val diffUtil = object : DiffUtil.ItemCallback<RemoteStarGroup>(){
+        override fun areItemsTheSame(oldItem: RemoteStarGroup, newItem: RemoteStarGroup): Boolean {
+            return oldItem.users.id == newItem.users.id
         }
 
-        override fun areContentsTheSame(oldItem: PresentationStargazersListItem, newItem: PresentationStargazersListItem): Boolean {
-            return oldItem == newItem
+        @SuppressLint("DiffUtilEquals")
+        override fun areContentsTheSame(oldItem: RemoteStarGroup, newItem: RemoteStarGroup): Boolean {
+            return oldItem.users == newItem.users
         }
     }
 

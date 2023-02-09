@@ -1,9 +1,7 @@
 package com.example.gitobserverapp.data.remote
 
-import com.example.gitobserverapp.data.remote.model.DataStargazersListItem
-import com.example.gitobserverapp.data.remote.model.GitResponse
-import com.example.gitobserverapp.data.remote.model.RemoteRepo
-import com.example.gitobserverapp.data.remote.model.RemoteResult
+import com.example.gitobserverapp.data.remote.model.RemoteRepoResult
+import com.example.gitobserverapp.data.remote.model.RemoteStarGroup
 import com.example.gitobserverapp.utils.Constants.API_GET_REPOS
 import retrofit2.Response
 import retrofit2.http.*
@@ -16,7 +14,7 @@ interface GitRetrofitService {
         @Query("sort") sort: String,
         @Query("page") page: Int,
         @Query("per_page") per_page: Int
-    ): Response<RemoteResult>
+    ): Response<RemoteRepoResult>
 
 
 
@@ -27,5 +25,5 @@ interface GitRetrofitService {
         @Path("owner_login") owner_login: String,
         @Query("per_page") per_page: Int,
         @Query("page") page : Int
-    ): Response<List<DataStargazersListItem>>
+    ): Response<List<RemoteStarGroup>>
 }

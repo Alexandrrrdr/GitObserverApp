@@ -11,6 +11,7 @@
     <string name="check_internet">Check internet connectivity</string>
     <string name="network_error">Network error</string>
     <string name="next">Next</string>
+    <string name="back">Back</string>
     <string name="previous">Previous</string>
     <string name="check_network_chart">Check network connection</string>
     <string name="no_data_from_server">No data from server</string>

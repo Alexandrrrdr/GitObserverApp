@@ -1,9 +1,10 @@
 package com.example.gitobserverapp.ui.screens.barchart
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
+import com.example.gitobserverapp.data.remote.model.RemoteStarGroup
 import com.example.gitobserverapp.domain.usecase.GetStargazersUseCase
-import com.example.gitobserverapp.ui.mapping.stargazers.DomainToPresentationStargazersListMapper
 import com.example.gitobserverapp.utils.Constants
 import com.example.gitobserverapp.utils.Constants.START_PAGE
 import kotlinx.coroutines.*
@@ -29,20 +30,17 @@ class ChartViewPresenter(private val getStargazersUseCase: GetStargazersUseCase)
         page = START_PAGE
         viewState.showLoadPage()
         CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
-            val tmpPresentationMapped: PresentationStargazersListModel
-            val domainStargazersList = async {
-                getStargazersUseCase.getData(
-                    repo_name = repoName,
-                    owner_login = repoOwnerName,
-                    page_number = START_PAGE
-                )
-            }
-            tmpPresentationMapped =
-                DomainToPresentationStargazersListMapper().map(domainStargazersList.await())
-            tmpListBarChart.addAll(compareYearsModel(tmpPresentationMapped.stargazers_list))
-            withContext(Dispatchers.Main + coroutineExceptionHandler) {
-                prepareListForChart(page = page)
-            }
+//            val tmpPresentationMapped: PresentationStargazersListModel
+            val starList = getStargazersUseCase.getData(
+                repo_name = repoName,
+                owner_login = repoOwnerName,
+                page_number = START_PAGE
+            )
+            Log.d("info", "${starList.data?.size}")
+//            tmpListBarChart.addAll(compareYearsModel(starList.data!!))
+//            withContext(Dispatchers.Main + coroutineExceptionHandler) {
+//                prepareListForChart(page = page)
+//            }
         }
     }
 
@@ -58,10 +56,10 @@ class ChartViewPresenter(private val getStargazersUseCase: GetStargazersUseCase)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun compareYearsModel(list: List<PresentationStargazersListItem>): List<BarChartModel> {
+    private fun compareYearsModel(list: List<RemoteStarGroup>): List<BarChartModel> {
 
-        var endDateYear = list[list.lastIndex].starred_at.year
-        var startDateYear = list[Constants.ZERO_PAGE].starred_at.year
+        var endDateYear = list[list.lastIndex].date.year
+        var startDateYear = list[Constants.ZERO_PAGE].date.year
         var todayDateYear = LocalDate.now().year
         val matchedListForBarChartModel = mutableListOf<BarChartModel>()
         var amountOfDates = 0
@@ -84,8 +82,8 @@ class ChartViewPresenter(private val getStargazersUseCase: GetStargazersUseCase)
 
         //stargazers started
         while (endDateYear >= startDateYear) {
-            val usersForBarChartData = mutableListOf<PresentationStargazersListItem>()
-            usersForBarChartData.addAll(list.filter { it.starred_at.year == endDateYear })
+            val usersForBarChartData = mutableListOf<RemoteStarGroup>()
+            usersForBarChartData.addAll(list.filter { it.date.year == endDateYear })
             matchedListForBarChartModel.add(
                 element = BarChartModel(
                     period = endDateYear,

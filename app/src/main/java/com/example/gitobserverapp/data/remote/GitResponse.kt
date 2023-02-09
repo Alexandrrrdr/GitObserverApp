@@ -1,4 +1,4 @@
-package com.example.gitobserverapp.data.remote.model
+package com.example.gitobserverapp.data.remote
 
 sealed class GitResponse<T: Any>(
     val data: T? = null,
