@@ -1,36 +1,56 @@
 package com.example.gitobserverapp.data.repository
 
+import android.util.Log
 import com.example.gitobserverapp.data.remote.GitRetrofitService
 import com.example.gitobserverapp.data.remote.model.GitResponse
-import com.example.gitobserverapp.data.remote.model.RemoteRepo
-import com.example.gitobserverapp.domain.model.DomainReposListModel
+import com.example.gitobserverapp.data.remote.model.RemoteResult
 import com.example.gitobserverapp.domain.repository.GetRepoListByName
-import com.example.gitobserverapp.utils.Constants
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.example.gitobserverapp.utils.Constants.DEF_PER_PAGE
+import com.example.gitobserverapp.utils.Constants.SORT_BY
+import retrofit2.HttpException
+import retrofit2.Response
+import java.io.IOException
 import javax.inject.Inject
 
 class ReposImplList @Inject constructor(
     private val gitRetrofitService: GitRetrofitService
 ) : GetRepoListByName {
 
-    override suspend fun getData(searchWord: String, page: Int): GitResponse<List<RemoteRepo>> {
-        return try {
-            val apiResult = gitRetrofitService.getRepos(
+    override suspend fun getData(searchWord: String, page: Int): GitResponse<RemoteResult> {
+        return handleResponse {
+            gitRetrofitService.getRepos(
                 q = searchWord,
-                sort = Constants.SORT_BY,
+                sort = SORT_BY,
                 page = page,
-                per_page = Constants.DEF_PER_PAGE
+                per_page = DEF_PER_PAGE
             )
-            GitResponse.Success(data = apiResult.body()!!)
-        } catch (e: Exception){
-            GitResponse.Error(data = null, message = e.message.toString())
         }
     }
 
-    override suspend fun saveData(domainReposListModel: DomainReposListModel) {
+    override suspend fun saveData(gitResult: GitResponse<RemoteResult>) {
         TODO("Not yet implemented")
     }
 
+    suspend fun <T: Any> handleResponse(
+        call: suspend () -> Response<T>
+    ): GitResponse<T> {
+        return try {
+                val response = call()
+                if (response.isSuccessful) {
+                    GitResponse.Success(data = response.body()!!)
+                } else {
+                    GitResponse.Error(message = response.message())
+                }
+            }
+            catch (e: HttpException) {
+                GitResponse.Error(message = "Something went wrong HttpException")
+            }
+            catch (e: IOException){
+                GitResponse.Exception()
+            }
+            catch (e: Throwable){
+                GitResponse.Error(message = "Throw exception")
+            }
+
+    }
 }

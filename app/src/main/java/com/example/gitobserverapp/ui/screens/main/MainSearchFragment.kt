@@ -105,7 +105,7 @@ class MainSearchFragment: MvpAppCompatFragment(), MainSearchView, MainSearchAdap
     }
 
     override fun onClick(item: RemoteRepo) {
-        val repoOwnerLogin: String = item.owner.name
+        val repoOwnerLogin: String = item.owner.login
         val repoName: String = item.name
         val direction = MainSearchFragmentDirections.actionMainFragmentToChartFragment(
             repoName = repoName,

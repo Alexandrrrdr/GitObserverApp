@@ -5,9 +5,9 @@ import com.squareup.moshi.Json
 import java.util.*
 
 class RemoteRepo(
+    override val id: Int,
     override val name: String,
     override val owner: RemoteUser,
     @Json(name = "stargazers_count")
-    override val starsCount: Int,
-    override val id: Int
+    override val starsCount: Int
 ): Repo

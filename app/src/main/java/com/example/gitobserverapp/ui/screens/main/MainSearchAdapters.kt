@@ -27,7 +27,7 @@ class MainSearchAdapters(private val listener: Listener): RecyclerView.Adapter<M
                 .load(item.owner.avatarUrl)
                 .into(binding.imgRepo)
             binding.txtRepoName.text = item.name
-            binding.txtRepoOwner.text = item.owner.name
+            binding.txtRepoOwner.text = item.owner.login
             binding.txtRepoRateCounter.text = item.starsCount.toString()
             itemView.setOnClickListener {
                 listener.onClick(item = item)
