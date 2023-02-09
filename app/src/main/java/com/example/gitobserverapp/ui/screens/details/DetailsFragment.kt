@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gitobserverapp.R
 import com.example.gitobserverapp.data.remote.model.RemoteStarGroup
 import com.example.gitobserverapp.databinding.FragmentDetailsBinding
-import com.example.gitobserverapp.ui.screens.barchart.PresentationStargazersListItem
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
 

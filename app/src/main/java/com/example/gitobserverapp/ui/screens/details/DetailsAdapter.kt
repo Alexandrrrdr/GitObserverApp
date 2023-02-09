@@ -10,16 +10,15 @@ import com.bumptech.glide.Glide
 import com.example.gitobserverapp.R
 import com.example.gitobserverapp.data.remote.model.RemoteStarGroup
 import com.example.gitobserverapp.databinding.DetailsItemBinding
-import com.example.gitobserverapp.ui.screens.barchart.PresentationStargazersListItem
 
 class DetailsAdapter(): RecyclerView.Adapter<DetailsAdapter.ViewHolder>() {
 
     inner class ViewHolder(private val binding: DetailsItemBinding): RecyclerView.ViewHolder(binding.root){
         fun bind(userData: RemoteStarGroup){
-            binding.txtViewName.text = userData.users.login
-            binding.txtViewUserId.text = userData.users.login
+            binding.txtViewName.text = userData.users.name
+            binding.txtViewUserId.text = userData.users.id.toString()
             Glide.with(itemView)
-                .load(userData.users.avatarUrl)
+                .load(userData.users.userUrl)
                 .placeholder(R.drawable.ic_image_placeholder)
                 .into(binding.imgViewStar)
         }

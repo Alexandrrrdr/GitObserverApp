@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.gitobserverapp.App
 import com.example.gitobserverapp.data.remote.model.RemoteStarGroup
@@ -188,6 +187,7 @@ class ChartFragment():
         this.lastPage = lastPage
         this.page = page
         navigationButtonsController(lastPage = lastPage, page = page)
+        Log.d("info", "${list.size}")
         initBarChart(list = list)
     }
 
@@ -201,7 +201,7 @@ class ChartFragment():
 
     override fun showNetworkErrorPage() {
         disableNavigationButtons(value = 0)
-        disableRadioButtons(value = false)
+        disableRadioButtons(value = true)
         binding.txtNetworkStatus.visibility = View.VISIBLE
         binding.progBarChart.visibility = View.GONE
     }
@@ -294,13 +294,10 @@ class ChartFragment():
 
         barEntryList.clear()
         barLabelList.clear()
-        for (i in list.indices){
-            Log.d("info", "${list[i].period}")
-        }
-
         for (i in list.indices) {
             barLabelList.add(i, list[i].period.toString())
             if (list[i].userInfo.isEmpty()){
+                Log.d("info", "searching for name  - ${list[i].userInfo[i].users.name}")
                 barEntryList.add(
                     BarEntry(
                         i.toFloat(),

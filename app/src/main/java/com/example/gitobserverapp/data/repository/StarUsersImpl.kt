@@ -21,7 +21,7 @@ class StarUsersImpl @Inject constructor(private val gitRetrofitService: GitRetro
         page_number: Int
     ): GitResponse<List<RemoteStarGroup>> {
 
-//        val tmpList = mutableListOf<RemoteStarGroup>()
+//
 //        var requestResult = loadPageAndNext(
 //            gitRetrofitService = gitRetrofitService,
 //            repo_name = repo_name,
@@ -41,16 +41,24 @@ class StarUsersImpl @Inject constructor(private val gitRetrofitService: GitRetro
 //            tmpPage++
 //        }
 
-//        Log.d("info", "${requestResult.data?.size}")
-
-        val tmp = handleResponse { gitRetrofitService.getStarredData(
+        val tmpList = mutableListOf<List<RemoteStarGroup>>()
+        val tmp = loadPageAndNext(
+            gitRetrofitService = gitRetrofitService,
             repo_name = repo_name,
             owner_login = owner_login,
-            per_page = Constants.MAX_PER_PAGE,
-            page = page_number
-        ) }
-        Log.d("info", "starUserimpl - ${tmp.data?.size}")
-        return tmp
+            page_number = page_number
+        )
+        var tmpPage = 2
+        while (tmp.data?.isNotEmpty() == true){
+            loadPageAndNext(
+                gitRetrofitService = gitRetrofitService,
+                repo_name = repo_name,
+                owner_login = owner_login,
+                page_number = page_number)
+            tmpPage++
+            tmpList.addAll(tmp?.data)
+        }
+        return
     }
 
     override suspend fun saveData(starGroupList: List<RemoteStarGroup>) {

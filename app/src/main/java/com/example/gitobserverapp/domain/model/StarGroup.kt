@@ -4,5 +4,5 @@ import java.util.*
 
 interface StarGroup {
     val date: Date
-    val users: User
+    val users: StarUser
 }

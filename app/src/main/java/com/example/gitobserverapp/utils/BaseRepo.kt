@@ -21,7 +21,7 @@ abstract class BaseRepo {
         } catch (e: IOException) {
             GitResponse.Exception()
         } catch (e: Throwable) {
-            GitResponse.Error(message = "Throw exception")
+            GitResponse.Error(message = e.cause.toString())
         }
     }
 }
