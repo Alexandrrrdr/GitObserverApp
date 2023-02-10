@@ -1,7 +1,7 @@
 package com.example.gitobserverapp.data.remote.model
 
-data class DataStargazersListModel<T>(
-    val items: List<T>
+data class DataStargazersListModel(
+    val items: List<DataStargazersListItem>
 )
 
 data class DataStargazersListItem(

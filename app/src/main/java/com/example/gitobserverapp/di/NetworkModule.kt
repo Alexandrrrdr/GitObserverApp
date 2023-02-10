@@ -1,10 +1,12 @@
 package com.example.gitobserverapp.di
 
 import com.example.gitobserverapp.data.remote.GitRetrofitService
+import com.example.gitobserverapp.data.repository.StarUsersImpl
 import com.example.gitobserverapp.utils.Constants
 import com.example.gitobserverapp.utils.Constants.END_YOKEN
 import com.example.gitobserverapp.utils.Constants.GIT_YOKEN
 import com.example.gitobserverapp.utils.Constants.START_YOKEN
+import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -25,7 +27,7 @@ class NetworkModule {
     @Singleton
     fun provideMoshi(): Moshi {
         return Moshi.Builder()
-            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
+            .add(Date::class.java, Rfc3339DateJsonAdapter())
             .addLast(KotlinJsonAdapterFactory())
             .build()
     }

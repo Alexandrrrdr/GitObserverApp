@@ -1,8 +1,8 @@
 package com.example.gitobserverapp.ui.screens.barchart
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
+import com.example.gitobserverapp.data.remote.GitResponse
 import com.example.gitobserverapp.data.remote.model.RemoteStarGroup
 import com.example.gitobserverapp.domain.usecase.GetStargazersUseCase
 import com.example.gitobserverapp.utils.Constants
@@ -23,7 +23,7 @@ class ChartViewPresenter(private val getStargazersUseCase: GetStargazersUseCase)
     @RequiresApi(Build.VERSION_CODES.O)
     fun getStargazersList(repoName: String, repoOwnerName: String) {
 
-        val coroutineExceptionHandler = CoroutineExceptionHandler{_, throwable ->
+        val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
             throwable.printStackTrace()
         }
         tmpListBarChart.addAll(emptyList())
@@ -36,14 +36,27 @@ class ChartViewPresenter(private val getStargazersUseCase: GetStargazersUseCase)
                 owner_login = repoOwnerName,
                 page_number = START_PAGE
             )
-            Log.d("info", "${starList.data?.size}")
-//            tmpListBarChart.addAll(compareYearsModel(starList.data!!))
-//            withContext(Dispatchers.Main + coroutineExceptionHandler) {
-//                prepareListForChart(page = page)
-//            }
+            when (starList) {
+                is GitResponse.Success -> {
+                    tmpListBarChart.addAll(compareYearsModel(starList.data!!))
+                    withContext(Dispatchers.Main) {
+                        prepareListForChart(page = page)
+                    }
+                }
+                is GitResponse.Error -> {
+                    withContext(Dispatchers.Main) {
+                        viewState.showErrorPage(error = starList.error.toString())
+                    }
+                }
+
+                is GitResponse.Exception -> {
+                    withContext(Dispatchers.Main) {
+                        viewState.showNetworkErrorPage()
+                    }
+                }
+            }
         }
     }
-
 
 
     private fun setLastPage(list: List<BarChartModel>) {

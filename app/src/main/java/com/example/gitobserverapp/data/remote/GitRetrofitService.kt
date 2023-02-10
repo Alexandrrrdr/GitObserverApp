@@ -1,6 +1,6 @@
 package com.example.gitobserverapp.data.remote
 
-import com.example.gitobserverapp.data.remote.model.RemoteRepoResult
+import com.example.gitobserverapp.data.remote.model.RemoteRepoResultList
 import com.example.gitobserverapp.data.remote.model.RemoteStarGroup
 import com.example.gitobserverapp.utils.Constants.API_GET_REPOS
 import retrofit2.Response
@@ -14,7 +14,7 @@ interface GitRetrofitService {
         @Query("sort") sort: String,
         @Query("page") page: Int,
         @Query("per_page") per_page: Int
-    ): Response<RemoteRepoResult>
+    ): Response<RemoteRepoResultList>
 
 
 
