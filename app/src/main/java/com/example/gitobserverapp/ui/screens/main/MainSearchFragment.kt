@@ -10,9 +10,7 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gitobserverapp.App
 import com.example.gitobserverapp.R
-import com.example.gitobserverapp.data.remote.model.RemoteRepo
 import com.example.gitobserverapp.databinding.FragmentMainBinding
-import com.example.gitobserverapp.domain.usecase.GetReposUseCase
 import com.example.gitobserverapp.utils.Constants
 import com.example.gitobserverapp.utils.Extensions.hideKeyboard
 import moxy.MvpAppCompatFragment
@@ -29,14 +27,14 @@ class MainSearchFragment: MvpAppCompatFragment(), MainSearchView, MainSearchAdap
         MainSearchAdapters(this)
     }
 
-    @Inject lateinit var getReposUseCase: GetReposUseCase
+    @Inject lateinit var getRepoUseCase: com.example.gitobserverapp.domain.usecase.GetRepoUseCase
 
     @InjectPresenter
     lateinit var mainSearchPresenter: MainSearchPresenter
 
     @ProvidePresenter
     fun provideMainSearchPresenter(): MainSearchPresenter {
-        return MainSearchPresenter(getReposUseCase = getReposUseCase)
+        return MainSearchPresenter(getReposUseCase = getRepoUseCase)
     }
 
     override fun onAttach(context: Context) {
@@ -76,7 +74,7 @@ class MainSearchFragment: MvpAppCompatFragment(), MainSearchView, MainSearchAdap
         mainSearchAdapters.differ.submitList(emptyList())
     }
 
-    override fun showSuccess(list: List<RemoteRepo>) {
+    override fun showSuccess(list: List<com.example.gitobserverapp.data.remote.model.RemoteRepo>) {
         binding.progBarMain.visibility = View.GONE
         binding.networkError.root.visibility = View.GONE
         binding.txtError.visibility = View.GONE
@@ -104,7 +102,7 @@ class MainSearchFragment: MvpAppCompatFragment(), MainSearchView, MainSearchAdap
         mainSearchAdapters.differ.submitList(emptyList())
     }
 
-    override fun onClick(item: RemoteRepo) {
+    override fun onClick(item: com.example.gitobserverapp.data.remote.model.RemoteRepo) {
         val repoOwnerLogin: String = item.owner.login
         val repoName: String = item.name
         val direction = MainSearchFragmentDirections.actionMainFragmentToChartFragment(

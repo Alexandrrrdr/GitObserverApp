@@ -1,10 +1,5 @@
 package com.example.gitobserverapp.di
 
-import com.example.gitobserverapp.data.remote.GitRetrofitService
-import com.example.gitobserverapp.data.repository.ReposImplList
-import com.example.gitobserverapp.data.repository.StarUsersImpl
-import com.example.gitobserverapp.domain.repository.GetRepoListByName
-import com.example.gitobserverapp.domain.repository.GetStarUsers
 import dagger.Module
 import dagger.Provides
 
@@ -12,12 +7,12 @@ import dagger.Provides
 class DataModul {
 
     @Provides
-    fun provideDomainReposRepository(gitRetrofitService: GitRetrofitService): GetRepoListByName{
-        return ReposImplList(gitRetrofitService = gitRetrofitService)
+    fun provideDomainReposRepository(gitRetrofitService: com.example.gitobserverapp.data.remote.GitRetrofitService): com.example.gitobserverapp.domain.repository.GetRepos {
+        return com.example.gitobserverapp.data.repository.ReposImplList(gitRetrofitService = gitRetrofitService)
     }
 
     @Provides
-    fun provideDomainStargazersRepository(gitRetrofitService: GitRetrofitService): GetStarUsers{
-        return StarUsersImpl(gitRetrofitService = gitRetrofitService)
+    fun provideDomainStargazersRepository(gitRetrofitService: com.example.gitobserverapp.data.remote.GitRetrofitService): com.example.gitobserverapp.domain.repository.GetStars {
+        return com.example.gitobserverapp.data.repository.StarsImpl(gitRetrofitService = gitRetrofitService)
     }
 }

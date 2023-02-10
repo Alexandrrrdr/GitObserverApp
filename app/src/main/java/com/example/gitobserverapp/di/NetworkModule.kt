@@ -1,23 +1,20 @@
 package com.example.gitobserverapp.di
 
-import com.example.gitobserverapp.data.remote.GitRetrofitService
-import com.example.gitobserverapp.data.repository.StarUsersImpl
 import com.example.gitobserverapp.utils.Constants
 import com.example.gitobserverapp.utils.Constants.END_YOKEN
 import com.example.gitobserverapp.utils.Constants.GIT_YOKEN
 import com.example.gitobserverapp.utils.Constants.START_YOKEN
-import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
 import dagger.Provides
-import okhttp3.*
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.*
-import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
@@ -34,7 +31,7 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideMoshiConverter(moshi: Moshi): MoshiConverterFactory{
+    fun provideMoshiConverter(moshi: Moshi): MoshiConverterFactory {
         return MoshiConverterFactory.create(moshi)
     }
 
@@ -56,12 +53,12 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideRetrofitService(okhttp: OkHttpClient, moshiConverterFactory: MoshiConverterFactory): GitRetrofitService {
+    fun provideRetrofitService(okhttp: OkHttpClient, moshiConverterFactory: MoshiConverterFactory): com.example.gitobserverapp.data.remote.GitRetrofitService {
         val retrofit: Retrofit = Retrofit.Builder()
             .client(okhttp)
             .baseUrl(Constants.API_BASE_URL)
             .addConverterFactory(moshiConverterFactory)
             .build()
-        return retrofit.create(GitRetrofitService::class.java)
+        return retrofit.create(com.example.gitobserverapp.data.remote.GitRetrofitService::class.java)
     }
 }

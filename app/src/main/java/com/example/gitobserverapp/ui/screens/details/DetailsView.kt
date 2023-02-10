@@ -7,5 +7,5 @@ import moxy.viewstate.strategy.StateStrategyType
 
 @StateStrategyType(value = AddToEndStrategy::class)
 interface DetailsView : MvpView {
-    fun showList(list: List<RemoteStarGroup>, period: Int, amountUsers: Int)
+    fun showList(list: List<com.example.gitobserverapp.data.remote.model.RemoteStarGroup>, period: Int, amountUsers: Int)
 }

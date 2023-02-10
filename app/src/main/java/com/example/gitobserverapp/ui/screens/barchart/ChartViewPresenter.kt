@@ -4,7 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.example.gitobserverapp.data.remote.GitResponse
 import com.example.gitobserverapp.data.remote.model.RemoteStarGroup
-import com.example.gitobserverapp.domain.usecase.GetStargazersUseCase
+import com.example.gitobserverapp.domain.usecase.GetStarGroupUseCase
 import com.example.gitobserverapp.utils.Constants
 import com.example.gitobserverapp.utils.Constants.START_PAGE
 import kotlinx.coroutines.*
@@ -13,7 +13,7 @@ import moxy.MvpPresenter
 import java.time.LocalDate
 
 @InjectViewState
-class ChartViewPresenter(private val getStargazersUseCase: GetStargazersUseCase) :
+class ChartViewPresenter(private val getStarGroupUseCase: GetStarGroupUseCase) :
     MvpPresenter<ChartView>() {
 
     private val tmpListBarChart = mutableListOf<BarChartModel>()
@@ -31,25 +31,25 @@ class ChartViewPresenter(private val getStargazersUseCase: GetStargazersUseCase)
         viewState.showLoadPage()
         CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
 //            val tmpPresentationMapped: PresentationStargazersListModel
-            val starList = getStargazersUseCase.getData(
+            val starList = getStarGroupUseCase.getData(
                 repo_name = repoName,
                 owner_login = repoOwnerName,
                 page_number = START_PAGE
             )
             when (starList) {
-                is GitResponse.Success -> {
+                is GitResponse.Success<*> -> {
                     tmpListBarChart.addAll(compareYearsModel(starList.data!!))
                     withContext(Dispatchers.Main) {
                         prepareListForChart(page = page)
                     }
                 }
-                is GitResponse.Error -> {
+                is GitResponse.Error<*> -> {
                     withContext(Dispatchers.Main) {
                         viewState.showErrorPage(error = starList.error.toString())
                     }
                 }
 
-                is GitResponse.Exception -> {
+                is GitResponse.Exception<*> -> {
                     withContext(Dispatchers.Main) {
                         viewState.showNetworkErrorPage()
                     }

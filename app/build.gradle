@@ -36,7 +36,9 @@ android {
 
 
 dependencies {
-
+    
+    implementation project(path: ":domain")
+    implementation project(path: ":data")
 
     //MOXY
     def moxyVer = '2.2.2'
@@ -50,6 +52,21 @@ dependencies {
     implementation "com.google.dagger:dagger-android-support:$daggerVer"
     kapt "com.google.dagger:dagger-android-processor:$daggerVer"
     kapt "com.google.dagger:dagger-compiler:$daggerVer"
+
+    //Retrofit + moshi converter
+    def retroMoshiVer = '2.9.0'
+    implementation "com.squareup.retrofit2:retrofit:$retroMoshiVer"
+    implementation "com.squareup.retrofit2:converter-moshi:$retroMoshiVer"
+
+    //Moshi
+    def moshiVer = '1.14.0'
+    implementation "com.squareup.moshi:moshi-kotlin:$moshiVer"
+    implementation "com.squareup.moshi:moshi-adapters:$moshiVer"
+
+    //Okhttp3
+    def okhttpVer = '4.10.0'
+    implementation "com.squareup.okhttp3:okhttp:$okhttpVer"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttpVer"
 
     //Pagination
     def paginationVer = '3.1.1'
@@ -66,24 +83,9 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$viewModelVer"
     implementation "androidx.lifecycle:lifecycle-livedata-core:$viewModelVer"
 
-    //Retrofit + moshi converter
-    def retroMoshiVer = '2.9.0'
-    implementation "com.squareup.retrofit2:retrofit:$retroMoshiVer"
-    implementation "com.squareup.retrofit2:converter-moshi:$retroMoshiVer"
-
-    //Moshi
-    def moshiVer = '1.14.0'
-    implementation "com.squareup.moshi:moshi-kotlin:$moshiVer"
-    implementation "com.squareup.moshi:moshi-adapters:$moshiVer"
-
     //Coroutines
     def coroutineVer = '1.6.4'
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutineVer"
-
-    //Okhttp3
-    def okhttpVer = '4.10.0'
-    implementation "com.squareup.okhttp3:okhttp:$okhttpVer"
-    implementation "com.squareup.okhttp3:logging-interceptor:$okhttpVer"
 
     //Glide library
     def glideVer = '4.14.2'
@@ -94,11 +96,6 @@ dependencies {
     def navigVer = '2.5.3'
     implementation "androidx.navigation:navigation-fragment-ktx:$navigVer"
     implementation "androidx.navigation:navigation-ui-ktx:$navigVer"
-
-    //Room
-    def roomVer = '2.5.0'
-    implementation "androidx.room:room-runtime:$roomVer"
-    kapt "androidx.room:room-compiler:$roomVer"
 
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.appcompat:appcompat:1.6.0'

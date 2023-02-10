@@ -8,7 +8,7 @@ import moxy.viewstate.strategy.StateStrategyType
 @StateStrategyType(value = AddToEndStrategy::class)
 interface MainSearchView: MvpView {
     fun showLoading()
-    fun showSuccess(list: List<RemoteRepo>)
+    fun showSuccess(list: List<com.example.gitobserverapp.data.remote.model.RemoteRepo>)
     fun showError(error: String)
     fun showNetworkError()
 }

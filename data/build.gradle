@@ -1,0 +1,60 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+}
+
+android {
+    compileSdk 32
+
+    defaultConfig {
+        minSdk 21
+        targetSdk 32
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+    implementation project(path: ":domain")
+
+    //Retrofit + moshi converter
+    def retroMoshiVer = '2.9.0'
+    implementation "com.squareup.retrofit2:retrofit:$retroMoshiVer"
+    implementation "com.squareup.retrofit2:converter-moshi:$retroMoshiVer"
+
+    //Moshi
+    def moshiVer = '1.14.0'
+    implementation "com.squareup.moshi:moshi-kotlin:$moshiVer"
+    implementation "com.squareup.moshi:moshi-adapters:$moshiVer"
+
+    //Okhttp3
+    def okhttpVer = '4.10.0'
+    implementation "com.squareup.okhttp3:okhttp:$okhttpVer"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttpVer"
+
+    //Dagger
+    def daggerVer = 2.44
+    implementation "com.google.dagger:dagger:$daggerVer"
+    implementation "com.google.dagger:dagger-android-support:$daggerVer"
+    kapt "com.google.dagger:dagger-android-processor:$daggerVer"
+    kapt "com.google.dagger:dagger-compiler:$daggerVer"
+
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+}

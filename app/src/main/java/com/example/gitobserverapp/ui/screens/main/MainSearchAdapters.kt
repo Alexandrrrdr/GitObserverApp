@@ -22,7 +22,7 @@ class MainSearchAdapters(private val listener: Listener): RecyclerView.Adapter<M
     }
 
     inner class ViewHolder(private val binding: RecItemBinding): RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: RemoteRepo, listener: Listener){
+        fun bind(item: com.example.gitobserverapp.data.remote.model.RemoteRepo, listener: Listener){
             Glide.with(itemView)
                 .load(item.owner.avatarUrl)
                 .into(binding.imgRepo)
@@ -37,13 +37,13 @@ class MainSearchAdapters(private val listener: Listener): RecyclerView.Adapter<M
 
     override fun getItemCount() = differ.currentList.size
 
-    private val difUtil = object : DiffUtil.ItemCallback<RemoteRepo>(){
-        override fun areItemsTheSame(oldItem: RemoteRepo, newItem: RemoteRepo): Boolean {
+    private val difUtil = object : DiffUtil.ItemCallback<com.example.gitobserverapp.data.remote.model.RemoteRepo>(){
+        override fun areItemsTheSame(oldItem: com.example.gitobserverapp.data.remote.model.RemoteRepo, newItem: com.example.gitobserverapp.data.remote.model.RemoteRepo): Boolean {
             return oldItem.id == newItem.id
         }
 
         @SuppressLint("DiffUtilEquals")
-        override fun areContentsTheSame(oldItem: RemoteRepo, newItem: RemoteRepo): Boolean {
+        override fun areContentsTheSame(oldItem: com.example.gitobserverapp.data.remote.model.RemoteRepo, newItem: com.example.gitobserverapp.data.remote.model.RemoteRepo): Boolean {
             return oldItem == newItem
         }
     }
@@ -51,6 +51,6 @@ class MainSearchAdapters(private val listener: Listener): RecyclerView.Adapter<M
     val differ = AsyncListDiffer(this, difUtil)
 
     interface Listener{
-        fun onClick(item: RemoteRepo)
+        fun onClick(item: com.example.gitobserverapp.data.remote.model.RemoteRepo)
     }
 }

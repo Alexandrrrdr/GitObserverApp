@@ -1,8 +1,5 @@
 package com.example.gitobserverapp.ui.screens.main
 
-import com.example.gitobserverapp.data.remote.GitResponse
-import com.example.gitobserverapp.data.remote.model.RemoteRepoResultList
-import com.example.gitobserverapp.domain.usecase.GetReposUseCase
 import kotlinx.coroutines.*
 import moxy.InjectViewState
 import moxy.MvpPresenter
@@ -10,7 +7,7 @@ import javax.inject.Inject
 
 @InjectViewState
 class MainSearchPresenter @Inject constructor(
-    private val getReposUseCase: GetReposUseCase
+    private val getRepoUseCase: com.example.gitobserverapp.domain.usecase.GetRepoUseCase
 ) : MvpPresenter<MainSearchView>() {
 
 
@@ -27,24 +24,24 @@ class MainSearchPresenter @Inject constructor(
         }
 
         CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
-            val repoResult: GitResponse<RemoteRepoResultList> =
-                        getReposUseCase.getData(
+            val repoResult: com.example.gitobserverapp.data.remote.GitResponse<com.example.gitobserverapp.data.remote.model.RemoteRepoResultList> =
+                        getRepoUseCase.getData(
                             repo_name = searchName,
                             page_number = page
                         )
 
             when (repoResult) {
-                is GitResponse.Success -> {
+                is com.example.gitobserverapp.data.remote.GitResponse.Success -> {
                     withContext(Dispatchers.Main) {
                         viewState.showSuccess(repoResult.data!!.repoList)
                     }
                 }
-                is GitResponse.Error -> {
+                is com.example.gitobserverapp.data.remote.GitResponse.Error -> {
                     withContext(Dispatchers.Main) {
                         viewState.showError(error = repoResult.error.toString())
                     }
                 }
-                is GitResponse.Exception -> {
+                is com.example.gitobserverapp.data.remote.GitResponse.Exception -> {
                     withContext(Dispatchers.Main) {
                         viewState.showNetworkError()
                     }

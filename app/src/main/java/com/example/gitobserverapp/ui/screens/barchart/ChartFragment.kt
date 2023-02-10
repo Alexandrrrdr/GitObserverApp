@@ -12,9 +12,7 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
 import com.example.gitobserverapp.App
-import com.example.gitobserverapp.data.remote.model.RemoteStarGroup
 import com.example.gitobserverapp.databinding.FragmentChartBinding
-import com.example.gitobserverapp.domain.usecase.GetStargazersUseCase
 import com.example.gitobserverapp.ui.screens.details.DetailsViewModel
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.XAxis
@@ -38,14 +36,14 @@ import javax.inject.Inject
 class ChartFragment():
     MvpAppCompatFragment(), ChartView {
 
-    @Inject lateinit var getStargazersUseCase: GetStargazersUseCase
+    @Inject lateinit var getStarGroupUseCase: com.example.gitobserverapp.domain.usecase.GetStarGroupUseCase
 
     @InjectPresenter
     lateinit var chartViewPresenter: ChartViewPresenter
 
     @ProvidePresenter
     fun provideChartViewPresenter(): ChartViewPresenter {
-        return ChartViewPresenter(getStargazersUseCase = getStargazersUseCase)
+        return ChartViewPresenter(getStargazersUseCase = getStarGroupUseCase)
     }
 
     private var _binding: FragmentChartBinding? = null
@@ -284,9 +282,9 @@ class ChartFragment():
     }
 
     //Check BarChart data.object after click on line
-    private fun getViaPoints(list: List<*>): List<RemoteStarGroup>? {
-        list.forEach { if (it !is RemoteStarGroup) return null }
-        return list.filterIsInstance<RemoteStarGroup>()
+    private fun getViaPoints(list: List<*>): List<com.example.gitobserverapp.data.remote.model.RemoteStarGroup>? {
+        list.forEach { if (it !is com.example.gitobserverapp.data.remote.model.RemoteStarGroup) return null }
+        return list.filterIsInstance<com.example.gitobserverapp.data.remote.model.RemoteStarGroup>()
             .apply { if (size != list.size) return null }
     }
 

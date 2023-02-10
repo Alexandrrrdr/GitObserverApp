@@ -5,7 +5,7 @@ import moxy.MvpPresenter
 
 class DetailsViewPresenter: MvpPresenter<DetailsView>() {
 
-    fun showData(list: List<RemoteStarGroup>, repoName: String, amountUsers: Int){
+    fun showData(list: List<com.example.gitobserverapp.data.remote.model.RemoteStarGroup>, repoName: String, amountUsers: Int){
 
     }
 }
