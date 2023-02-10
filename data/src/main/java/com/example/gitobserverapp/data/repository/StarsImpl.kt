@@ -18,7 +18,7 @@ class StarsImpl @Inject constructor(private val gitRetrofitService: GitRetrofitS
         repo_name: String,
         owner_login: String,
         page_number: Int
-    ): GitResponse<List<RemoteStarGroup>> {
+    ): List<RemoteStarGroup> {
 
 //
 //        var requestResult = loadPageAndNext(

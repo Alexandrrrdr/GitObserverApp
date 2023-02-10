@@ -13,7 +13,7 @@ class ReposImplList @Inject constructor(
     private val gitRetrofitService: GitRetrofitService
 ) : GetRepos, BaseRepo() {
 
-    override suspend fun getData(searchWord: String, page: Int): GitResponse<RemoteRepoResultList> {
+    override suspend fun getData(searchWord: String, page: Int): RemoteRepoResultList {
         return handleResponse { gitRetrofitService.getRepos(
                 q = searchWord,
                 sort = SORT_BY,
@@ -22,7 +22,7 @@ class ReposImplList @Inject constructor(
         }
     }
 
-    override suspend fun saveData(gitResult: GitResponse<RemoteRepoResultList>) {
+    override suspend fun saveData(gitResult: RemoteRepoResultList) {
         TODO("Not yet implemented")
     }
 }

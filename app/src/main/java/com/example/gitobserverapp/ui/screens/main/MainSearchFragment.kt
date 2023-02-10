@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gitobserverapp.App
 import com.example.gitobserverapp.R
 import com.example.gitobserverapp.databinding.FragmentMainBinding
+import com.example.gitobserverapp.domain.usecase.GetRepoUseCase
+import com.example.gitobserverapp.ui.screens.main.model.UiRepo
 import com.example.gitobserverapp.utils.Constants
 import com.example.gitobserverapp.utils.Extensions.hideKeyboard
 import moxy.MvpAppCompatFragment
@@ -27,14 +29,16 @@ class MainSearchFragment: MvpAppCompatFragment(), MainSearchView, MainSearchAdap
         MainSearchAdapters(this)
     }
 
-    @Inject lateinit var getRepoUseCase: com.example.gitobserverapp.domain.usecase.GetRepoUseCase
+    @Inject lateinit var getRepoUseCase: GetRepoUseCase
+    @Inject lateinit var uiMapper: UiMapper
 
     @InjectPresenter
     lateinit var mainSearchPresenter: MainSearchPresenter
 
     @ProvidePresenter
     fun provideMainSearchPresenter(): MainSearchPresenter {
-        return MainSearchPresenter(getReposUseCase = getRepoUseCase)
+        return MainSearchPresenter(getRepoUseCase = getRepoUseCase,
+        uiMapper = uiMapper)
     }
 
     override fun onAttach(context: Context) {
@@ -74,7 +78,7 @@ class MainSearchFragment: MvpAppCompatFragment(), MainSearchView, MainSearchAdap
         mainSearchAdapters.differ.submitList(emptyList())
     }
 
-    override fun showSuccess(list: List<com.example.gitobserverapp.data.remote.model.RemoteRepo>) {
+    override fun showSuccess(list: List<UiRepo>) {
         binding.progBarMain.visibility = View.GONE
         binding.networkError.root.visibility = View.GONE
         binding.txtError.visibility = View.GONE
@@ -102,7 +106,7 @@ class MainSearchFragment: MvpAppCompatFragment(), MainSearchView, MainSearchAdap
         mainSearchAdapters.differ.submitList(emptyList())
     }
 
-    override fun onClick(item: com.example.gitobserverapp.data.remote.model.RemoteRepo) {
+    override fun onClick(item: UiRepo) {
         val repoOwnerLogin: String = item.owner.login
         val repoName: String = item.name
         val direction = MainSearchFragmentDirections.actionMainFragmentToChartFragment(

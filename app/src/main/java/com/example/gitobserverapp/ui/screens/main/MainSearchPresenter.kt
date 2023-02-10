@@ -7,7 +7,8 @@ import javax.inject.Inject
 
 @InjectViewState
 class MainSearchPresenter @Inject constructor(
-    private val getRepoUseCase: com.example.gitobserverapp.domain.usecase.GetRepoUseCase
+    private val getRepoUseCase: com.example.gitobserverapp.domain.usecase.GetRepoUseCase,
+    private val uiMapper: UiMapper
 ) : MvpPresenter<MainSearchView>() {
 
 
@@ -24,29 +25,28 @@ class MainSearchPresenter @Inject constructor(
         }
 
         CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
-            val repoResult: com.example.gitobserverapp.data.remote.GitResponse<com.example.gitobserverapp.data.remote.model.RemoteRepoResultList> =
-                        getRepoUseCase.getData(
-                            repo_name = searchName,
-                            page_number = page
-                        )
+            val result = uiMapper.map(getRepoUseCase.getData(repo_name = searchName, page_number = page))
 
-            when (repoResult) {
-                is com.example.gitobserverapp.data.remote.GitResponse.Success -> {
-                    withContext(Dispatchers.Main) {
-                        viewState.showSuccess(repoResult.data!!.repoList)
-                    }
-                }
-                is com.example.gitobserverapp.data.remote.GitResponse.Error -> {
-                    withContext(Dispatchers.Main) {
-                        viewState.showError(error = repoResult.error.toString())
-                    }
-                }
-                is com.example.gitobserverapp.data.remote.GitResponse.Exception -> {
-                    withContext(Dispatchers.Main) {
-                        viewState.showNetworkError()
-                    }
-                }
-            }
+            viewState.showSuccess(result.repoList)
+
+
+//            when (repoResult) {
+//                is com.example.gitobserverapp.data.remote.GitResponse.Success -> {
+//                    withContext(Dispatchers.Main) {
+//                        viewState.showSuccess(repoResult.data!!.repoList)
+//                    }
+//                }
+//                is com.example.gitobserverapp.data.remote.GitResponse.Error -> {
+//                    withContext(Dispatchers.Main) {
+//                        viewState.showError(error = repoResult.error.toString())
+//                    }
+//                }
+//                is com.example.gitobserverapp.data.remote.GitResponse.Exception -> {
+//                    withContext(Dispatchers.Main) {
+//                        viewState.showNetworkError()
+//                    }
+//                }
+//            }
         }
     }
 }
