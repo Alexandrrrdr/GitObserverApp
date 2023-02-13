@@ -1,6 +1,5 @@
 package com.example.gitobserverapp.ui.screens.main
 
-import com.example.gitobserverapp.data.remote.model.RemoteRepo
 import com.example.gitobserverapp.ui.screens.main.model.UiRepo
 import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndStrategy

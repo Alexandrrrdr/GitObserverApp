@@ -15,6 +15,7 @@ import com.example.gitobserverapp.domain.usecase.GetRepoUseCase
 import com.example.gitobserverapp.ui.screens.main.model.UiRepo
 import com.example.gitobserverapp.utils.Constants
 import com.example.gitobserverapp.utils.Extensions.hideKeyboard
+import com.example.gitobserverapp.utils.mapper.UiMapper
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
@@ -37,8 +38,7 @@ class MainSearchFragment: MvpAppCompatFragment(), MainSearchView, MainSearchAdap
 
     @ProvidePresenter
     fun provideMainSearchPresenter(): MainSearchPresenter {
-        return MainSearchPresenter(getRepoUseCase = getRepoUseCase,
-        uiMapper = uiMapper)
+        return MainSearchPresenter(getRepoUseCase = getRepoUseCase, uiMapper = uiMapper)
     }
 
     override fun onAttach(context: Context) {
@@ -65,7 +65,7 @@ class MainSearchFragment: MvpAppCompatFragment(), MainSearchView, MainSearchAdap
         }
 
         binding.btnCheckAgain.setOnClickListener {
-            mainSearchPresenter.loadData(searchName = "", page = Constants.START_PAGE)
+            mainSearchPresenter.loadData(searchName = binding.edtTxtInput.text.toString(), page = Constants.START_PAGE)
         }
     }
 

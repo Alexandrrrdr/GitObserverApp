@@ -43,7 +43,7 @@ class ChartFragment():
 
     @ProvidePresenter
     fun provideChartViewPresenter(): ChartViewPresenter {
-        return ChartViewPresenter(getStargazersUseCase = getStarGroupUseCase)
+        return ChartViewPresenter(getStarGroupUseCase = getStarGroupUseCase)
     }
 
     private var _binding: FragmentChartBinding? = null
@@ -112,7 +112,8 @@ class ChartFragment():
     @RequiresApi(Build.VERSION_CODES.O)
     private fun radioButtonClickListener() {
         binding.radioBtnYears.setOnClickListener {
-            chartViewPresenter.getStargazersList(repoName = repoName, repoOwnerName = repoOwnerName)
+            //TODO check after all work
+//            chartViewPresenter.getStargazersList(repoName = repoName, repoOwnerName = repoOwnerName)
         }
         binding.radioBtnMonths.setOnClickListener{
             Snackbar.make(binding.root, "Months", Snackbar.LENGTH_LONG).show()

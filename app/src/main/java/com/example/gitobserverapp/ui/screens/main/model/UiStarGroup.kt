@@ -1,6 +1,5 @@
 package com.example.gitobserverapp.ui.screens.main.model
 
-import com.squareup.moshi.Json
 import java.util.*
 
 data class UiStarGroup(

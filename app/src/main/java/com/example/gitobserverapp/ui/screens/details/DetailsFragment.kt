@@ -78,7 +78,7 @@ class DetailsFragment : MvpAppCompatFragment(), DetailsView {
 
 
     //TODO Pass data from chart fragment
-    override fun showList(list: List<com.example.gitobserverapp.data.remote.model.RemoteStarGroup>, period: Int, amount: Int) {
+    override fun showList(list: List<RemoteStarGroup>, period: Int, amount: Int) {
         detailsAdapter.differ.submitList(list)
         binding.txtDetailsHeader.text = requireActivity().resources.getText(R.string.details_period)
         binding.totalAmount.text = requireActivity().resources.getText(R.string.details_total_amount)

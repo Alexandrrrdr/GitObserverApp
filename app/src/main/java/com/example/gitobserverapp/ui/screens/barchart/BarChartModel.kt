@@ -4,5 +4,5 @@ import com.example.gitobserverapp.data.remote.model.RemoteStarGroup
 
 data class BarChartModel(
     var period: Int,
-    var userInfo: List<com.example.gitobserverapp.data.remote.model.RemoteStarGroup>
+    var userInfo: List<RemoteStarGroup>
 )

@@ -1,11 +1,21 @@
 package com.example.gitobserverapp.utils.mapper
 
-import com.example.gitobserverapp.domain.model.RepoResultList
-import com.example.gitobserverapp.ui.screens.main.model.UiRepoResultList
-import com.example.gitobserverapp.utils.mapper.base.BaseMapper
+import com.example.gitobserverapp.domain.model.Repo
+import com.example.gitobserverapp.domain.model.RepoUser
+import com.example.gitobserverapp.ui.screens.main.model.UiRepo
+import com.example.gitobserverapp.ui.screens.main.model.UiRepoUser
 
-class UiMapper(): BaseMapper<RepoResultList, UiRepoResultList> {
-    override fun map(from: RepoResultList): UiRepoResultList {
-        return UiRepoResultList(repoList = from.repoList)
+class UiMapper(){
+
+    fun mapUserToUi(from: RepoUser): UiRepoUser {
+        return UiRepoUser(id = from.id, login = from.login, avatarUrl = from.avatarUrl)
+    }
+
+    fun mapRepoToUi(from: Repo): UiRepo {
+        return UiRepo(id = from.id, name = from.name, starsCount = from.starsCount, owner = mapUserToUi(from.owner))
+    }
+
+    fun mapRepoListToUi(from: List<Repo>): List<UiRepo>{
+        return from.map { mapRepoToUi(it) }
     }
 }

@@ -1,9 +1,9 @@
 package com.example.gitobserverapp.domain.repository
 
-import com.example.gitobserverapp.domain.model.RepoResultList
+import com.example.gitobserverapp.domain.model.Repo
+import com.example.gitobserverapp.domain.model.NetworkState
 
 
 interface GetRepos {
-    suspend fun getData(searchWord: String, page: Int): RepoResultList
-    suspend fun saveData(gitResult: RepoResultList)
+    suspend fun getData(searchWord: String, page: Int): NetworkState<List<Repo>>
 }

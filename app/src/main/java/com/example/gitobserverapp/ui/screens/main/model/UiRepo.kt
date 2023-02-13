@@ -1,7 +1,5 @@
 package com.example.gitobserverapp.ui.screens.main.model
 
-import com.squareup.moshi.Json
-
 data class UiRepoResultList(
     val repoList: List<UiRepo>
 )

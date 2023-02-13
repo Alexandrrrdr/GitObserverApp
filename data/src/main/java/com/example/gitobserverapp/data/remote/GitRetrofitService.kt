@@ -1,5 +1,6 @@
 package com.example.gitobserverapp.data.remote
 
+import com.example.gitobserverapp.data.remote.model.RemoteRepo
 import com.example.gitobserverapp.data.remote.model.RemoteRepoResultList
 import com.example.gitobserverapp.data.remote.model.RemoteStarGroup
 import com.example.gitobserverapp.data.utils.Constants.API_GET_REPOS

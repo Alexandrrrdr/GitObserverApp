@@ -1,5 +1,8 @@
 package com.example.gitobserverapp.ui.screens.main
 
+import com.example.gitobserverapp.domain.model.NetworkState
+import com.example.gitobserverapp.domain.usecase.GetRepoUseCase
+import com.example.gitobserverapp.utils.mapper.UiMapper
 import kotlinx.coroutines.*
 import moxy.InjectViewState
 import moxy.MvpPresenter
@@ -7,7 +10,7 @@ import javax.inject.Inject
 
 @InjectViewState
 class MainSearchPresenter @Inject constructor(
-    private val getRepoUseCase: com.example.gitobserverapp.domain.usecase.GetRepoUseCase,
+    private val getRepoUseCase: GetRepoUseCase,
     private val uiMapper: UiMapper
 ) : MvpPresenter<MainSearchView>() {
 
@@ -25,28 +28,21 @@ class MainSearchPresenter @Inject constructor(
         }
 
         CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
-            val result = uiMapper.map(getRepoUseCase.getData(repo_name = searchName, page_number = page))
-
-            viewState.showSuccess(result.repoList)
-
-
-//            when (repoResult) {
-//                is com.example.gitobserverapp.data.remote.GitResponse.Success -> {
-//                    withContext(Dispatchers.Main) {
-//                        viewState.showSuccess(repoResult.data!!.repoList)
-//                    }
-//                }
-//                is com.example.gitobserverapp.data.remote.GitResponse.Error -> {
-//                    withContext(Dispatchers.Main) {
-//                        viewState.showError(error = repoResult.error.toString())
-//                    }
-//                }
-//                is com.example.gitobserverapp.data.remote.GitResponse.Exception -> {
-//                    withContext(Dispatchers.Main) {
-//                        viewState.showNetworkError()
-//                    }
-//                }
-//            }
+            val result = getRepoUseCase.getData(repo_name = searchName, page_number = page)
+            withContext(Dispatchers.Main){
+                when (result) {
+                    is NetworkState.Error -> viewState.showError(result.error)
+                    is NetworkState.HttpErrors.BadGateWay -> viewState.showError(result.exception)
+                    is NetworkState.HttpErrors.InternalServerError -> viewState.showError(result.exception)
+                    is NetworkState.HttpErrors.RemovedResourceFound -> viewState.showError(result.exception)
+                    is NetworkState.HttpErrors.ResourceForbidden -> viewState.showError(result.exception)
+                    is NetworkState.HttpErrors.ResourceNotFound -> viewState.showError(result.exception)
+                    is NetworkState.HttpErrors.ResourceRemoved -> viewState.showError(result.exception)
+                    NetworkState.InvalidData -> viewState.showError("No data on server")
+                    is NetworkState.NetworkException -> viewState.showNetworkError()
+                    is NetworkState.Success -> viewState.showSuccess(uiMapper.mapRepoListToUi(result.data))
+                }
+            }
         }
     }
 }
