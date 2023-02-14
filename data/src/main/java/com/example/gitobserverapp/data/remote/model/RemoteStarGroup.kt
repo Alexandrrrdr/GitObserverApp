@@ -6,7 +6,7 @@ import java.util.*
 data class RemoteStarGroup(
     @Json(name = "starred_at")
     val date: Date,
-    @Json(name = "starred_at")
+    @Json(name = "user")
     val users: RemoteStarUser
 )
 

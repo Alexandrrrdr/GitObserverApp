@@ -10,10 +10,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.gitobserverapp.App
 import com.example.gitobserverapp.databinding.FragmentChartBinding
+import com.example.gitobserverapp.domain.usecase.GetStarGroupUseCase
+import com.example.gitobserverapp.ui.screens.barchart.model.BarChartModel
 import com.example.gitobserverapp.ui.screens.details.DetailsViewModel
+import com.example.gitobserverapp.ui.screens.barchart.model.UiStarGroup
+import com.example.gitobserverapp.utils.mapper.UiStarGroupMapper
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
@@ -36,14 +41,15 @@ import javax.inject.Inject
 class ChartFragment():
     MvpAppCompatFragment(), ChartView {
 
-    @Inject lateinit var getStarGroupUseCase: com.example.gitobserverapp.domain.usecase.GetStarGroupUseCase
+    @Inject lateinit var getStarGroupUseCase: GetStarGroupUseCase
+    @Inject lateinit var uiStarGroupMapper: UiStarGroupMapper
 
     @InjectPresenter
     lateinit var chartViewPresenter: ChartViewPresenter
 
     @ProvidePresenter
     fun provideChartViewPresenter(): ChartViewPresenter {
-        return ChartViewPresenter(getStarGroupUseCase = getStarGroupUseCase)
+        return ChartViewPresenter(getStarGroupUseCase = getStarGroupUseCase, uiStarGroupMapper = uiStarGroupMapper)
     }
 
     private var _binding: FragmentChartBinding? = null
@@ -112,8 +118,7 @@ class ChartFragment():
     @RequiresApi(Build.VERSION_CODES.O)
     private fun radioButtonClickListener() {
         binding.radioBtnYears.setOnClickListener {
-            //TODO check after all work
-//            chartViewPresenter.getStargazersList(repoName = repoName, repoOwnerName = repoOwnerName)
+            chartViewPresenter.getStargazersList(repoName = repoName, repoOwnerName = repoOwnerName)
         }
         binding.radioBtnMonths.setOnClickListener{
             Snackbar.make(binding.root, "Months", Snackbar.LENGTH_LONG).show()
@@ -265,13 +270,13 @@ class ChartFragment():
                     getViaPoints(userList)?.let { list ->
                         if (list.isNotEmpty()) {
                             Snackbar.make(binding.root, "$year, ${userList.size}", Snackbar.LENGTH_LONG).show()
-//                            detailsViewModel.setUserList(list)
-//                            val direction =
-//                                ChartFragmentDirections.actionChartFragmentToDetailsFragment(
-//                                    timePeriod = year,
-//                                    amountUsers = userList.size
-//                                )
-//                            findNavController().navigate(directions = direction)
+                            detailsViewModel.setUserList(list)
+                            val direction =
+                                ChartFragmentDirections.actionChartFragmentToDetailsFragment(
+                                    timePeriod = year,
+                                    amountUsers = userList.size
+                                )
+                            findNavController().navigate(directions = direction)
                         }
                     }
                 }
@@ -283,9 +288,9 @@ class ChartFragment():
     }
 
     //Check BarChart data.object after click on line
-    private fun getViaPoints(list: List<*>): List<com.example.gitobserverapp.data.remote.model.RemoteStarGroup>? {
-        list.forEach { if (it !is com.example.gitobserverapp.data.remote.model.RemoteStarGroup) return null }
-        return list.filterIsInstance<com.example.gitobserverapp.data.remote.model.RemoteStarGroup>()
+    private fun getViaPoints(list: List<*>): List<UiStarGroup>? {
+        list.forEach { if (it !is UiStarGroup) return null }
+        return list.filterIsInstance<UiStarGroup>()
             .apply { if (size != list.size) return null }
     }
 

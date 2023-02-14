@@ -1,64 +1,66 @@
 package com.example.gitobserverapp.ui.screens.barchart
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
-import com.example.gitobserverapp.data.remote.model.RemoteStarGroup
+import com.example.gitobserverapp.domain.model.NetworkState
 import com.example.gitobserverapp.domain.usecase.GetStarGroupUseCase
+import com.example.gitobserverapp.ui.screens.barchart.model.BarChartModel
+import com.example.gitobserverapp.ui.screens.barchart.model.UiStarGroup
 import com.example.gitobserverapp.utils.Constants
 import com.example.gitobserverapp.utils.Constants.START_PAGE
+import com.example.gitobserverapp.utils.mapper.UiStarGroupMapper
 import kotlinx.coroutines.*
 import moxy.InjectViewState
 import moxy.MvpPresenter
 import java.time.LocalDate
+import java.util.*
 import javax.inject.Inject
 
 @InjectViewState
 class ChartViewPresenter
-@Inject constructor(private val getStarGroupUseCase: GetStarGroupUseCase)
-    :
-    MvpPresenter<ChartView>() {
+@Inject constructor(
+    private val getStarGroupUseCase: GetStarGroupUseCase,
+    private val uiStarGroupMapper: UiStarGroupMapper): MvpPresenter<ChartView>() {
 
     private val tmpListBarChart = mutableListOf<BarChartModel>()
     private var lastPage = 1
     private var page = 1
 
-//    @RequiresApi(Build.VERSION_CODES.O)
-//    fun getStargazersList(repoName: String, repoOwnerName: String) {
-//
-//        val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
-//            throwable.printStackTrace()
-//        }
-//        tmpListBarChart.addAll(emptyList())
-//        page = START_PAGE
-//        viewState.showLoadPage()
-//        CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
-////            val tmpPresentationMapped: PresentationStargazersListModel
-//            val starList = getStarGroupUseCase.getData(
-//                repo_name = repoName,
-//                owner_login = repoOwnerName,
-//                page_number = START_PAGE
-//            )
-//            when (starList) {
-//                is com.example.gitobserverapp.data.remote.GitResponse.Result.Success<*> -> {
-//                    tmpListBarChart.addAll(compareYearsModel(starList.data!!))
-//                    withContext(Dispatchers.Main) {
-//                        prepareListForChart(page = page)
-//                    }
-//                }
-//                is com.example.gitobserverapp.data.remote.GitResponse.Result.Error<*> -> {
-//                    withContext(Dispatchers.Main) {
-//                        viewState.showErrorPage(error = starList.error.toString())
-//                    }
-//                }
-//
-//                is com.example.gitobserverapp.data.remote.GitResponse.Result.Exception<*> -> {
-//                    withContext(Dispatchers.Main) {
-//                        viewState.showNetworkErrorPage()
-//                    }
-//                }
-//            }
-//        }
-//    }
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getStargazersList(repoName: String, repoOwnerName: String) {
+
+        val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
+            throwable.printStackTrace()
+        }
+        tmpListBarChart.addAll(emptyList())
+        page = START_PAGE
+        viewState.showLoadPage()
+        CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
+            val starList = getStarGroupUseCase.getData(
+                repo_name = repoName,
+                owner_login = repoOwnerName,
+                page_number = START_PAGE
+            )
+                when (starList) {
+                    is NetworkState.Error -> withContext(Dispatchers.Main){viewState.showErrorPage(starList.error)}
+                    is NetworkState.HttpErrors.BadGateWay -> withContext(Dispatchers.Main){viewState.showErrorPage(starList.exception)}
+                    is NetworkState.HttpErrors.InternalServerError -> withContext(Dispatchers.Main){viewState.showErrorPage(starList.exception)}
+                    is NetworkState.HttpErrors.RemovedResourceFound -> withContext(Dispatchers.Main){viewState.showErrorPage(starList.exception)}
+                    is NetworkState.HttpErrors.ResourceForbidden -> withContext(Dispatchers.Main){viewState.showErrorPage(starList.exception)}
+                    is NetworkState.HttpErrors.ResourceNotFound -> withContext(Dispatchers.Main){viewState.showErrorPage(starList.exception)}
+                    is NetworkState.HttpErrors.ResourceRemoved -> withContext(Dispatchers.Main){viewState.showErrorPage(starList.exception)}
+                    NetworkState.InvalidData -> withContext(Dispatchers.Main){viewState.showErrorPage("Something wrong with data from server")}
+                    is NetworkState.NetworkException -> withContext(Dispatchers.Main){viewState.showNetworkErrorPage()}
+                    is NetworkState.Success -> {
+                        withContext(Dispatchers.Main) {
+                            tmpListBarChart.addAll(compareYearsModel(uiStarGroupMapper.mapStarGroupList(starList.data)))
+                            viewState.showSuccessPage(list = tmpListBarChart, lastPage = lastPage, page = page)
+                        }
+                    }
+                }
+        }
+    }
 
 
     private fun setLastPage(list: List<BarChartModel>) {
@@ -71,7 +73,9 @@ class ChartViewPresenter
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun compareYearsModel(list: List<RemoteStarGroup>): List<BarChartModel> {
+    private fun compareYearsModel(list: List<UiStarGroup>): List<BarChartModel> {
+
+        val calendar = Calendar.getInstance()
 
         var endDateYear = list[list.lastIndex].date.year
         var startDateYear = list[Constants.ZERO_PAGE].date.year
@@ -81,6 +85,8 @@ class ChartViewPresenter
         for (i in startDateYear..todayDateYear) {
             amountOfDates++
         }
+        Log.d("info", "Today - $todayDateYear, Start - $startDateYear, End - $endDateYear")
+
 
         //If last stargazers starred date less than today year 2023 i fill empty data until starred
         if (todayDateYear > endDateYear) {
@@ -97,7 +103,7 @@ class ChartViewPresenter
 
         //stargazers started
         while (endDateYear >= startDateYear) {
-            val usersForBarChartData = mutableListOf<RemoteStarGroup>()
+            val usersForBarChartData = mutableListOf<UiStarGroup>()
             usersForBarChartData.addAll(list.filter { it.date.year == endDateYear })
             matchedListForBarChartModel.add(
                 element = BarChartModel(
@@ -135,6 +141,9 @@ class ChartViewPresenter
             }
         }
         setLastPage(matchedListForBarChartModel)
+
+        Log.d("info", "last page is - $lastPage")
+        Log.d("info", "${matchedListForBarChartModel.size}")
         return matchedListForBarChartModel
     }
 

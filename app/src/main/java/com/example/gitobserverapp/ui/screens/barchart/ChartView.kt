@@ -1,5 +1,6 @@
 package com.example.gitobserverapp.ui.screens.barchart
 
+import com.example.gitobserverapp.ui.screens.barchart.model.BarChartModel
 import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.StateStrategyType

@@ -5,9 +5,7 @@ import com.example.gitobserverapp.data.remote.model.RemoteRepoUser
 import com.example.gitobserverapp.domain.model.Repo
 import com.example.gitobserverapp.domain.model.RepoUser
 
-class MapToDomain(){
-
-
+class RepoToDomain(){
     fun mapToDomain(from: RemoteRepoUser): RepoUser{
         return RepoUser(id = from.id, login = from.login, avatarUrl = from.avatarUrl)
     }

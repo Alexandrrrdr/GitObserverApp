@@ -5,7 +5,7 @@ import com.example.gitobserverapp.domain.model.RepoUser
 import com.example.gitobserverapp.ui.screens.main.model.UiRepo
 import com.example.gitobserverapp.ui.screens.main.model.UiRepoUser
 
-class UiMapper(){
+class UiRepoMapper(){
 
     fun mapUserToUi(from: RepoUser): UiRepoUser {
         return UiRepoUser(id = from.id, login = from.login, avatarUrl = from.avatarUrl)

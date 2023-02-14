@@ -3,7 +3,7 @@ package com.example.gitobserverapp.data.repository
 import com.example.gitobserverapp.data.remote.GitRetrofitService
 import com.example.gitobserverapp.data.utils.Constants.DEF_PER_PAGE
 import com.example.gitobserverapp.data.utils.Constants.SORT_BY
-import com.example.gitobserverapp.data.utils.mapper.MapToDomain
+import com.example.gitobserverapp.data.utils.mapper.RepoToDomain
 import com.example.gitobserverapp.domain.model.Repo
 import com.example.gitobserverapp.domain.model.NetworkState
 import com.example.gitobserverapp.domain.repository.GetRepos
@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 class ReposImplList @Inject constructor(
     private val gitRetrofitService: GitRetrofitService,
-    private val mapToDomain: MapToDomain
+    private val repoToDomain: RepoToDomain
 ) : GetRepos
 {
     override suspend fun getData(
@@ -23,7 +23,7 @@ class ReposImplList @Inject constructor(
             val getRepos = gitRetrofitService.getRepos(q = searchWord, sort = SORT_BY, page = page, per_page = DEF_PER_PAGE)
             if (getRepos.isSuccessful){
                 if (getRepos.body() != null){
-                    NetworkState.Success(mapToDomain.mapRepoList(getRepos.body()!!.repoList))
+                    NetworkState.Success(repoToDomain.mapRepoList(getRepos.body()!!.repoList))
                 }
                 else {
                     NetworkState.InvalidData

@@ -15,7 +15,7 @@ import com.example.gitobserverapp.domain.usecase.GetRepoUseCase
 import com.example.gitobserverapp.ui.screens.main.model.UiRepo
 import com.example.gitobserverapp.utils.Constants
 import com.example.gitobserverapp.utils.Extensions.hideKeyboard
-import com.example.gitobserverapp.utils.mapper.UiMapper
+import com.example.gitobserverapp.utils.mapper.UiRepoMapper
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
@@ -31,14 +31,14 @@ class MainSearchFragment: MvpAppCompatFragment(), MainSearchView, MainSearchAdap
     }
 
     @Inject lateinit var getRepoUseCase: GetRepoUseCase
-    @Inject lateinit var uiMapper: UiMapper
+    @Inject lateinit var uiRepoMapper: UiRepoMapper
 
     @InjectPresenter
     lateinit var mainSearchPresenter: MainSearchPresenter
 
     @ProvidePresenter
     fun provideMainSearchPresenter(): MainSearchPresenter {
-        return MainSearchPresenter(getRepoUseCase = getRepoUseCase, uiMapper = uiMapper)
+        return MainSearchPresenter(getRepoUseCase = getRepoUseCase, uiRepoMapper = uiRepoMapper)
     }
 
     override fun onAttach(context: Context) {

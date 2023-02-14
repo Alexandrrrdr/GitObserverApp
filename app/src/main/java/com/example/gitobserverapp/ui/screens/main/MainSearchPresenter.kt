@@ -2,7 +2,7 @@ package com.example.gitobserverapp.ui.screens.main
 
 import com.example.gitobserverapp.domain.model.NetworkState
 import com.example.gitobserverapp.domain.usecase.GetRepoUseCase
-import com.example.gitobserverapp.utils.mapper.UiMapper
+import com.example.gitobserverapp.utils.mapper.UiRepoMapper
 import kotlinx.coroutines.*
 import moxy.InjectViewState
 import moxy.MvpPresenter
@@ -11,7 +11,7 @@ import javax.inject.Inject
 @InjectViewState
 class MainSearchPresenter @Inject constructor(
     private val getRepoUseCase: GetRepoUseCase,
-    private val uiMapper: UiMapper
+    private val uiRepoMapper: UiRepoMapper
 ) : MvpPresenter<MainSearchView>() {
 
 
@@ -40,7 +40,7 @@ class MainSearchPresenter @Inject constructor(
                     is NetworkState.HttpErrors.ResourceRemoved -> viewState.showError(result.exception)
                     NetworkState.InvalidData -> viewState.showError("No data on server")
                     is NetworkState.NetworkException -> viewState.showNetworkError()
-                    is NetworkState.Success -> viewState.showSuccess(uiMapper.mapRepoListToUi(result.data))
+                    is NetworkState.Success -> viewState.showSuccess(uiRepoMapper.mapRepoListToUi(result.data))
                 }
             }
         }

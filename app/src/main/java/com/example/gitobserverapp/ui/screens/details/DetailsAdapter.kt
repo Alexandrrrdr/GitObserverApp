@@ -8,13 +8,13 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.gitobserverapp.R
-import com.example.gitobserverapp.data.remote.model.RemoteStarGroup
 import com.example.gitobserverapp.databinding.DetailsItemBinding
+import com.example.gitobserverapp.ui.screens.barchart.model.UiStarGroup
 
 class DetailsAdapter(): RecyclerView.Adapter<DetailsAdapter.ViewHolder>() {
 
     inner class ViewHolder(private val binding: DetailsItemBinding): RecyclerView.ViewHolder(binding.root){
-        fun bind(userData: RemoteStarGroup){
+        fun bind(userData: UiStarGroup){
             binding.txtViewName.text = userData.users.name
             binding.txtViewUserId.text = userData.users.id.toString()
             Glide.with(itemView)
@@ -35,13 +35,13 @@ class DetailsAdapter(): RecyclerView.Adapter<DetailsAdapter.ViewHolder>() {
 
     override fun getItemCount(): Int = differ.currentList.size
 
-    private val diffUtil = object : DiffUtil.ItemCallback<RemoteStarGroup>(){
-        override fun areItemsTheSame(oldItem: RemoteStarGroup, newItem: RemoteStarGroup): Boolean {
+    private val diffUtil = object : DiffUtil.ItemCallback<UiStarGroup>(){
+        override fun areItemsTheSame(oldItem: UiStarGroup, newItem: UiStarGroup): Boolean {
             return oldItem.users.id == newItem.users.id
         }
 
         @SuppressLint("DiffUtilEquals")
-        override fun areContentsTheSame(oldItem: RemoteStarGroup, newItem: RemoteStarGroup): Boolean {
+        override fun areContentsTheSame(oldItem: UiStarGroup, newItem: UiStarGroup): Boolean {
             return oldItem.users == newItem.users
         }
     }

@@ -1,7 +1,6 @@
 package com.example.gitobserverapp.ui.screens.details
 
 import android.annotation.SuppressLint
-import android.content.res.Resources
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,8 +9,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gitobserverapp.R
-import com.example.gitobserverapp.data.remote.model.RemoteStarGroup
 import com.example.gitobserverapp.databinding.FragmentDetailsBinding
+import com.example.gitobserverapp.ui.screens.barchart.model.UiStarGroup
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
 
@@ -78,7 +77,7 @@ class DetailsFragment : MvpAppCompatFragment(), DetailsView {
 
 
     //TODO Pass data from chart fragment
-    override fun showList(list: List<RemoteStarGroup>, period: Int, amount: Int) {
+    override fun showList(list: List<UiStarGroup>, period: Int, amount: Int) {
         detailsAdapter.differ.submitList(list)
         binding.txtDetailsHeader.text = requireActivity().resources.getText(R.string.details_period)
         binding.totalAmount.text = requireActivity().resources.getText(R.string.details_total_amount)

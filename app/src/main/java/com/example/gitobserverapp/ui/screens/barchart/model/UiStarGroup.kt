@@ -1,4 +1,4 @@
-package com.example.gitobserverapp.ui.screens.main.model
+package com.example.gitobserverapp.ui.screens.barchart.model
 
 import java.util.*
 
