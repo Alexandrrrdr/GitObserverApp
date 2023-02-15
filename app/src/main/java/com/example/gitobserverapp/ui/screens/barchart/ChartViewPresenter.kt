@@ -14,6 +14,7 @@ import kotlinx.coroutines.*
 import moxy.InjectViewState
 import moxy.MvpPresenter
 import java.time.LocalDate
+import java.time.ZoneId
 import java.util.*
 import javax.inject.Inject
 
@@ -55,7 +56,7 @@ class ChartViewPresenter
                     is NetworkState.Success -> {
                         withContext(Dispatchers.Main) {
                             tmpListBarChart.addAll(compareYearsModel(uiStarGroupMapper.mapStarGroupList(starList.data)))
-                            viewState.showSuccessPage(list = tmpListBarChart, lastPage = lastPage, page = page)
+                            prepareListForChart(START_PAGE)
                         }
                     }
                 }
@@ -75,18 +76,15 @@ class ChartViewPresenter
     @RequiresApi(Build.VERSION_CODES.O)
     private fun compareYearsModel(list: List<UiStarGroup>): List<BarChartModel> {
 
-        val calendar = Calendar.getInstance()
+        var endDateYear = convertToLocalDateViaInstant(list[list.lastIndex].date)!!.year
 
-        var endDateYear = list[list.lastIndex].date.year
-        var startDateYear = list[Constants.ZERO_PAGE].date.year
+        var startDateYear = convertToLocalDateViaInstant(list[Constants.ZERO_PAGE].date)!!.year
         var todayDateYear = LocalDate.now().year
         val matchedListForBarChartModel = mutableListOf<BarChartModel>()
         var amountOfDates = 0
         for (i in startDateYear..todayDateYear) {
             amountOfDates++
         }
-        Log.d("info", "Today - $todayDateYear, Start - $startDateYear, End - $endDateYear")
-
 
         //If last stargazers starred date less than today year 2023 i fill empty data until starred
         if (todayDateYear > endDateYear) {
@@ -104,7 +102,7 @@ class ChartViewPresenter
         //stargazers started
         while (endDateYear >= startDateYear) {
             val usersForBarChartData = mutableListOf<UiStarGroup>()
-            usersForBarChartData.addAll(list.filter { it.date.year == endDateYear })
+            usersForBarChartData.addAll(list.filter { convertToLocalDateViaInstant(it.date)!!.year == endDateYear })
             matchedListForBarChartModel.add(
                 element = BarChartModel(
                     period = endDateYear,
@@ -141,10 +139,14 @@ class ChartViewPresenter
             }
         }
         setLastPage(matchedListForBarChartModel)
-
-        Log.d("info", "last page is - $lastPage")
-        Log.d("info", "${matchedListForBarChartModel.size}")
         return matchedListForBarChartModel
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun convertToLocalDateViaInstant(dateToConvert: Date): LocalDate? {
+        return dateToConvert.toInstant()
+            .atZone(ZoneId.systemDefault())
+            .toLocalDate()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

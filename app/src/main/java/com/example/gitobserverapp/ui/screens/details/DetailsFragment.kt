@@ -1,16 +1,13 @@
 package com.example.gitobserverapp.ui.screens.details
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gitobserverapp.R
 import com.example.gitobserverapp.databinding.FragmentDetailsBinding
-import com.example.gitobserverapp.ui.screens.barchart.model.UiStarGroup
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
 
@@ -23,15 +20,11 @@ class DetailsFragment : MvpAppCompatFragment(), DetailsView {
     private var _binding: FragmentDetailsBinding? = null
     private val binding get() = _binding!!
 
-
-    private val args: DetailsFragmentArgs by navArgs()
-    private var period = ""
-    private var amount = 0
-
-    private val detailsViewModel: DetailsViewModel by activityViewModels()
     private val detailsAdapter: DetailsAdapter by lazy {
         DetailsAdapter()
     }
+
+    private val args: DetailsFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,24 +36,12 @@ class DetailsFragment : MvpAppCompatFragment(), DetailsView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        period = args.timePeriod
-        amount = args.amountUsers
+        val period = args.timePeriod
+        val amount = args.amountUsers
+        val userList: Array<User> = args.list
 
         recyclerViewInit()
-        renderUi()
-    }
-
-    //TODO delete it after mvp pattern will work
-    @SuppressLint("NotifyDataSetChanged")
-    private fun renderUi() {
-        detailsViewModel.usersList.observe(viewLifecycleOwner) { userData ->
-            detailsAdapter.differ.submitList(userData)
-            val txtPeriod = requireActivity().resources.getText(R.string.details_period).toString() + period
-            binding.txtDetailsHeader.text = txtPeriod
-            val txtAmountUsers = requireActivity().resources.getText(R.string.details_total_amount).toString() + amount.toString()
-            binding.totalAmount.text = txtAmountUsers
-            detailsAdapter.notifyDataSetChanged()
-        }
+        detailsViewPresenter.showData(period = period, amountUsers = amount, arrayList = userList)
     }
 
     private fun recyclerViewInit() {
@@ -75,11 +56,13 @@ class DetailsFragment : MvpAppCompatFragment(), DetailsView {
         _binding = null
     }
 
-
-    //TODO Pass data from chart fragment
-    override fun showList(list: List<UiStarGroup>, period: Int, amount: Int) {
+    override fun showList(list: List<User>, period: String, amountUsers: Int) {
         detailsAdapter.differ.submitList(list)
-        binding.txtDetailsHeader.text = requireActivity().resources.getText(R.string.details_period)
-        binding.totalAmount.text = requireActivity().resources.getText(R.string.details_total_amount)
+        val txtPeriod =
+            requireActivity().resources.getText(R.string.details_period).toString() + period
+        binding.txtDetailsHeader.text = txtPeriod
+        val txtAmountUsers = requireActivity().resources.getText(R.string.details_total_amount)
+            .toString() + amountUsers.toString()
+        binding.totalAmount.text = txtAmountUsers
     }
 }

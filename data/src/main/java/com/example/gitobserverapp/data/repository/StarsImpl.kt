@@ -73,59 +73,5 @@ private val starGroupToDomain: StarGroupToDomain): GetStars{
         )
     }
 }
-//
-//        var requestResult = loadPageAndNext(
-//            gitRetrofitService = gitRetrofitService,
-//            repo_name = repo_name,
-//            owner_login = owner_login,
-//            page_number = page_number
-//        )
-//
-//        var tmpPage = 2
-//        while (requestResult.data?.isNotEmpty() == true) {
-//            tmpList.addAll(requestResult.data!!)
-//            requestResult = loadPageAndNext(
-//                gitRetrofitService = gitRetrofitService,
-//                repo_name = repo_name,
-//                owner_login = owner_login,
-//                page_number = tmpPage
-//            )
-//            tmpPage++
-//        }
-
-//        val tmpList = mutableListOf<RemoteStarGroup>()
-//        val tmp = loadPageAndNext(
-//            gitRetrofitService = gitRetrofitService,
-//            repo_name = repo_name,
-//            owner_login = owner_login,
-//            page_number = page_number
-//        )
-//        when(tmp){
-//            is com.example.gitobserverapp.data.remote.GitResponse.Result.Exception -> {
-//                return Result.Exception()
-//            }
-//            is com.example.gitobserverapp.data.remote.GitResponse.Result.Error -> {
-//                return Result.Error(message = tmp.error.toString())
-//            }
-//            is com.example.gitobserverapp.data.remote.GitResponse.Result.Success -> {
-//                var tmpPage = 2
-//                while (tmp.data?.isNotEmpty() == true){
-//                    loadPageAndNext(
-//                        gitRetrofitService = gitRetrofitService,
-//                        repo_name = repo_name,
-//                        owner_login = owner_login,
-//                        page_number = tmpPage)
-//                    tmpPage++
-//                    tmpList.addAll(tmp.data)
-//                }
-//            }
-//        }
-//        return Result.Success(data = tmpList)
-//    }
-//
-//    override suspend fun saveData(starGroupList: List<RemoteStarGroup>) {
-//        TODO("Not yet implemented")
-//    }
-//
 
 

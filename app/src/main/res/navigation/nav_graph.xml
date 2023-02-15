@@ -43,5 +43,8 @@
         <argument
             android:name="amountUsers"
             app:argType="integer" />
+        <argument
+            android:name="list"
+            app:argType="com.example.gitobserverapp.ui.screens.details.User[]" />
     </fragment>
 </navigation>
