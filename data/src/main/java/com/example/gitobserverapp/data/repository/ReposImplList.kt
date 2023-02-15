@@ -20,7 +20,7 @@ class ReposImplList @Inject constructor(
         page: Int
     ): NetworkState<List<Repo>> {
         return try {
-            val getRepos = gitRetrofitService.getRepos(q = searchWord, sort = SORT_BY, page = page, per_page = DEF_PER_PAGE)
+            val getRepos = gitRetrofitService.getOwnerRepos(q = searchWord, sort = SORT_BY, page = page, perPage = DEF_PER_PAGE)
             if (getRepos.isSuccessful){
                 if (getRepos.body() != null){
                     NetworkState.Success(repoToDomain.mapRepoList(getRepos.body()!!.repoList))

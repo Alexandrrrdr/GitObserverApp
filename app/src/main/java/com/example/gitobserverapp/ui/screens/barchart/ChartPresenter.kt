@@ -1,7 +1,6 @@
 package com.example.gitobserverapp.ui.screens.barchart
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import com.example.gitobserverapp.domain.model.NetworkState
 import com.example.gitobserverapp.domain.usecase.GetStarGroupUseCase
@@ -19,10 +18,10 @@ import java.util.*
 import javax.inject.Inject
 
 @InjectViewState
-class ChartViewPresenter
+class ChartPresenter
 @Inject constructor(
     private val getStarGroupUseCase: GetStarGroupUseCase,
-    private val uiStarGroupMapper: UiStarGroupMapper): MvpPresenter<ChartView>() {
+    private val uiStarGroupMapper: UiStarGroupMapper) : MvpPresenter<ChartView>() {
 
     private val tmpListBarChart = mutableListOf<BarChartModel>()
     private var lastPage = 1
@@ -39,9 +38,9 @@ class ChartViewPresenter
         viewState.showLoadPage()
         CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
             val starList = getStarGroupUseCase.getData(
-                repo_name = repoName,
-                owner_login = repoOwnerName,
-                page_number = START_PAGE
+                repoName = repoName,
+                ownerLogin = repoOwnerName,
+                pageNumber = START_PAGE
             )
                 when (starList) {
                     is NetworkState.Error -> withContext(Dispatchers.Main){viewState.showErrorPage(starList.error)}

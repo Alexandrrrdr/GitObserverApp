@@ -5,5 +5,5 @@ import com.example.gitobserverapp.domain.model.NetworkState
 
 
 interface GetStars {
-    suspend fun getData(repo_name: String, owner_login: String, page_number: Int): NetworkState<List<StarGroup>>
+    suspend fun getData(repoName: String, ownerLogin: String, pageNumber: Int): NetworkState<List<StarGroup>>
 }

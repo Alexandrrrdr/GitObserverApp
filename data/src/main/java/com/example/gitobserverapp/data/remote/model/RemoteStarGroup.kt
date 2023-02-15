@@ -1,20 +1,22 @@
 package com.example.gitobserverapp.data.remote.model
 
+import com.example.gitobserverapp.domain.model.StarGroup
+import com.example.gitobserverapp.domain.model.StarUser
 import com.squareup.moshi.Json
 import java.util.*
 
 data class RemoteStarGroup(
     @Json(name = "starred_at")
-    val date: Date,
+    override val date: Date,
     @Json(name = "user")
-    val users: RemoteStarUser
-)
+    override val users: RemoteStarUser
+): StarGroup
 
 data class RemoteStarUser(
     @Json(name = "id")
-    val id: Int,
+    override val id: Int,
     @Json(name = "login")
-    val name: String,
+    override val name: String,
     @Json(name = "avatar_url")
-    val userAvaUrl: String
-)
+    override val userAvaUrl: String
+): StarUser

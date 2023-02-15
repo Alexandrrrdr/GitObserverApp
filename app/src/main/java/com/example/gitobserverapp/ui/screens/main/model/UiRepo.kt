@@ -1,9 +1,5 @@
 package com.example.gitobserverapp.ui.screens.main.model
 
-data class UiRepoResultList(
-    val repoList: List<UiRepo>
-)
-
 data class UiRepo(
     val id: Int,
     val name: String,

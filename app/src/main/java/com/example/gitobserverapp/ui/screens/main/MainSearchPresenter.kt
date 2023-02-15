@@ -28,7 +28,7 @@ class MainSearchPresenter @Inject constructor(
         }
 
         CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
-            val result = getRepoUseCase.getData(repo_name = searchName, page_number = page)
+            val result = getRepoUseCase.getData(repoName = searchName, pageNumber = page)
             withContext(Dispatchers.Main){
                 when (result) {
                     is NetworkState.Error -> viewState.showError(result.error)

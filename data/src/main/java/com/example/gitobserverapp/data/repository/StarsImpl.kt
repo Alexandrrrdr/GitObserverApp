@@ -1,7 +1,6 @@
 package com.example.gitobserverapp.data.repository
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import com.example.gitobserverapp.data.remote.GitRetrofitService
 import com.example.gitobserverapp.data.remote.model.RemoteStarGroup
@@ -20,25 +19,25 @@ private val starGroupToDomain: StarGroupToDomain): GetStars{
 
     @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun getData(
-        repo_name: String,
-        owner_login: String,
-        page_number: Int
+        repoName: String,
+        ownerLogin: String,
+        pageNumber: Int
     ): NetworkState<List<StarGroup>> {
         val tmpReadyList = mutableListOf<StarGroup>()
         return try {
 
             var tmp = gitRetrofitService.getStarredData(
-                repo_name = repo_name,
-                owner_login = owner_login,
-                per_page = Constants.MAX_PER_PAGE,
-                page = page_number
+                repoName = repoName,
+                ownerLogin = ownerLogin,
+                perPage = Constants.MAX_PER_PAGE,
+                page = pageNumber
             )
 
             if (tmp.isSuccessful) {
                 var tmpPage = 2
                 while (tmp.body()?.isNotEmpty() == true) {
                     tmpReadyList.addAll(starGroupToDomain.mapListStarGroup(tmp.body()!!))
-                    tmp = loadPageAndNext(gitRetrofitService, repo_name, owner_login, tmpPage)
+                    tmp = loadPageAndNext(gitRetrofitService, repoName, ownerLogin, tmpPage)
                     tmpPage++
 
                 }
@@ -66,9 +65,9 @@ private val starGroupToDomain: StarGroupToDomain): GetStars{
         page_number: Int
     ): Response<List<RemoteStarGroup>> {
         return gitRetrofitService.getStarredData(
-            repo_name = repo_name,
-            owner_login = owner_login,
-            per_page = Constants.MAX_PER_PAGE,
+            repoName = repo_name,
+            ownerLogin = owner_login,
+            perPage = Constants.MAX_PER_PAGE,
             page = page_number
         )
     }

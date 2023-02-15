@@ -1,4 +1,4 @@
-package com.example.gitobserverapp.domain.model.tmp
+package com.example.gitobserverapp.domain.model.interfacesvar
 
 interface RepoUser {
     val id: Int

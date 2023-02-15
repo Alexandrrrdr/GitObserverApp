@@ -24,19 +24,19 @@ import moxy.presenter.ProvidePresenter
 import javax.inject.Inject
 
 
-class ChartFragment():
-    MvpAppCompatFragment(), ChartView, BarChartCreate.Listener {
+class ChartFragment:
+    MvpAppCompatFragment(), ChartView, ChartHelper.Listener {
 
     @Inject lateinit var getStarGroupUseCase: GetStarGroupUseCase
     @Inject lateinit var uiStarGroupMapper: UiStarGroupMapper
 
-    private lateinit var barChartCreate: BarChartCreate
+    private lateinit var chartHelper: ChartHelper
     @InjectPresenter
-    lateinit var chartViewPresenter: ChartViewPresenter
+    lateinit var chartPresenter: ChartPresenter
 
     @ProvidePresenter
-    fun provideChartViewPresenter(): ChartViewPresenter {
-        return ChartViewPresenter(getStarGroupUseCase = getStarGroupUseCase, uiStarGroupMapper = uiStarGroupMapper)
+    fun provideChartViewPresenter(): ChartPresenter {
+        return ChartPresenter(getStarGroupUseCase = getStarGroupUseCase, uiStarGroupMapper = uiStarGroupMapper)
     }
 
     private var _binding: FragmentChartBinding? = null
@@ -66,7 +66,7 @@ class ChartFragment():
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        barChartCreate = BarChartCreate(binding.barChart, this)
+        chartHelper = ChartHelper(binding.barChart, this)
         repoName = args.repoName
         repoOwnerName = args.repoOwnerName
         binding.repoName.text = repoName
@@ -81,7 +81,7 @@ class ChartFragment():
     private fun prevPageClick() {
         binding.prevPage.setOnClickListener {
             page++
-            chartViewPresenter.prepareListForChart(page = page)
+            chartPresenter.prepareListForChart(page = page)
         }
     }
 
@@ -89,14 +89,14 @@ class ChartFragment():
     private fun nextPageClick() {
         binding.nextPage.setOnClickListener {
             page--
-            chartViewPresenter.prepareListForChart(page = page)
+            chartPresenter.prepareListForChart(page = page)
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun radioButtonClickListener() {
         binding.radioBtnYears.setOnClickListener {
-            chartViewPresenter.getStargazersList(repoName = repoName, repoOwnerName = repoOwnerName)
+            chartPresenter.getStargazersList(repoName = repoName, repoOwnerName = repoOwnerName)
         }
         binding.radioBtnMonths.setOnClickListener{
             Snackbar.make(binding.root, "Months", Snackbar.LENGTH_LONG).show()
@@ -124,7 +124,7 @@ class ChartFragment():
         this.lastPage = lastPage
         this.page = page
         navigationButtonsController(lastPage = lastPage, page = page)
-        barChartCreate.initBarChart(list = list)
+        chartHelper.initBarChart(list = list)
     }
 
     override fun showErrorPage(error: String) {

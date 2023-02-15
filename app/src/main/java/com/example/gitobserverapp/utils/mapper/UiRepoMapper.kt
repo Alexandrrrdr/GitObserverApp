@@ -7,11 +7,11 @@ import com.example.gitobserverapp.ui.screens.main.model.UiRepoUser
 
 class UiRepoMapper(){
 
-    fun mapUserToUi(from: RepoUser): UiRepoUser {
+    private fun mapUserToUi(from: RepoUser): UiRepoUser {
         return UiRepoUser(id = from.id, login = from.login, avatarUrl = from.avatarUrl)
     }
 
-    fun mapRepoToUi(from: Repo): UiRepo {
+    private fun mapRepoToUi(from: Repo): UiRepo {
         return UiRepo(id = from.id, name = from.name, starsCount = from.starsCount, owner = mapUserToUi(from.owner))
     }
 
