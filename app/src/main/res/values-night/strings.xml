@@ -19,5 +19,6 @@
     <string name="check_network_connection">Check network connection</string>
     <string name="details_total_amount">Total amount of users: </string>
     <string name="details_period">Period: </string>
+    <string name="nothing_selected">Nothing was selected</string>
 
 </resources>
