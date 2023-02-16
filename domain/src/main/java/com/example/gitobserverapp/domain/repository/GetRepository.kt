@@ -7,5 +7,5 @@ import com.example.gitobserverapp.domain.model.StarUser
 
 interface GetRepository {
     suspend fun getRepos(userName: String): NetworkState<List<Repo>>
-    suspend fun getStarGroup(repoName: String, ownerLogin: String, pageNumber: Int): NetworkState<List<StarUser>>
+    suspend fun getStarGroup(repoName: String, ownerName: String, pageNumber: Int): NetworkState<List<StarUser>>
 }

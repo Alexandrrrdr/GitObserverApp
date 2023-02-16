@@ -17,7 +17,7 @@ class GetStarUseCase @Inject constructor(
     ): NetworkState<List<StarUser>> {
         return getRepository.getStarGroup(
             repoName = repoName,
-            ownerLogin = ownerLogin,
+            ownerName = ownerLogin,
             pageNumber = pageNumber
         )
     }

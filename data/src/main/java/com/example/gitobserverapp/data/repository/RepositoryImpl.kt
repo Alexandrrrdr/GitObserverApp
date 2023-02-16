@@ -5,16 +5,15 @@ import com.example.gitobserverapp.data.remote.GitRetrofitService
 import com.example.gitobserverapp.data.remote.model.interfacevar.RemoteRepo
 import com.example.gitobserverapp.data.remote.model.interfacevar.RemoteStarUser
 import com.example.gitobserverapp.data.utils.Constants
+import com.example.gitobserverapp.data.utils.Constants.MAX_PER_PAGE
 import com.example.gitobserverapp.data.utils.Constants.START_PAGE
-import com.example.gitobserverapp.domain.model.Repo
 import com.example.gitobserverapp.domain.model.NetworkState
-import com.example.gitobserverapp.domain.model.StarUser
 import com.example.gitobserverapp.domain.repository.GetRepository
 import okio.IOException
 import retrofit2.Response
 import javax.inject.Inject
 
-class RepositoryImplList @Inject constructor(
+class RepositoryImpl @Inject constructor(
     private val gitRetrofitService: GitRetrofitService
 ) : GetRepository {
 
@@ -24,20 +23,16 @@ class RepositoryImplList @Inject constructor(
         return try {
             val getRepos = gitRetrofitService.getOwnerRepos(
                 userName = userName,
-                page = START_PAGE
+                page = START_PAGE,
             )
-            Log.d("info", "Start request")
             if (getRepos.isSuccessful){
                 if (getRepos.body() != null){
-                    Log.d("info", "Request is success")
                     NetworkState.Success(getRepos.body()!!)
                 }
                 else {
-                    Log.d("info", "Request is invalidate")
                     NetworkState.InvalidData
                 }
             } else {
-                Log.d("info", "Request is HttpError")
                 when(getRepos.code()){
                     301 -> NetworkState.HttpErrors.ResourceRemoved(getRepos.message())
                     302 -> NetworkState.HttpErrors.RemovedResourceFound(getRepos.message())
@@ -49,23 +44,23 @@ class RepositoryImplList @Inject constructor(
                 }
             }
         } catch (e: IOException){
-            Log.d("info", "Request is Exception")
             NetworkState.NetworkException(e.cause.toString())
         }
     }
 
     override suspend fun getStarGroup(
         repoName: String,
-        ownerLogin: String,
+        ownerName: String,
         pageNumber: Int
-    ): NetworkState<List<StarUser>> {
-        val tmpReadyList = mutableListOf<StarUser>()
+    ): NetworkState<List<RemoteStarUser>> {
+        val tmpReadyList = mutableListOf<RemoteStarUser>()
         return try {
 
-            var tmp = gitRetrofitService.getStarredData(
+            Log.d("info", "RepoName - $repoName, ownerName - $ownerName, pageNumber - $pageNumber")
+            var tmp = gitRetrofitService.getStarUsers(
                 repoName = repoName,
-                ownerLogin = ownerLogin,
-                perPage = Constants.MAX_PER_PAGE,
+                ownerLogin = ownerName,
+                perPage = MAX_PER_PAGE,
                 page = pageNumber
             )
 
@@ -73,7 +68,7 @@ class RepositoryImplList @Inject constructor(
                 var tmpPage = 2
                 while (tmp.body()?.isNotEmpty() == true) {
                     tmpReadyList.addAll(tmp.body()!!)
-                    tmp = loadPageAndNext(gitRetrofitService, repoName, ownerLogin, tmpPage)
+                    tmp = loadPageAndNext(gitRetrofitService, repoName, ownerName, tmpPage)
                     tmpPage++
 
                 }
@@ -100,7 +95,7 @@ class RepositoryImplList @Inject constructor(
         owner_login: String,
         page_number: Int
     ): Response<List<RemoteStarUser>> {
-        return gitRetrofitService.getStarredData(
+        return gitRetrofitService.getStarUsers(
             repoName = repo_name,
             ownerLogin = owner_login,
             perPage = Constants.MAX_PER_PAGE,

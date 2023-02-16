@@ -16,14 +16,14 @@ interface GitRetrofitService {
 //        @Query("type") type: String = "owner",
 //        @Query("sort") sort: String = "full_name",
 //        @Query("direction") direction: String = "asc",
-//        @Query("per_page") perPage: Int = 100,    //max is 100
+//        @Query("per_page") perPage: Int,    //max is 100
         @Query("page") page: Int
     ): Response<List<RemoteRepo>>
 
 
     @Headers("Accept: application/vnd.github.star+json")
     @GET("/repos/{owner_login}/{repo_name}/stargazers")
-    suspend fun getStarredData(
+    suspend fun getStarUsers(
         @Path("repo_name") repoName: String,
         @Path("owner_login") ownerLogin: String,
         @Query("per_page") perPage: Int,

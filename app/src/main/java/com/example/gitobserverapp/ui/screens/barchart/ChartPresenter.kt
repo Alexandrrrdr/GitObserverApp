@@ -1,6 +1,7 @@
 package com.example.gitobserverapp.ui.screens.barchart
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import com.example.gitobserverapp.domain.model.NetworkState
 import com.example.gitobserverapp.domain.usecase.GetStarUseCase
@@ -8,18 +9,18 @@ import com.example.gitobserverapp.ui.screens.barchart.model.BarChartModel
 import com.example.gitobserverapp.ui.screens.barchart.model.UiStarGroup
 import com.example.gitobserverapp.utils.Constants
 import com.example.gitobserverapp.utils.Constants.START_PAGE
+import com.example.gitobserverapp.utils.Extensions.convertToLocalDate
 import kotlinx.coroutines.*
 import moxy.InjectViewState
 import moxy.MvpPresenter
 import java.time.LocalDate
-import java.time.ZoneId
-import java.util.*
 import javax.inject.Inject
 
 @InjectViewState
 class ChartPresenter
 @Inject constructor(
-    private val getStarGroupUseCase: GetStarUseCase) : MvpPresenter<ChartView>() {
+    private val getStarGroupUseCase: GetStarUseCase
+    ) : MvpPresenter<ChartView>() {
 
     private val tmpListBarChart = mutableListOf<BarChartModel>()
     private var lastPage = 1
@@ -40,6 +41,7 @@ class ChartPresenter
                 ownerLogin = repoOwnerName,
                 pageNumber = START_PAGE
             )
+
                 when (starList) {
                     is NetworkState.Error -> withContext(Dispatchers.Main){viewState.showErrorPage(starList.error)}
                     is NetworkState.HttpErrors.BadGateWay -> withContext(Dispatchers.Main){viewState.showErrorPage(starList.exception)}
@@ -75,9 +77,10 @@ class ChartPresenter
     @RequiresApi(Build.VERSION_CODES.O)
     private fun compareYearsModel(list: List<UiStarGroup>): List<BarChartModel> {
 
-        var endDateYear = convertToLocalDateViaInstant(list[list.lastIndex].date)!!.year
+        Log.d("info", "compare is started!!!")
+        var endDateYear = list[list.lastIndex].date.convertToLocalDate()!!.year
 
-        var startDateYear = convertToLocalDateViaInstant(list[Constants.ZERO_PAGE].date)!!.year
+        var startDateYear = list[Constants.ZERO_PAGE].date.convertToLocalDate()!!.year
         var todayDateYear = LocalDate.now().year
         val matchedListForBarChartModel = mutableListOf<BarChartModel>()
         var amountOfDates = 0
@@ -101,7 +104,7 @@ class ChartPresenter
         //stargazers started
         while (endDateYear >= startDateYear) {
             val usersForBarChartData = mutableListOf<UiStarGroup>()
-            usersForBarChartData.addAll(list.filter { convertToLocalDateViaInstant(it.date)!!.year == endDateYear })
+            usersForBarChartData.addAll(list.filter { it.date.convertToLocalDate()!!.year == endDateYear })
             matchedListForBarChartModel.add(
                 element = BarChartModel(
                     period = endDateYear,
@@ -139,13 +142,6 @@ class ChartPresenter
         }
         setLastPage(matchedListForBarChartModel)
         return matchedListForBarChartModel
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun convertToLocalDateViaInstant(dateToConvert: Date): LocalDate? {
-        return dateToConvert.toInstant()
-            .atZone(ZoneId.systemDefault())
-            .toLocalDate()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
