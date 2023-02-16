@@ -8,14 +8,13 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.gitobserverapp.App
 import com.example.gitobserverapp.R
 import com.example.gitobserverapp.databinding.FragmentMainBinding
-import com.example.gitobserverapp.domain.usecase.GetRepoUseCase
+import com.example.gitobserverapp.domain.usecase.GetReposUseCase
 import com.example.gitobserverapp.ui.screens.main.model.UiRepo
-import com.example.gitobserverapp.utils.Constants
 import com.example.gitobserverapp.utils.Extensions.hideKeyboard
-import com.example.gitobserverapp.utils.mapper.UiRepoMapper
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
@@ -30,15 +29,14 @@ class MainSearchFragment: MvpAppCompatFragment(), MainSearchView, MainSearchAdap
         MainSearchAdapters(this)
     }
 
-    @Inject lateinit var getRepoUseCase: GetRepoUseCase
-    @Inject lateinit var uiRepoMapper: UiRepoMapper
+    @Inject lateinit var getReposUseCaseUseCase: GetReposUseCase
 
     @InjectPresenter
     lateinit var mainSearchPresenter: MainSearchPresenter
 
     @ProvidePresenter
     fun provideMainSearchPresenter(): MainSearchPresenter {
-        return MainSearchPresenter(getRepoUseCase = getRepoUseCase, uiRepoMapper = uiRepoMapper)
+        return MainSearchPresenter(getReposUseCase = getReposUseCaseUseCase)
     }
 
     override fun onAttach(context: Context) {
@@ -60,12 +58,12 @@ class MainSearchFragment: MvpAppCompatFragment(), MainSearchView, MainSearchAdap
         recyclerViewInit()
 
         binding.btnSearch.setOnClickListener {
-            mainSearchPresenter.loadData(searchName = binding.edtTxtInput.text.toString(), page = Constants.START_PAGE)
+            mainSearchPresenter.loadData(userName = binding.edtTxtInput.text.toString())
             hideKeyboard()
         }
 
         binding.btnCheckAgain.setOnClickListener {
-            mainSearchPresenter.loadData(searchName = binding.edtTxtInput.text.toString(), page = Constants.START_PAGE)
+            mainSearchPresenter.loadData(userName = binding.edtTxtInput.text.toString())
         }
     }
 

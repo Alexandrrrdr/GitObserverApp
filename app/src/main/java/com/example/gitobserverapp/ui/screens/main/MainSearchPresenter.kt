@@ -1,8 +1,9 @@
 package com.example.gitobserverapp.ui.screens.main
 
 import com.example.gitobserverapp.domain.model.NetworkState
-import com.example.gitobserverapp.domain.usecase.GetRepoUseCase
-import com.example.gitobserverapp.utils.mapper.UiRepoMapper
+import com.example.gitobserverapp.domain.usecase.GetReposUseCase
+import com.example.gitobserverapp.ui.screens.main.model.UiRepo
+import com.example.gitobserverapp.ui.screens.main.model.UiRepoOwner
 import kotlinx.coroutines.*
 import moxy.InjectViewState
 import moxy.MvpPresenter
@@ -10,25 +11,23 @@ import javax.inject.Inject
 
 @InjectViewState
 class MainSearchPresenter @Inject constructor(
-    private val getRepoUseCase: GetRepoUseCase,
-    private val uiRepoMapper: UiRepoMapper
+    private val getReposUseCase: GetReposUseCase
 ) : MvpPresenter<MainSearchView>() {
 
 
-    fun loadData(searchName: String, page: Int) {
+    fun loadData(userName: String) {
 
-        if (searchName.isEmpty()) {
+        if (userName.isEmpty()) {
             viewState.showError("Search field is empty")
             return
         }
         viewState.showLoading()
-
         val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
             throwable.printStackTrace()
         }
 
         CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
-            val result = getRepoUseCase.getData(repoName = searchName, pageNumber = page)
+            val result = getReposUseCase.getRepos(userName = userName)
             withContext(Dispatchers.Main){
                 when (result) {
                     is NetworkState.Error -> viewState.showError(result.error)
@@ -40,7 +39,11 @@ class MainSearchPresenter @Inject constructor(
                     is NetworkState.HttpErrors.ResourceRemoved -> viewState.showError(result.exception)
                     NetworkState.InvalidData -> viewState.showError("No data on server")
                     is NetworkState.NetworkException -> viewState.showNetworkError()
-                    is NetworkState.Success -> viewState.showSuccess(uiRepoMapper.mapRepoListToUi(result.data))
+                    is NetworkState.Success -> viewState.showSuccess(result.data.map { UiRepo(
+                        id = it.id, description = it.description, name = it.name, owner =
+                        UiRepoOwner(avatarUrl = it.owner.avatarUrl, id = it.owner.id, login = it.owner.login),
+                        created = it.created, starUserAmount = it.starUserAmount
+                    ) })
                 }
             }
         }

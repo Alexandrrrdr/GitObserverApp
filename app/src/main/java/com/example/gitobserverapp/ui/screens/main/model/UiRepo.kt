@@ -1,14 +1,15 @@
 package com.example.gitobserverapp.ui.screens.main.model
 
-data class UiRepo(
-    val id: Int,
-    val name: String,
-    val starsCount: Int,
-    val owner: UiRepoUser
-)
+import com.example.gitobserverapp.domain.model.Repo
+import java.util.*
 
-data class UiRepoUser(
-    val id: Int,
-    val login: String,
-    val avatarUrl: String
-)
+data class UiRepo(
+    override val id: Int,
+    override val description: String? = null,
+    override val name: String,
+    override val owner: UiRepoOwner,
+    override val created: Date,
+    override val starUserAmount: Int
+): Repo
+
+

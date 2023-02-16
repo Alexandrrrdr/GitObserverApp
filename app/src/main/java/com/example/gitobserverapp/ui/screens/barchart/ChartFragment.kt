@@ -12,11 +12,10 @@ import androidx.navigation.fragment.navArgs
 import com.example.gitobserverapp.App
 import com.example.gitobserverapp.R
 import com.example.gitobserverapp.databinding.FragmentChartBinding
-import com.example.gitobserverapp.domain.usecase.GetStarGroupUseCase
+import com.example.gitobserverapp.domain.usecase.GetStarUseCase
 import com.example.gitobserverapp.ui.screens.barchart.model.BarChartModel
 import com.example.gitobserverapp.ui.screens.details.User
 import com.example.gitobserverapp.utils.Constants.START_PAGE
-import com.example.gitobserverapp.utils.mapper.UiStarGroupMapper
 import com.google.android.material.snackbar.Snackbar
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
@@ -27,8 +26,7 @@ import javax.inject.Inject
 class ChartFragment:
     MvpAppCompatFragment(), ChartView, ChartHelper.Listener {
 
-    @Inject lateinit var getStarGroupUseCase: GetStarGroupUseCase
-    @Inject lateinit var uiStarGroupMapper: UiStarGroupMapper
+    @Inject lateinit var getStarGroupUseCase: GetStarUseCase
 
     private lateinit var chartHelper: ChartHelper
     @InjectPresenter
@@ -36,7 +34,7 @@ class ChartFragment:
 
     @ProvidePresenter
     fun provideChartViewPresenter(): ChartPresenter {
-        return ChartPresenter(getStarGroupUseCase = getStarGroupUseCase, uiStarGroupMapper = uiStarGroupMapper)
+        return ChartPresenter(getStarGroupUseCase = getStarGroupUseCase)
     }
 
     private var _binding: FragmentChartBinding? = null

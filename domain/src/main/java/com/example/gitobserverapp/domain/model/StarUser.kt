@@ -1,4 +1,4 @@
-package com.example.gitobserverapp.domain.model.interfacesvar
+package com.example.gitobserverapp.domain.model
 
 import java.util.*
 

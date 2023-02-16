@@ -87,9 +87,9 @@ class ChartHelper(
                     getViaPoints(userList)?.let { list ->
                         if (list.isNotEmpty()) {
                             val tmp: List<User> = list.map { User(
-                                id = it.users.id,
-                                login = it.users.name,
-                                avatar_url = it.users.userAvaUrl)
+                                id = it.id,
+                                login = it.name,
+                                avatar_url = it.userUrl)
                             }
                             listener.click(item = tmp, year = year)
                         }

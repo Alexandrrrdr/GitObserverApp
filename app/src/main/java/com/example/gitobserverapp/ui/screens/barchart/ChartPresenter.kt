@@ -3,12 +3,11 @@ package com.example.gitobserverapp.ui.screens.barchart
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.example.gitobserverapp.domain.model.NetworkState
-import com.example.gitobserverapp.domain.usecase.GetStarGroupUseCase
+import com.example.gitobserverapp.domain.usecase.GetStarUseCase
 import com.example.gitobserverapp.ui.screens.barchart.model.BarChartModel
 import com.example.gitobserverapp.ui.screens.barchart.model.UiStarGroup
 import com.example.gitobserverapp.utils.Constants
 import com.example.gitobserverapp.utils.Constants.START_PAGE
-import com.example.gitobserverapp.utils.mapper.UiStarGroupMapper
 import kotlinx.coroutines.*
 import moxy.InjectViewState
 import moxy.MvpPresenter
@@ -20,8 +19,7 @@ import javax.inject.Inject
 @InjectViewState
 class ChartPresenter
 @Inject constructor(
-    private val getStarGroupUseCase: GetStarGroupUseCase,
-    private val uiStarGroupMapper: UiStarGroupMapper) : MvpPresenter<ChartView>() {
+    private val getStarGroupUseCase: GetStarUseCase) : MvpPresenter<ChartView>() {
 
     private val tmpListBarChart = mutableListOf<BarChartModel>()
     private var lastPage = 1
@@ -37,7 +35,7 @@ class ChartPresenter
         page = START_PAGE
         viewState.showLoadPage()
         CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
-            val starList = getStarGroupUseCase.getData(
+            val starList = getStarGroupUseCase.getStarGroup(
                 repoName = repoName,
                 ownerLogin = repoOwnerName,
                 pageNumber = START_PAGE
@@ -54,7 +52,9 @@ class ChartPresenter
                     is NetworkState.NetworkException -> withContext(Dispatchers.Main){viewState.showNetworkErrorPage()}
                     is NetworkState.Success -> {
                         withContext(Dispatchers.Main) {
-                            tmpListBarChart.addAll(compareYearsModel(uiStarGroupMapper.mapStarGroupList(starList.data)))
+                            tmpListBarChart.addAll(compareYearsModel(starList.data.map { UiStarGroup(
+                                date = it.date, id = it.id, name = it.name, userUrl = it.userUrl
+                            ) }))
                             prepareListForChart(START_PAGE)
                         }
                     }

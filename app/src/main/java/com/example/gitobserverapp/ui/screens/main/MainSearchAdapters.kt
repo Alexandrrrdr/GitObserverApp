@@ -1,15 +1,19 @@
 package com.example.gitobserverapp.ui.screens.main
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.example.gitobserverapp.data.remote.model.RemoteRepo
 import com.example.gitobserverapp.databinding.RecItemBinding
 import com.example.gitobserverapp.ui.screens.main.model.UiRepo
+import com.example.gitobserverapp.utils.Extensions.convertToLocalDate
+import java.time.LocalDate
+import java.time.ZoneId
+import java.util.*
 
 class MainSearchAdapters(private val listener: Listener): RecyclerView.Adapter<MainSearchAdapters.ViewHolder>() {
 
@@ -18,18 +22,17 @@ class MainSearchAdapters(private val listener: Listener): RecyclerView.Adapter<M
         return ViewHolder(binding)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(item = differ.currentList[position], listener = listener)
     }
 
     inner class ViewHolder(private val binding: RecItemBinding): RecyclerView.ViewHolder(binding.root) {
+        @RequiresApi(Build.VERSION_CODES.O)
         fun bind(item: UiRepo, listener: Listener){
-            Glide.with(itemView)
-                .load(item.owner.avatarUrl)
-                .into(binding.imgRepo)
-            binding.txtRepoName.text = item.name
-            binding.txtRepoOwner.text = item.owner.login
-            binding.txtRepoRateCounter.text = item.starsCount.toString()
+            binding.repoName.text = item.name
+            binding.repoDate.text = item.created.convertToLocalDate().toString()
+            binding.repoStarAmount.text = item.starUserAmount.toString()
             itemView.setOnClickListener {
                 listener.onClick(item = item)
             }

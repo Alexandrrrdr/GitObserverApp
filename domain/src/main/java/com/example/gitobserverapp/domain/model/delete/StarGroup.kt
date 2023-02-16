@@ -1,4 +1,4 @@
-//package com.example.gitobserverapp.domain.model
+package com.example.gitobserverapp.domain.model.delete//package com.example.gitobserverapp.domain.model
 //
 //import java.util.*
 //

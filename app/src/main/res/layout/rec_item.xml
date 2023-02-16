@@ -10,58 +10,84 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="#B4E4EA"
-        android:padding="4dp">
-
-        <ImageView
-            android:id="@+id/imgRepo"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_margin="6dp"
-            android:src="@drawable/ic_no_image"
-            app:layout_constraintTop_toBottomOf="@+id/txtRepoName"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+        android:padding="8dp">
 
         <TextView
-            android:id="@+id/txtRepoName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="start"
-            android:textColor="@color/black"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/imgRepo"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.636"
-            tools:text="Repository name" />
-
-        <TextView
-            android:id="@+id/txtRepoOwner"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:gravity="center_horizontal"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            app:layout_constraintStart_toEndOf="@+id/imgRepo"
-            app:layout_constraintTop_toTopOf="@+id/imgRepo"
-            tools:text="Repository owner" />
-
-        <TextView
-            android:id="@+id/txtLanguage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/purple_500"
-            android:textSize="16sp"
+            android:id="@+id/repoNamePermanent"
+            android:textColor="@color/g_black"
+            android:text="@string/repository_name"
             android:textStyle="bold"
-            android:layout_marginEnd="10dp"
-            app:layout_constraintBottom_toBottomOf="@+id/imgRepoRate"
-            app:layout_constraintEnd_toStartOf="@+id/imgRepoRate"
-            app:layout_constraintTop_toTopOf="@+id/imgRepoRate"
-            tools:text="Kotlin" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium.Inverse"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/repoName"
+            app:layout_constraintBottom_toBottomOf="@id/repoName"
+            />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/repoName"
+            android:textColor="@color/g_black"
+            tools:text="Example"
+            android:gravity="center_horizontal"
+            android:layout_marginStart="10dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small.Inverse"
+            app:layout_constraintStart_toEndOf="@+id/repoNamePermanent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/imgRepoRate"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+<!--        <TextView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:id="@+id/repoDescriptionPermanent"-->
+<!--            android:textColor="@color/g_black"-->
+<!--            android:layout_marginTop="10dp"-->
+<!--            android:text="@string/description"-->
+<!--            android:textStyle="bold"-->
+<!--            android:textAppearance="@style/TextAppearance.AppCompat.Medium.Inverse"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/repoNamePermanent"-->
+<!--            />-->
+<!--        <TextView-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:id="@+id/repoDescription"-->
+<!--            android:textColor="@color/g_black"-->
+<!--            tools:text="Some description"-->
+<!--            android:layout_marginStart="10dp"-->
+<!--            android:textAppearance="@style/TextAppearance.AppCompat.Medium.Inverse"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/repoDescriptionPermanent"-->
+<!--            app:layout_constraintTop_toTopOf="@id/repoDescriptionPermanent"-->
+<!--            app:layout_constraintBottom_toBottomOf="@id/repoDescriptionPermanent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"/>-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/repoDatePermanent"
+            android:textColor="@color/g_black"
+            android:text="@string/created"
+            android:textStyle="bold"
+            android:layout_marginTop="15dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium.Inverse"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/repoNamePermanent"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/repoDate"
+            android:textColor="@color/g_black"
+            tools:text="01.01.1970"
+            android:layout_marginStart="10dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small.Inverse"
+            app:layout_constraintStart_toEndOf="@+id/repoDatePermanent"
+            app:layout_constraintTop_toTopOf="@id/repoDatePermanent"
+            app:layout_constraintBottom_toBottomOf="@id/repoDatePermanent"
+            />
 
         <ImageView
             android:id="@+id/imgRepoRate"
@@ -69,22 +95,21 @@
             android:layout_height="30dp"
             android:layout_marginEnd="15dp"
             android:src="@drawable/ic_rate"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/txtRepoRateCounter"
-            app:layout_constraintTop_toBottomOf="@+id/txtRepoOwner" />
+            app:layout_constraintBottom_toBottomOf="@id/repoDate"
+            app:layout_constraintTop_toTopOf="@id/repoDate"
+            app:layout_constraintEnd_toStartOf="@+id/repoStarAmount"/>
 
         <TextView
-            android:id="@+id/txtRepoRateCounter"
+            android:id="@+id/repoStarAmount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:textColor="@color/black"
-            android:textSize="16sp"
+            android:textColor="@color/g_black"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium.Inverse"
             android:layout_marginEnd="10dp"
             app:layout_constraintBottom_toBottomOf="@+id/imgRepoRate"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/imgRepoRate"
             tools:text="1.000" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

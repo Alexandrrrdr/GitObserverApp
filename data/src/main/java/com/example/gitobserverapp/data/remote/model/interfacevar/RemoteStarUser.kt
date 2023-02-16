@@ -1,9 +1,12 @@
 package com.example.gitobserverapp.data.remote.model.interfacevar
 
-import com.example.gitobserverapp.domain.model.interfacesvar.StarUser
+import com.example.gitobserverapp.domain.model.StarUser
 import com.squareup.moshi.Json
+import java.util.*
 
 data class RemoteStarUser(
+    @Json(name = "starred_at")
+    override val date: Date,
     @Json(name = "id")
     override val id: Int,
     @Json(name = "login")

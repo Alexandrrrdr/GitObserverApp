@@ -1,14 +1,11 @@
 package com.example.gitobserverapp.ui.screens.barchart.model
 
+import com.example.gitobserverapp.domain.model.StarUser
 import java.util.*
 
 data class UiStarGroup(
-    val date: Date,
-    val users: UiStarUser
-)
-
-data class UiStarUser(
-    val id: Int,
-    val name: String,
-    val userAvaUrl: String
-)
+    override val date: Date,
+    override val id: Int,
+    override val name: String,
+    override val userUrl: String
+): StarUser
