@@ -6,7 +6,8 @@ import androidx.annotation.RequiresApi
 import com.example.gitobserverapp.domain.model.NetworkState
 import com.example.gitobserverapp.domain.usecase.GetStarUseCase
 import com.example.gitobserverapp.ui.screens.barchart.model.BarChartModel
-import com.example.gitobserverapp.ui.screens.barchart.model.UiStarGroup
+import com.example.gitobserverapp.ui.screens.barchart.model.UiStarDate
+import com.example.gitobserverapp.ui.screens.barchart.model.UiStarUser
 import com.example.gitobserverapp.utils.Constants
 import com.example.gitobserverapp.utils.Constants.START_PAGE
 import com.example.gitobserverapp.utils.Extensions.convertToLocalDate
@@ -54,8 +55,8 @@ class ChartPresenter
                     is NetworkState.NetworkException -> withContext(Dispatchers.Main){viewState.showNetworkErrorPage()}
                     is NetworkState.Success -> {
                         withContext(Dispatchers.Main) {
-                            tmpListBarChart.addAll(compareYearsModel(starList.data.map { UiStarGroup(
-                                date = it.date, id = it.id, name = it.name, userUrl = it.userUrl
+                            tmpListBarChart.addAll(compareYearsModel(starList.data.map { UiStarDate(
+                                date = it.date, user = UiStarUser(id = it.user.id, name = it.user.name, userUrl = it.user.userUrl)
                             ) }))
                             prepareListForChart(START_PAGE)
                         }
@@ -75,7 +76,7 @@ class ChartPresenter
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun compareYearsModel(list: List<UiStarGroup>): List<BarChartModel> {
+    private fun compareYearsModel(list: List<UiStarDate>): List<BarChartModel> {
 
         Log.d("info", "compare is started!!!")
         var endDateYear = list[list.lastIndex].date.convertToLocalDate()!!.year
@@ -103,7 +104,7 @@ class ChartPresenter
 
         //stargazers started
         while (endDateYear >= startDateYear) {
-            val usersForBarChartData = mutableListOf<UiStarGroup>()
+            val usersForBarChartData = mutableListOf<UiStarDate>()
             usersForBarChartData.addAll(list.filter { it.date.convertToLocalDate()!!.year == endDateYear })
             matchedListForBarChartModel.add(
                 element = BarChartModel(

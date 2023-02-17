@@ -1,10 +1,11 @@
-package com.example.gitobserverapp.ui.screens.barchart
+package com.example.gitobserverapp.ui.screens.barchart.helper
 
 import android.graphics.Color
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.example.gitobserverapp.ui.screens.barchart.model.BarChartModel
-import com.example.gitobserverapp.ui.screens.barchart.model.UiStarGroup
+import com.example.gitobserverapp.ui.screens.barchart.model.UiStarDate
+import com.example.gitobserverapp.ui.screens.barchart.model.UiStarUser
 import com.example.gitobserverapp.ui.screens.details.User
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.XAxis
@@ -87,9 +88,9 @@ class ChartHelper(
                     getViaPoints(userList)?.let { list ->
                         if (list.isNotEmpty()) {
                             val tmp: List<User> = list.map { User(
-                                id = it.id,
-                                login = it.name,
-                                avatar_url = it.userUrl)
+                                id = it.user.id,
+                                login = it.user.name,
+                                avatar_url = it.user.userUrl)
                             }
                             listener.click(item = tmp, year = year)
                         }
@@ -104,9 +105,9 @@ class ChartHelper(
     }
 
     //Check BarChart data.object after click on line
-    private fun getViaPoints(list: List<*>): List<UiStarGroup>? {
-        list.forEach { if (it !is UiStarGroup) return null }
-        return list.filterIsInstance<UiStarGroup>()
+    private fun getViaPoints(list: List<*>): List<UiStarDate>? {
+        list.forEach { if (it !is UiStarDate) return null }
+        return list.filterIsInstance<UiStarDate>()
             .apply { if (size != list.size) return null }
     }
 

@@ -5,8 +5,6 @@ import com.squareup.moshi.Json
 import java.util.*
 
 data class RemoteStarUser(
-    @Json(name = "starred_at")
-    override val date: Date,
     @Json(name = "id")
     override val id: Int,
     @Json(name = "login")

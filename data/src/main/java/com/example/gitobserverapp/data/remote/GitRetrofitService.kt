@@ -1,7 +1,7 @@
 package com.example.gitobserverapp.data.remote
 
 import com.example.gitobserverapp.data.remote.model.interfacevar.RemoteRepo
-import com.example.gitobserverapp.data.remote.model.interfacevar.RemoteStarUser
+import com.example.gitobserverapp.data.remote.model.interfacevar.RemoteStarDate
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Headers
@@ -28,5 +28,5 @@ interface GitRetrofitService {
         @Path("owner_login") ownerLogin: String,
         @Query("per_page") perPage: Int,
         @Query("page") page: Int
-    ): Response<List<RemoteStarUser>>
+    ): Response<List<RemoteStarDate>>
 }

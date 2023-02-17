@@ -3,7 +3,7 @@ package com.example.gitobserverapp.data.repository
 import android.util.Log
 import com.example.gitobserverapp.data.remote.GitRetrofitService
 import com.example.gitobserverapp.data.remote.model.interfacevar.RemoteRepo
-import com.example.gitobserverapp.data.remote.model.interfacevar.RemoteStarUser
+import com.example.gitobserverapp.data.remote.model.interfacevar.RemoteStarDate
 import com.example.gitobserverapp.data.utils.Constants
 import com.example.gitobserverapp.data.utils.Constants.MAX_PER_PAGE
 import com.example.gitobserverapp.data.utils.Constants.START_PAGE
@@ -52,8 +52,8 @@ class RepositoryImpl @Inject constructor(
         repoName: String,
         ownerName: String,
         pageNumber: Int
-    ): NetworkState<List<RemoteStarUser>> {
-        val tmpReadyList = mutableListOf<RemoteStarUser>()
+    ): NetworkState<List<RemoteStarDate>> {
+        val tmpReadyList = mutableListOf<RemoteStarDate>()
         return try {
 
             Log.d("info", "RepoName - $repoName, ownerName - $ownerName, pageNumber - $pageNumber")
@@ -94,7 +94,7 @@ class RepositoryImpl @Inject constructor(
         repo_name: String,
         owner_login: String,
         page_number: Int
-    ): Response<List<RemoteStarUser>> {
+    ): Response<List<RemoteStarDate>> {
         return gitRetrofitService.getStarUsers(
             repoName = repo_name,
             ownerLogin = owner_login,
