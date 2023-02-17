@@ -1,4 +1,4 @@
-package com.example.gitobserverapp.ui.screens.details
+package com.example.gitobserverapp.ui.screens.details.model
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

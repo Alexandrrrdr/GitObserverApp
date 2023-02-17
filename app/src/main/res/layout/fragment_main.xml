@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFE57F"
-    tools:context=".ui.screens.main.MainSearchFragment">
+    tools:context=".ui.screens.main.SearchFragment">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/edtTxtLayout"

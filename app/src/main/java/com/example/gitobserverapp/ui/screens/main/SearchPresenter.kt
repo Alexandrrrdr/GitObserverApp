@@ -10,9 +10,9 @@ import moxy.MvpPresenter
 import javax.inject.Inject
 
 @InjectViewState
-class MainSearchPresenter @Inject constructor(
+class SearchPresenter @Inject constructor(
     private val getReposUseCase: GetReposUseCase
-) : MvpPresenter<MainSearchView>() {
+) : MvpPresenter<SearchView>() {
 
 
     fun loadData(userName: String) {

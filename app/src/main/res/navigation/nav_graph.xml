@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/mainFragment"
-        android:name="com.example.gitobserverapp.ui.screens.main.MainSearchFragment"
+        android:name="com.example.gitobserverapp.ui.screens.main.SearchFragment"
         android:label="fragment_main"
         tools:layout="@layout/fragment_main" >
         <action

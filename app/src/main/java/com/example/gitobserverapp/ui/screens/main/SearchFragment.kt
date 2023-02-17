@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
 import com.example.gitobserverapp.App
 import com.example.gitobserverapp.R
 import com.example.gitobserverapp.databinding.FragmentMainBinding
@@ -20,28 +19,28 @@ import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import javax.inject.Inject
 
-class MainSearchFragment: MvpAppCompatFragment(), MainSearchView, MainSearchAdapters.Listener {
+class SearchFragment: MvpAppCompatFragment(), SearchView, SearchAdapter.Listener {
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
 
-    private val mainSearchAdapters: MainSearchAdapters by lazy {
-        MainSearchAdapters(this)
+    private val searchAdapter: SearchAdapter by lazy {
+        SearchAdapter(this)
     }
 
     @Inject lateinit var getReposUseCaseUseCase: GetReposUseCase
 
     @InjectPresenter
-    lateinit var mainSearchPresenter: MainSearchPresenter
+    lateinit var searchPresenter: SearchPresenter
 
     @ProvidePresenter
-    fun provideMainSearchPresenter(): MainSearchPresenter {
-        return MainSearchPresenter(getReposUseCase = getReposUseCaseUseCase)
+    fun provideMainSearchPresenter(): SearchPresenter {
+        return SearchPresenter(getReposUseCase = getReposUseCaseUseCase)
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        (requireContext().applicationContext as App).appComponent.inject(this@MainSearchFragment)
+        (requireContext().applicationContext as App).appComponent.inject(this@SearchFragment)
     }
 
     override fun onCreateView(
@@ -58,12 +57,12 @@ class MainSearchFragment: MvpAppCompatFragment(), MainSearchView, MainSearchAdap
         recyclerViewInit()
 
         binding.btnSearch.setOnClickListener {
-            mainSearchPresenter.loadData(userName = binding.edtTxtInput.text.toString())
+            searchPresenter.loadData(userName = binding.edtTxtInput.text.toString())
             hideKeyboard()
         }
 
         binding.btnCheckAgain.setOnClickListener {
-            mainSearchPresenter.loadData(userName = binding.edtTxtInput.text.toString())
+            searchPresenter.loadData(userName = binding.edtTxtInput.text.toString())
         }
     }
 
@@ -73,7 +72,7 @@ class MainSearchFragment: MvpAppCompatFragment(), MainSearchView, MainSearchAdap
         binding.networkError.root.visibility = View.GONE
         binding.btnSearch.isEnabled = false
         binding.btnCheckAgain.isVisible = false
-        mainSearchAdapters.differ.submitList(emptyList())
+        searchAdapter.differ.submitList(emptyList())
     }
 
     override fun showSuccess(list: List<UiRepo>) {
@@ -82,7 +81,7 @@ class MainSearchFragment: MvpAppCompatFragment(), MainSearchView, MainSearchAdap
         binding.txtError.visibility = View.GONE
         binding.btnSearch.isEnabled = true
         binding.btnCheckAgain.isVisible = false
-        mainSearchAdapters.differ.submitList(list)
+        searchAdapter.differ.submitList(list)
     }
 
     override fun showError(error: String) {
@@ -92,7 +91,7 @@ class MainSearchFragment: MvpAppCompatFragment(), MainSearchView, MainSearchAdap
         binding.txtError.text = error
         binding.btnSearch.isEnabled = true
         binding.btnCheckAgain.isVisible = false
-        mainSearchAdapters.differ.submitList(emptyList())
+        searchAdapter.differ.submitList(emptyList())
     }
 
     override fun showNetworkError() {
@@ -101,13 +100,13 @@ class MainSearchFragment: MvpAppCompatFragment(), MainSearchView, MainSearchAdap
         binding.txtError.visibility = View.GONE
         binding.btnSearch.isEnabled = false
         binding.btnCheckAgain.isVisible = true
-        mainSearchAdapters.differ.submitList(emptyList())
+        searchAdapter.differ.submitList(emptyList())
     }
 
     override fun onClick(item: UiRepo) {
         val repoOwnerLogin: String = item.owner.login
         val repoName: String = item.name
-        val direction = MainSearchFragmentDirections.actionMainFragmentToChartFragment(
+        val direction = SearchFragmentDirections.actionMainFragmentToChartFragment(
             repoName = repoName,
             repoOwnerName = repoOwnerLogin
         )
@@ -117,6 +116,6 @@ class MainSearchFragment: MvpAppCompatFragment(), MainSearchView, MainSearchAdap
     private fun recyclerViewInit() {
         binding.recView.layoutManager = LinearLayoutManager(requireActivity())
         binding.recView.setHasFixedSize(true)
-        binding.recView.adapter = mainSearchAdapters
+        binding.recView.adapter = searchAdapter
     }
 }

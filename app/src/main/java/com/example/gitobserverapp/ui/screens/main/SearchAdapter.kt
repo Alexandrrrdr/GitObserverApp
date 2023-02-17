@@ -11,11 +11,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.gitobserverapp.databinding.RecItemBinding
 import com.example.gitobserverapp.ui.screens.main.model.UiRepo
 import com.example.gitobserverapp.utils.Extensions.convertToLocalDate
-import java.time.LocalDate
-import java.time.ZoneId
-import java.util.*
 
-class MainSearchAdapters(private val listener: Listener): RecyclerView.Adapter<MainSearchAdapters.ViewHolder>() {
+class SearchAdapter(private val listener: Listener): RecyclerView.Adapter<SearchAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = let { RecItemBinding.inflate(LayoutInflater.from(parent.context), parent, false) }

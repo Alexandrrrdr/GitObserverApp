@@ -15,7 +15,7 @@ import moxy.presenter.InjectPresenter
 class DetailsFragment : MvpAppCompatFragment(), DetailsView {
 
     @InjectPresenter
-    lateinit var detailsViewPresenter: DetailsViewPresenter
+    lateinit var detailsPresenter: DetailsPresenter
 
     private var _binding: FragmentDetailsBinding? = null
     private val binding get() = _binding!!
@@ -41,7 +41,7 @@ class DetailsFragment : MvpAppCompatFragment(), DetailsView {
         val userList: Array<User> = args.list
 
         recyclerViewInit()
-        detailsViewPresenter.showData(period = period, amountUsers = amount, arrayList = userList)
+        detailsPresenter.showData(period = period, amountUsers = amount, arrayList = userList)
     }
 
     private fun recyclerViewInit() {
