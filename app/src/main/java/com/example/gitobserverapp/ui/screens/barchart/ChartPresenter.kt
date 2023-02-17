@@ -11,6 +11,7 @@ import com.example.gitobserverapp.ui.screens.barchart.model.UiStarUser
 import com.example.gitobserverapp.utils.Constants
 import com.example.gitobserverapp.utils.Constants.START_PAGE
 import com.example.gitobserverapp.utils.Extensions.convertToLocalDate
+import com.example.gitobserverapp.utils.parse_period.years.YearParser
 import kotlinx.coroutines.*
 import moxy.InjectViewState
 import moxy.MvpPresenter
@@ -20,7 +21,8 @@ import javax.inject.Inject
 @InjectViewState
 class ChartPresenter
 @Inject constructor(
-    private val getStarGroupUseCase: GetStarUseCase
+    private val getStarGroupUseCase: GetStarUseCase,
+    private val yearParser: YearParser
     ) : MvpPresenter<ChartView>() {
 
     private val tmpListBarChart = mutableListOf<BarChartModel>()

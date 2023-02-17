@@ -13,7 +13,7 @@ import java.util.*
 class YearParser() {
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun compareYearsModel(list: List<UiStarDate>): List<BarChartModel> {
+    fun compareYearsModel(list: List<UiStarDate>): List<BarChartModel> {
 
         var endDateYear = list[list.lastIndex].date.convertToLocalDate()!!.year
 

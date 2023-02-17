@@ -5,8 +5,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.example.gitobserverapp.ui.screens.barchart.model.BarChartModel
 import com.example.gitobserverapp.ui.screens.barchart.model.UiStarDate
-import com.example.gitobserverapp.ui.screens.barchart.model.UiStarUser
-import com.example.gitobserverapp.ui.screens.details.User
+import com.example.gitobserverapp.ui.screens.details.model.DetailsUser
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
@@ -87,7 +86,7 @@ class ChartHelper(
                 if (userList is List<*>) {
                     getViaPoints(userList)?.let { list ->
                         if (list.isNotEmpty()) {
-                            val tmp: List<User> = list.map { User(
+                            val tmp: List<DetailsUser> = list.map { DetailsUser(
                                 id = it.user.id,
                                 login = it.user.name,
                                 avatar_url = it.user.userUrl)
@@ -137,7 +136,7 @@ class ChartHelper(
     }
 
     interface Listener{
-        fun click(item: List<User>, year: String)
+        fun click(item: List<DetailsUser>, year: String)
         fun nothingClick()
     }
 }

@@ -15,8 +15,9 @@ import com.example.gitobserverapp.databinding.FragmentChartBinding
 import com.example.gitobserverapp.domain.usecase.GetStarUseCase
 import com.example.gitobserverapp.ui.screens.barchart.helper.ChartHelper
 import com.example.gitobserverapp.ui.screens.barchart.model.BarChartModel
-import com.example.gitobserverapp.ui.screens.details.User
+import com.example.gitobserverapp.ui.screens.details.model.DetailsUser
 import com.example.gitobserverapp.utils.Constants.START_PAGE
+import com.example.gitobserverapp.utils.parse_period.years.YearParser
 import com.google.android.material.snackbar.Snackbar
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
@@ -27,15 +28,16 @@ import javax.inject.Inject
 class ChartFragment:
     MvpAppCompatFragment(), ChartView, ChartHelper.Listener {
 
-    @Inject lateinit var getStarGroupUseCase: GetStarUseCase
-
     private lateinit var chartHelper: ChartHelper
+
+    @Inject lateinit var getStarGroupUseCase: GetStarUseCase
+    @Inject lateinit var yearParser: YearParser
     @InjectPresenter
     lateinit var chartPresenter: ChartPresenter
 
     @ProvidePresenter
     fun provideChartViewPresenter(): ChartPresenter {
-        return ChartPresenter(getStarGroupUseCase = getStarGroupUseCase)
+        return ChartPresenter(getStarGroupUseCase = getStarGroupUseCase, yearParser = yearParser)
     }
 
     private var _binding: FragmentChartBinding? = null
@@ -66,6 +68,8 @@ class ChartFragment:
         super.onViewCreated(view, savedInstanceState)
 
         chartHelper = ChartHelper(binding.barChart, this)
+        yearParser = YearParser()
+
         repoName = args.repoName
         repoOwnerName = args.repoOwnerName
         binding.repoName.text = repoName
@@ -144,8 +148,8 @@ class ChartFragment:
         _binding = null
     }
 
-    override fun click(item: List<User>, year: String) {
-        val arrayList: Array<User> = item.toTypedArray()
+    override fun click(item: List<DetailsUser>, year: String) {
+        val arrayList: Array<DetailsUser> = item.toTypedArray()
         val direction =
             ChartFragmentDirections.actionChartFragmentToDetailsFragment(
                 timePeriod = year,

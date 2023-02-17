@@ -45,6 +45,6 @@
             app:argType="integer" />
         <argument
             android:name="list"
-            app:argType="com.example.gitobserverapp.ui.screens.details.User[]" />
+            app:argType="com.example.gitobserverapp.ui.screens.details.model.DetailsUser[]" />
     </fragment>
 </navigation>

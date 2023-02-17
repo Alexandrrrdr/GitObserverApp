@@ -1,7 +1,7 @@
 package com.example.gitobserverapp.data.remote
 
-import com.example.gitobserverapp.data.remote.model.interfacevar.RemoteRepo
-import com.example.gitobserverapp.data.remote.model.interfacevar.RemoteStarDate
+import com.example.gitobserverapp.data.remote.model.RemoteRepo
+import com.example.gitobserverapp.data.remote.model.RemoteStarDate
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Headers

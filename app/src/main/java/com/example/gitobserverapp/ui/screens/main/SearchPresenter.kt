@@ -4,6 +4,7 @@ import com.example.gitobserverapp.domain.model.NetworkState
 import com.example.gitobserverapp.domain.usecase.GetReposUseCase
 import com.example.gitobserverapp.ui.screens.main.model.UiRepo
 import com.example.gitobserverapp.ui.screens.main.model.UiRepoOwner
+import com.example.gitobserverapp.utils.parse_period.years.YearParser
 import kotlinx.coroutines.*
 import moxy.InjectViewState
 import moxy.MvpPresenter
@@ -11,7 +12,8 @@ import javax.inject.Inject
 
 @InjectViewState
 class SearchPresenter @Inject constructor(
-    private val getReposUseCase: GetReposUseCase
+    private val getReposUseCase: GetReposUseCase,
+    private val yearParser: YearParser
 ) : MvpPresenter<SearchView>() {
 
 

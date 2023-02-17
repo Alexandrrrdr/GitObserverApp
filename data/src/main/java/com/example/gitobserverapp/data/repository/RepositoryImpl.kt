@@ -2,8 +2,8 @@ package com.example.gitobserverapp.data.repository
 
 import android.util.Log
 import com.example.gitobserverapp.data.remote.GitRetrofitService
-import com.example.gitobserverapp.data.remote.model.interfacevar.RemoteRepo
-import com.example.gitobserverapp.data.remote.model.interfacevar.RemoteStarDate
+import com.example.gitobserverapp.data.remote.model.RemoteRepo
+import com.example.gitobserverapp.data.remote.model.RemoteStarDate
 import com.example.gitobserverapp.data.utils.Constants
 import com.example.gitobserverapp.data.utils.Constants.MAX_PER_PAGE
 import com.example.gitobserverapp.data.utils.Constants.START_PAGE
@@ -98,7 +98,7 @@ class RepositoryImpl @Inject constructor(
         return gitRetrofitService.getStarUsers(
             repoName = repo_name,
             ownerLogin = owner_login,
-            perPage = Constants.MAX_PER_PAGE,
+            perPage = MAX_PER_PAGE,
             page = page_number
         )
     }

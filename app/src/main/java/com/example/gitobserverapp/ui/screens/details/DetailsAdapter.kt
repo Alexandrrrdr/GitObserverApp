@@ -9,11 +9,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.gitobserverapp.R
 import com.example.gitobserverapp.databinding.DetailsItemBinding
+import com.example.gitobserverapp.ui.screens.details.model.DetailsUser
 
 class DetailsAdapter(): RecyclerView.Adapter<DetailsAdapter.ViewHolder>() {
 
     inner class ViewHolder(private val binding: DetailsItemBinding): RecyclerView.ViewHolder(binding.root){
-        fun bind(userData: User){
+        fun bind(userData: DetailsUser){
             binding.txtViewName.text = userData.login
             binding.txtViewUserId.text = userData.id.toString()
             Glide.with(itemView)
@@ -34,13 +35,13 @@ class DetailsAdapter(): RecyclerView.Adapter<DetailsAdapter.ViewHolder>() {
 
     override fun getItemCount(): Int = differ.currentList.size
 
-    private val diffUtil = object : DiffUtil.ItemCallback<User>(){
-        override fun areItemsTheSame(oldItem: User, newItem: User): Boolean {
+    private val diffUtil = object : DiffUtil.ItemCallback<DetailsUser>(){
+        override fun areItemsTheSame(oldItem: DetailsUser, newItem: DetailsUser): Boolean {
             return oldItem.id == newItem.id
         }
 
         @SuppressLint("DiffUtilEquals")
-        override fun areContentsTheSame(oldItem: User, newItem: User): Boolean {
+        override fun areContentsTheSame(oldItem: DetailsUser, newItem: DetailsUser): Boolean {
             return oldItem == newItem
         }
     }

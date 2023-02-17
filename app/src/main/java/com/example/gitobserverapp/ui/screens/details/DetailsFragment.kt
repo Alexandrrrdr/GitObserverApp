@@ -8,6 +8,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gitobserverapp.R
 import com.example.gitobserverapp.databinding.FragmentDetailsBinding
+import com.example.gitobserverapp.ui.screens.details.model.DetailsUser
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
 
@@ -38,7 +39,7 @@ class DetailsFragment : MvpAppCompatFragment(), DetailsView {
         super.onViewCreated(view, savedInstanceState)
         val period = args.timePeriod
         val amount = args.amountUsers
-        val userList: Array<User> = args.list
+        val userList: Array<DetailsUser> = args.list
 
         recyclerViewInit()
         detailsPresenter.showData(period = period, amountUsers = amount, arrayList = userList)
@@ -56,7 +57,7 @@ class DetailsFragment : MvpAppCompatFragment(), DetailsView {
         _binding = null
     }
 
-    override fun showList(list: List<User>, period: String, amountUsers: Int) {
+    override fun showList(list: List<DetailsUser>, period: String, amountUsers: Int) {
         detailsAdapter.differ.submitList(list)
         val txtPeriod =
             requireActivity().resources.getText(R.string.details_period).toString() + period

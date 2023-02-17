@@ -1,4 +1,4 @@
-package com.example.gitobserverapp.data.remote.model.interfacevar
+package com.example.gitobserverapp.data.remote.model
 
 import com.example.gitobserverapp.domain.model.StarDate
 import com.squareup.moshi.Json
