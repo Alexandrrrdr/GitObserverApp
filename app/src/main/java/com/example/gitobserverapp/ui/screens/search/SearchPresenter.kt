@@ -1,9 +1,9 @@
-package com.example.gitobserverapp.ui.screens.main
+package com.example.gitobserverapp.ui.screens.search
 
 import com.example.gitobserverapp.domain.model.NetworkState
 import com.example.gitobserverapp.domain.usecase.GetReposUseCase
-import com.example.gitobserverapp.ui.screens.main.model.UiRepo
-import com.example.gitobserverapp.ui.screens.main.model.UiRepoOwner
+import com.example.gitobserverapp.ui.screens.search.model.UiRepo
+import com.example.gitobserverapp.ui.screens.search.model.UiRepoOwner
 import com.example.gitobserverapp.utils.parse_period.years.YearParser
 import kotlinx.coroutines.*
 import moxy.InjectViewState
@@ -12,8 +12,7 @@ import javax.inject.Inject
 
 @InjectViewState
 class SearchPresenter @Inject constructor(
-    private val getReposUseCase: GetReposUseCase,
-    private val yearParser: YearParser
+    private val getReposUseCase: GetReposUseCase
 ) : MvpPresenter<SearchView>() {
 
 
@@ -32,14 +31,9 @@ class SearchPresenter @Inject constructor(
             val result = getReposUseCase.getRepos(userName = userName)
             withContext(Dispatchers.Main){
                 when (result) {
+                    is NetworkState.CommonError -> viewState.showError(result.httpErrors.toString())
                     is NetworkState.Error -> viewState.showError(result.error)
-                    is NetworkState.HttpErrors.BadGateWay -> viewState.showError(result.exception)
-                    is NetworkState.HttpErrors.InternalServerError -> viewState.showError(result.exception)
-                    is NetworkState.HttpErrors.RemovedResourceFound -> viewState.showError(result.exception)
-                    is NetworkState.HttpErrors.ResourceForbidden -> viewState.showError(result.exception)
-                    is NetworkState.HttpErrors.ResourceNotFound -> viewState.showError(result.exception)
-                    is NetworkState.HttpErrors.ResourceRemoved -> viewState.showError(result.exception)
-                    NetworkState.InvalidData -> viewState.showError("No data on server")
+                    is NetworkState.InvalidData -> viewState.showError("No data on server")
                     is NetworkState.NetworkException -> viewState.showNetworkError()
                     is NetworkState.Success -> viewState.showSuccess(result.data.map { UiRepo(
                         id = it.id, description = it.description, name = it.name, owner =

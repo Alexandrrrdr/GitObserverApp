@@ -45,28 +45,23 @@ class ChartPresenter
                 pageNumber = START_PAGE
             )
 
+            withContext(Dispatchers.Main){
                 when (starList) {
-                    is NetworkState.Error -> withContext(Dispatchers.Main){viewState.showErrorPage(starList.error)}
-                    is NetworkState.HttpErrors.BadGateWay -> withContext(Dispatchers.Main){viewState.showErrorPage(starList.exception)}
-                    is NetworkState.HttpErrors.InternalServerError -> withContext(Dispatchers.Main){viewState.showErrorPage(starList.exception)}
-                    is NetworkState.HttpErrors.RemovedResourceFound -> withContext(Dispatchers.Main){viewState.showErrorPage(starList.exception)}
-                    is NetworkState.HttpErrors.ResourceForbidden -> withContext(Dispatchers.Main){viewState.showErrorPage(starList.exception)}
-                    is NetworkState.HttpErrors.ResourceNotFound -> withContext(Dispatchers.Main){viewState.showErrorPage(starList.exception)}
-                    is NetworkState.HttpErrors.ResourceRemoved -> withContext(Dispatchers.Main){viewState.showErrorPage(starList.exception)}
-                    NetworkState.InvalidData -> withContext(Dispatchers.Main){viewState.showErrorPage("Something wrong with data from server")}
-                    is NetworkState.NetworkException -> withContext(Dispatchers.Main){viewState.showNetworkErrorPage()}
+                    is NetworkState.Error -> viewState.showErrorPage(starList.error)
+                    is NetworkState.InvalidData -> viewState.showErrorPage("Something wrong with data from server")
+                    is NetworkState.NetworkException -> viewState.showNetworkErrorPage()
                     is NetworkState.Success -> {
-                        withContext(Dispatchers.Main) {
-                            tmpListBarChart.addAll(compareYearsModel(starList.data.map { UiStarDate(
-                                date = it.date, user = UiStarUser(id = it.user.id, name = it.user.name, userUrl = it.user.userUrl)
-                            ) }))
-                            prepareListForChart(START_PAGE)
-                        }
-                    }
+                    tmpListBarChart.addAll(yearParser.compareYearsModel(starList.data.map { UiStarDate(
+                        date = it.date, user = UiStarUser(id = it.user.id, name = it.user.name, userUrl = it.user.userUrl)
+                    ) }))
+                        setLastPage(tmpListBarChart)
+                        prepareListForChart(START_PAGE)
                 }
+                    is NetworkState.CommonError -> viewState.showErrorPage(error = starList.httpErrors.toString())
+                }
+            }
         }
     }
-
 
     private fun setLastPage(list: List<BarChartModel>) {
         val lastItems = list.size % 5
@@ -75,76 +70,6 @@ class ChartPresenter
         } else {
             list.size / 5 + 1
         }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun compareYearsModel(list: List<UiStarDate>): List<BarChartModel> {
-
-        Log.d("info", "compare is started!!!")
-        var endDateYear = list[list.lastIndex].date.convertToLocalDate()!!.year
-
-        var startDateYear = list[Constants.ZERO_PAGE].date.convertToLocalDate()!!.year
-        var todayDateYear = LocalDate.now().year
-        val matchedListForBarChartModel = mutableListOf<BarChartModel>()
-        var amountOfDates = 0
-        for (i in startDateYear..todayDateYear) {
-            amountOfDates++
-        }
-
-        //If last stargazers starred date less than today year 2023 i fill empty data until starred
-        if (todayDateYear > endDateYear) {
-            while (todayDateYear > endDateYear) {
-                matchedListForBarChartModel.add(
-                    element = BarChartModel(
-                        period = todayDateYear,
-                        userInfo = emptyList()
-                    )
-                )
-                todayDateYear--
-            }
-        }
-
-        //stargazers started
-        while (endDateYear >= startDateYear) {
-            val usersForBarChartData = mutableListOf<UiStarDate>()
-            usersForBarChartData.addAll(list.filter { it.date.convertToLocalDate()!!.year == endDateYear })
-            matchedListForBarChartModel.add(
-                element = BarChartModel(
-                    period = endDateYear,
-                    userInfo = usersForBarChartData
-                )
-            )
-            endDateYear--
-        }
-
-        if (amountOfDates < 5) {
-            val tmpLeftDates = 5 - amountOfDates
-            for (i in 1..tmpLeftDates) {
-                matchedListForBarChartModel.add(
-                    element = BarChartModel(
-                        period = startDateYear,
-                        userInfo = emptyList()
-                    )
-                )
-            }
-        } else {
-            val differ = amountOfDates % 5
-            if (differ != 0) {
-                val tmpStartDay = startDateYear - (5 - differ)
-                while (startDateYear > (tmpStartDay)) {
-                    startDateYear--
-
-                    matchedListForBarChartModel.add(
-                        element = BarChartModel(
-                            period = startDateYear,
-                            userInfo = emptyList()
-                        )
-                    )
-                }
-            }
-        }
-        setLastPage(matchedListForBarChartModel)
-        return matchedListForBarChartModel
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

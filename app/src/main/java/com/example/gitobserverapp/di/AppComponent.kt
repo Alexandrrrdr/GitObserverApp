@@ -2,7 +2,7 @@ package com.example.gitobserverapp.di
 
 import com.example.gitobserverapp.ui.screens.barchart.ChartFragment
 import com.example.gitobserverapp.ui.screens.details.DetailsFragment
-import com.example.gitobserverapp.ui.screens.main.SearchFragment
+import com.example.gitobserverapp.ui.screens.search.SearchFragment
 import dagger.Component
 import javax.inject.Singleton
 

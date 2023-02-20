@@ -4,11 +4,9 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.example.gitobserverapp.ui.screens.barchart.model.BarChartModel
 import com.example.gitobserverapp.ui.screens.barchart.model.UiStarDate
-import com.example.gitobserverapp.ui.screens.barchart.model.UiStarUser
 import com.example.gitobserverapp.utils.Constants
 import com.example.gitobserverapp.utils.Extensions.convertToLocalDate
 import java.time.LocalDate
-import java.util.*
 
 class YearParser() {
 

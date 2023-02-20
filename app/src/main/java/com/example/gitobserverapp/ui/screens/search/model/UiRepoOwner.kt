@@ -1,4 +1,4 @@
-package com.example.gitobserverapp.ui.screens.main.model
+package com.example.gitobserverapp.ui.screens.search.model
 
 import com.example.gitobserverapp.domain.model.RepoOwner
 

@@ -1,10 +1,8 @@
 package com.example.gitobserverapp.data.repository
 
-import android.util.Log
 import com.example.gitobserverapp.data.remote.GitRetrofitService
 import com.example.gitobserverapp.data.remote.model.RemoteRepo
 import com.example.gitobserverapp.data.remote.model.RemoteStarDate
-import com.example.gitobserverapp.data.utils.Constants
 import com.example.gitobserverapp.data.utils.Constants.MAX_PER_PAGE
 import com.example.gitobserverapp.data.utils.Constants.START_PAGE
 import com.example.gitobserverapp.domain.model.NetworkState
@@ -33,15 +31,7 @@ class RepositoryImpl @Inject constructor(
                     NetworkState.InvalidData
                 }
             } else {
-                when(getRepos.code()){
-                    301 -> NetworkState.HttpErrors.ResourceRemoved(getRepos.message())
-                    302 -> NetworkState.HttpErrors.RemovedResourceFound(getRepos.message())
-                    403 -> NetworkState.HttpErrors.ResourceForbidden(getRepos.message())
-                    404 -> NetworkState.HttpErrors.ResourceNotFound(getRepos.message())
-                    500 -> NetworkState.HttpErrors.InternalServerError(getRepos.message())
-                    502 -> NetworkState.HttpErrors.BadGateWay(getRepos.message())
-                    else -> NetworkState.Error(getRepos.message())
-                }
+                NetworkState.CommonError(httpErrors = getRepos.code())
             }
         } catch (e: IOException){
             NetworkState.NetworkException(e.cause.toString())
@@ -56,7 +46,6 @@ class RepositoryImpl @Inject constructor(
         val tmpReadyList = mutableListOf<RemoteStarDate>()
         return try {
 
-            Log.d("info", "RepoName - $repoName, ownerName - $ownerName, pageNumber - $pageNumber")
             var tmp = gitRetrofitService.getStarUsers(
                 repoName = repoName,
                 ownerLogin = ownerName,
@@ -74,15 +63,7 @@ class RepositoryImpl @Inject constructor(
                 }
                 NetworkState.Success(tmpReadyList)
             } else {
-                when(tmp.code()){
-                    301 -> NetworkState.HttpErrors.ResourceRemoved(tmp.message())
-                    302 -> NetworkState.HttpErrors.RemovedResourceFound(tmp.message())
-                    403 -> NetworkState.HttpErrors.ResourceForbidden(tmp.message())
-                    404 -> NetworkState.HttpErrors.ResourceNotFound(tmp.message())
-                    500 -> NetworkState.HttpErrors.InternalServerError(tmp.message())
-                    502 -> NetworkState.HttpErrors.BadGateWay(tmp.message())
-                    else -> NetworkState.Error(tmp.message())
-                }
+                NetworkState.CommonError(httpErrors = tmp.code())
             }
         } catch (e: IOException) {
             NetworkState.NetworkException(e.message.toString())

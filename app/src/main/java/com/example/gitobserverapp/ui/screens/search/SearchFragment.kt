@@ -1,4 +1,4 @@
-package com.example.gitobserverapp.ui.screens.main
+package com.example.gitobserverapp.ui.screens.search
 
 import android.content.Context
 import android.os.Bundle
@@ -12,9 +12,8 @@ import com.example.gitobserverapp.App
 import com.example.gitobserverapp.R
 import com.example.gitobserverapp.databinding.FragmentMainBinding
 import com.example.gitobserverapp.domain.usecase.GetReposUseCase
-import com.example.gitobserverapp.ui.screens.main.model.UiRepo
+import com.example.gitobserverapp.ui.screens.search.model.UiRepo
 import com.example.gitobserverapp.utils.Extensions.hideKeyboard
-import com.example.gitobserverapp.utils.parse_period.years.YearParser
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
@@ -30,14 +29,13 @@ class SearchFragment: MvpAppCompatFragment(), SearchView, SearchAdapter.Listener
     }
 
     @Inject lateinit var getReposUseCaseUseCase: GetReposUseCase
-    @Inject lateinit var yearParser: YearParser
 
     @InjectPresenter
     lateinit var searchPresenter: SearchPresenter
 
     @ProvidePresenter
     fun provideMainSearchPresenter(): SearchPresenter {
-        return SearchPresenter(getReposUseCase = getReposUseCaseUseCase, yearParser = yearParser)
+        return SearchPresenter(getReposUseCase = getReposUseCaseUseCase)
     }
 
     override fun onAttach(context: Context) {

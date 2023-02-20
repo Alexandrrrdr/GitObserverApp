@@ -1,6 +1,6 @@
-package com.example.gitobserverapp.ui.screens.main
+package com.example.gitobserverapp.ui.screens.search
 
-import com.example.gitobserverapp.ui.screens.main.model.UiRepo
+import com.example.gitobserverapp.ui.screens.search.model.UiRepo
 import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndStrategy
 import moxy.viewstate.strategy.StateStrategyType

@@ -1,4 +1,4 @@
-package com.example.gitobserverapp.ui.screens.main
+package com.example.gitobserverapp.ui.screens.search
 
 import android.annotation.SuppressLint
 import android.os.Build
@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gitobserverapp.databinding.RecItemBinding
-import com.example.gitobserverapp.ui.screens.main.model.UiRepo
+import com.example.gitobserverapp.ui.screens.search.model.UiRepo
 import com.example.gitobserverapp.utils.Extensions.convertToLocalDate
 
 class SearchAdapter(private val listener: Listener): RecyclerView.Adapter<SearchAdapter.ViewHolder>() {
