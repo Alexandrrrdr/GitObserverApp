@@ -148,8 +148,8 @@ class ChartFragment:
         binding.progBarChart.visibility = View.GONE
     }
 
-    override fun showNetworkErrorPage(error: String) {
-        ErrorAlertDialog.showDialog(error = error, requireContext())
+    override fun showNetworkErrorPage() {
+        ErrorAlertDialog.showDialog("Check network", requireContext())
         navigationButtonsController(START_PAGE, START_PAGE)
         binding.txtNetworkStatus.visibility = View.VISIBLE
         binding.progBarChart.visibility = View.GONE

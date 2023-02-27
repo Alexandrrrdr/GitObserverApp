@@ -38,8 +38,6 @@ class RepositoryImpl @Inject constructor(
         ownerName: String,
         pageNumber: Int
     ): List<RemoteStarDate> {
-        val tmpReadyList = mutableListOf<RemoteStarDate>()
-
         try {
             val tmp = gitRetrofitService.getStarUsers(
                 repoName = repoName,
@@ -47,13 +45,12 @@ class RepositoryImpl @Inject constructor(
                 page = pageNumber
             )
             if (tmp.isSuccessful && tmp.body() != null) {
-                tmpReadyList.addAll(tmp.body()!!)
-                return tmpReadyList
+                return tmp.body()!!
             } else {
-                throw NetworkState.InvalidData("No data on server")
+                throw NetworkState.InvalidData(empty = "No data on server")
             }
         }catch (e: Exception){
-            throw NetworkState.NetworkException(e)
+            throw NetworkState.NetworkException(error = e)
         }
     }
 }

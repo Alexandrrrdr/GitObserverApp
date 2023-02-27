@@ -10,5 +10,5 @@ interface ChartView: MvpView {
     fun showLoadPage()
     fun showSuccessPage(list: List<BarChartModel>, lastPage: Int, page: Int, isLoadAllowed: Boolean)
     fun showErrorPage(error: String)
-    fun showNetworkErrorPage(error: String)
+    fun showNetworkErrorPage()
 }

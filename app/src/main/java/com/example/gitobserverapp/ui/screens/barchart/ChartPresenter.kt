@@ -42,13 +42,9 @@ class ChartPresenter
             viewState.showErrorPage("No users who placed a star...")
             return
         } else {
-            val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
-                throwable.printStackTrace()
-            }
             viewState.showLoadPage()
-            CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
+            CoroutineScope(Dispatchers.IO).launch {
                 try {
-
                     var starredList = loadData(repoName = repoName, ownerName = repoOwnerName, pageNumber = lastLoadPage)
                     tmpListUiStarDate.addAll(0, starredList)
                     lastLoadPage--
@@ -71,9 +67,9 @@ class ChartPresenter
                             viewState.showErrorPage(error = "No data from server")
                         }
                     }
-                } catch (e: NetworkState.NetworkException){
+                } catch (e: Exception){
                     withContext(Dispatchers.Main) {
-                        viewState.showNetworkErrorPage(error = e.message!!)
+                        viewState.showNetworkErrorPage()
                     }
                 }
             }

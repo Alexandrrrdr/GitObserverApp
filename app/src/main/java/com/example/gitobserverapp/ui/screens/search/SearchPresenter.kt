@@ -21,11 +21,8 @@ class SearchPresenter @Inject constructor(
             return
         }
         viewState.showLoading()
-        val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
-            throwable.printStackTrace()
-        }
 
-        CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             try {
                 val result = getReposUseCase.getRepos(userName = userName)
                 if (result.isNotEmpty()){
