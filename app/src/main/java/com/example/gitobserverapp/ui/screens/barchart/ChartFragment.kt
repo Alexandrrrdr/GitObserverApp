@@ -3,6 +3,7 @@ package com.example.gitobserverapp.ui.screens.barchart
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +18,7 @@ import com.example.gitobserverapp.ui.screens.barchart.helper.ChartHelper
 import com.example.gitobserverapp.ui.screens.barchart.model.BarChartModel
 import com.example.gitobserverapp.ui.screens.details.model.DetailsUser
 import com.example.gitobserverapp.utils.Constants.START_PAGE
+import com.example.gitobserverapp.utils.ErrorAlertDialog
 import com.example.gitobserverapp.utils.parse_period.years.YearParser
 import com.google.android.material.snackbar.Snackbar
 import moxy.MvpAppCompatFragment
@@ -47,8 +49,10 @@ class ChartFragment:
     private val args: ChartFragmentArgs by navArgs()
     private var repoName = ""
     private var repoOwnerName = ""
+    private var starAmount = 0
     private var page = 1
     private var lastPage = 1
+    private var isLoadAllowed = false
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -68,8 +72,7 @@ class ChartFragment:
         super.onViewCreated(view, savedInstanceState)
 
         chartHelper = ChartHelper(binding.barChart, this)
-        yearParser = YearParser()
-
+        starAmount = args.starAmount
         repoName = args.repoName
         repoOwnerName = args.repoOwnerName
         binding.repoName.text = repoName
@@ -83,8 +86,13 @@ class ChartFragment:
     @RequiresApi(Build.VERSION_CODES.O)
     private fun prevPageClick() {
         binding.prevPage.setOnClickListener {
-            page++
-            chartPresenter.prepareListForChart(page = page)
+            if (isLoadAllowed){
+                page++
+                chartPresenter.getStargazersList(repoName = repoName, repoOwnerName = repoOwnerName, page = page)
+            } else {
+                page++
+                chartPresenter.prepareListForChart(page = page)
+            }
         }
     }
 
@@ -99,7 +107,8 @@ class ChartFragment:
     @RequiresApi(Build.VERSION_CODES.O)
     private fun radioButtonClickListener() {
         binding.radioBtnYears.setOnClickListener {
-            chartPresenter.getStargazersList(repoName = repoName, repoOwnerName = repoOwnerName)
+            chartPresenter.findLastLoadPage(starAmount = starAmount)
+            chartPresenter.getStargazersList(repoName = repoName, repoOwnerName = repoOwnerName, page = 1)
         }
         binding.radioBtnMonths.setOnClickListener{
             Snackbar.make(binding.root, "Months", Snackbar.LENGTH_LONG).show()
@@ -111,7 +120,7 @@ class ChartFragment:
 
     private fun navigationButtonsController(lastPage: Int, page: Int) {
         binding.nextPage.isEnabled = (page == lastPage && page != 1) || (page != 1 && page != lastPage)
-        binding.prevPage.isEnabled = (page == 1 && lastPage > 1) || (page != 1 && page != lastPage)
+        binding.prevPage.isEnabled = (page == 1 && lastPage > 1) || (page != 1 && page < lastPage) || isLoadAllowed
     }
 
     override fun showLoadPage() {
@@ -121,23 +130,26 @@ class ChartFragment:
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    override fun showSuccessPage(list: List<BarChartModel>, lastPage: Int, page: Int) {
+    override fun showSuccessPage(list: List<BarChartModel>, lastPage: Int, page: Int, isLoadAllowed: Boolean) {
         binding.txtNetworkStatus.visibility = View.GONE
         binding.progBarChart.visibility = View.GONE
         this.lastPage = lastPage
         this.page = page
+        this.isLoadAllowed = isLoadAllowed
         navigationButtonsController(lastPage = lastPage, page = page)
         chartHelper.initBarChart(list = list)
     }
 
     override fun showErrorPage(error: String) {
+        ErrorAlertDialog.showDialog(error = error, requireContext())
         navigationButtonsController(START_PAGE, START_PAGE)
         binding.txtNetworkStatus.text = error
         binding.txtNetworkStatus.visibility = View.VISIBLE
         binding.progBarChart.visibility = View.GONE
     }
 
-    override fun showNetworkErrorPage() {
+    override fun showNetworkErrorPage(error: String) {
+        ErrorAlertDialog.showDialog(error = error, requireContext())
         navigationButtonsController(START_PAGE, START_PAGE)
         binding.txtNetworkStatus.visibility = View.VISIBLE
         binding.progBarChart.visibility = View.GONE

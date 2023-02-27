@@ -31,6 +31,9 @@
         <action
             android:id="@+id/action_chartFragment_to_detailsFragment"
             app:destination="@id/detailsFragment" />
+        <argument
+            android:name="starAmount"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/detailsFragment"

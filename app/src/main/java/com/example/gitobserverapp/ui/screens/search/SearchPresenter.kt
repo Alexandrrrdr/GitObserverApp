@@ -1,10 +1,8 @@
 package com.example.gitobserverapp.ui.screens.search
 
-import com.example.gitobserverapp.domain.model.NetworkState
 import com.example.gitobserverapp.domain.usecase.GetReposUseCase
 import com.example.gitobserverapp.ui.screens.search.model.UiRepo
 import com.example.gitobserverapp.ui.screens.search.model.UiRepoOwner
-import com.example.gitobserverapp.utils.parse_period.years.YearParser
 import kotlinx.coroutines.*
 import moxy.InjectViewState
 import moxy.MvpPresenter
@@ -28,18 +26,27 @@ class SearchPresenter @Inject constructor(
         }
 
         CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
-            val result = getReposUseCase.getRepos(userName = userName)
-            withContext(Dispatchers.Main){
-                when (result) {
-                    is NetworkState.CommonError -> viewState.showError(result.httpErrors.toString())
-                    is NetworkState.Error -> viewState.showError(result.error)
-                    is NetworkState.InvalidData -> viewState.showError("No data on server")
-                    is NetworkState.NetworkException -> viewState.showNetworkError()
-                    is NetworkState.Success -> viewState.showSuccess(result.data.map { UiRepo(
-                        id = it.id, description = it.description, name = it.name, owner =
-                        UiRepoOwner(avatarUrl = it.owner.avatarUrl, id = it.owner.id, login = it.owner.login),
-                        created = it.created, starUserAmount = it.starUserAmount
-                    ) })
+            try {
+                val result = getReposUseCase.getRepos(userName = userName)
+                if (result.isNotEmpty()){
+                    withContext(Dispatchers.Main){
+                        viewState.showSuccess(result.map { UiRepo(
+                            id = it.id,
+                            description = it.description,
+                            name = it.name,
+                            owner = UiRepoOwner(avatarUrl = it.owner.avatarUrl, id = it.owner.id, login = it.owner.login),
+                            created = it.created,
+                            starUserAmount = it.starUserAmount
+                        ) })
+                    }
+                } else {
+                    withContext(Dispatchers.Main) {
+                        viewState.showError("No server data")
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    viewState.showNetworkError()
                 }
             }
         }

@@ -8,9 +8,9 @@ import javax.inject.Inject
 
 class GetReposUseCase @Inject constructor(
     private val getRepository: GetRepository,
-): BaseRepoUseCase<String, NetworkState<List<Repo>>> {
+): BaseRepoUseCase<String, List<Repo>> {
 
-    override suspend fun getRepos(userName: String): NetworkState<List<Repo>> {
+    override suspend fun getRepos(userName: String): List<Repo> {
         return getRepository.getRepos(userName = userName)
     }
 }

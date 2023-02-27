@@ -8,7 +8,7 @@ import moxy.viewstate.strategy.StateStrategyType
 @StateStrategyType(value = AddToEndSingleStrategy::class)
 interface ChartView: MvpView {
     fun showLoadPage()
-    fun showSuccessPage(list: List<BarChartModel>, lastPage: Int, page: Int)
+    fun showSuccessPage(list: List<BarChartModel>, lastPage: Int, page: Int, isLoadAllowed: Boolean)
     fun showErrorPage(error: String)
-    fun showNetworkErrorPage()
+    fun showNetworkErrorPage(error: String)
 }

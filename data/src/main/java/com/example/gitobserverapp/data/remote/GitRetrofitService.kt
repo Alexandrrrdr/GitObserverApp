@@ -2,6 +2,7 @@ package com.example.gitobserverapp.data.remote
 
 import com.example.gitobserverapp.data.remote.model.RemoteRepo
 import com.example.gitobserverapp.data.remote.model.RemoteStarDate
+import com.example.gitobserverapp.data.utils.Constants
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Headers
@@ -26,7 +27,7 @@ interface GitRetrofitService {
     suspend fun getStarUsers(
         @Path("repo_name") repoName: String,
         @Path("owner_login") ownerLogin: String,
-        @Query("per_page") perPage: Int,
+        @Query("per_page") perPage: Int = Constants.MAX_PER_PAGE,
         @Query("page") page: Int
     ): Response<List<RemoteStarDate>>
 }

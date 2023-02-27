@@ -104,11 +104,10 @@ class SearchFragment: MvpAppCompatFragment(), SearchView, SearchAdapter.Listener
     }
 
     override fun onClick(item: UiRepo) {
-        val repoOwnerLogin: String = item.owner.login
-        val repoName: String = item.name
         val direction = SearchFragmentDirections.actionMainFragmentToChartFragment(
-            repoName = repoName,
-            repoOwnerName = repoOwnerLogin
+            repoName = item.name,
+            repoOwnerName = item.owner.login,
+            starAmount = item.starUserAmount
         )
         requireActivity().findNavController(R.id.fragment_holder).navigate(directions = direction)
     }
