@@ -26,8 +26,7 @@ import moxy.presenter.ProvidePresenter
 import javax.inject.Inject
 
 
-class ChartFragment:
-    MvpAppCompatFragment(), ChartView, ChartHelper.Listener {
+class ChartFragment: MvpAppCompatFragment(), ChartView, ChartHelper.Listener {
 
     private lateinit var chartHelper: ChartHelper
 
