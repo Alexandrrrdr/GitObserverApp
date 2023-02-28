@@ -38,7 +38,7 @@ class SearchPresenter @Inject constructor(
                     }
                 } else {
                     withContext(Dispatchers.Main) {
-                        viewState.showError("No server data")
+                        viewState.showError("No data on server")
                     }
                 }
             } catch (e: Exception) {

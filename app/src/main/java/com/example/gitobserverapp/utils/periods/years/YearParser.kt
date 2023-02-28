@@ -1,7 +1,6 @@
-package com.example.gitobserverapp.utils.parse_period.years
+package com.example.gitobserverapp.utils.periods.years
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import com.example.gitobserverapp.ui.screens.barchart.model.BarChartModel
 import com.example.gitobserverapp.ui.screens.barchart.model.UiStarDate
@@ -12,7 +11,7 @@ import java.time.LocalDate
 class YearParser() {
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun compareYearsModel(list: List<UiStarDate>): List<BarChartModel> {
+    fun yearCreater(list: List<UiStarDate>): List<BarChartModel> {
 
         var endDateYear = list[list.lastIndex].date.convertToLocalDate()!!.year
         var startDateYear = list[Constants.ZERO_PAGE].date.convertToLocalDate()!!.year

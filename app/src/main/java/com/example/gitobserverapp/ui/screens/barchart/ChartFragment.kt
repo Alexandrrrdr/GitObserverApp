@@ -3,7 +3,6 @@ package com.example.gitobserverapp.ui.screens.barchart
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +18,7 @@ import com.example.gitobserverapp.ui.screens.barchart.model.BarChartModel
 import com.example.gitobserverapp.ui.screens.details.model.DetailsUser
 import com.example.gitobserverapp.utils.Constants.START_PAGE
 import com.example.gitobserverapp.utils.ErrorAlertDialog
-import com.example.gitobserverapp.utils.parse_period.years.YearParser
+import com.example.gitobserverapp.utils.periods.years.YearParser
 import com.google.android.material.snackbar.Snackbar
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
@@ -91,7 +90,7 @@ class ChartFragment:
                 chartPresenter.getStargazersList(repoName = repoName, repoOwnerName = repoOwnerName, page = page)
             } else {
                 page++
-                chartPresenter.prepareListForChart(page = page)
+                chartPresenter.navigationInList(page = page)
             }
         }
     }
@@ -100,7 +99,7 @@ class ChartFragment:
     private fun nextPageClick() {
         binding.nextPage.setOnClickListener {
             page--
-            chartPresenter.prepareListForChart(page = page)
+            chartPresenter.navigationInList(page = page)
         }
     }
 

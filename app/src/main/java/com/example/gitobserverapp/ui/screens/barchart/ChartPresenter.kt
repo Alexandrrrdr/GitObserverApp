@@ -1,22 +1,18 @@
 package com.example.gitobserverapp.ui.screens.barchart
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
-import com.example.gitobserverapp.domain.model.NetworkState
 import com.example.gitobserverapp.domain.usecase.GetStarUseCase
 import com.example.gitobserverapp.ui.screens.barchart.model.BarChartModel
 import com.example.gitobserverapp.ui.screens.barchart.model.UiStarDate
 import com.example.gitobserverapp.ui.screens.barchart.model.UiStarUser
 import com.example.gitobserverapp.utils.Constants
-import com.example.gitobserverapp.utils.Constants.START_PAGE
 import com.example.gitobserverapp.utils.Extensions.convertToLocalDate
-import com.example.gitobserverapp.utils.parse_period.years.YearParser
+import com.example.gitobserverapp.utils.periods.years.YearParser
 import kotlinx.coroutines.*
 import moxy.InjectViewState
 import moxy.MvpPresenter
 import javax.inject.Inject
-import kotlin.math.log
 
 @InjectViewState
 class ChartPresenter
@@ -27,40 +23,41 @@ class ChartPresenter
 
     private val tmpListBarChart = mutableListOf<BarChartModel>()
     private val tmpListUiStarDate = mutableListOf<UiStarDate>()
-    private var lastListPage = 1
-    private var lastLoadPage = 1
-    private var page = 1
-    private var isLoadAllowed = false
 
+    private var lastListPage = 1
+    private var currentListPage = 1
+
+    private var lastPageToLoad = 1
+    private var isLoadAllowed = false
 
     //New version
     @RequiresApi(Build.VERSION_CODES.O)
     fun getStargazersList(repoName: String, repoOwnerName: String, page: Int) {
-        this.page = page
-        isLoadAllowed = lastLoadPage > 1
-        if (lastLoadPage == 0){
-            viewState.showErrorPage("No users who placed a star...")
+        this.currentListPage = page
+        isLoadAllowed = lastPageToLoad > 1
+        if (lastPageToLoad < 1){
+            viewState.showErrorPage("No stars, check another project")
             return
         } else {
             viewState.showLoadPage()
             CoroutineScope(Dispatchers.IO).launch {
                 try {
-                    var starredList = loadData(repoName = repoName, ownerName = repoOwnerName, pageNumber = lastLoadPage)
+                    var starredList = loadData(repoName = repoName, ownerName = repoOwnerName, pageNumber = lastPageToLoad)
                     tmpListUiStarDate.addAll(0, starredList)
-                    lastLoadPage--
+                    lastPageToLoad--
 
-                    while (!dateRangeChecker(starredList) && lastLoadPage >= 1){
-                        starredList = loadData(repoName = repoName, ownerName = repoOwnerName, pageNumber = lastLoadPage)
+                    while (!dateRangeChecker(starredList) && lastPageToLoad >= 1){
+                        starredList = loadData(repoName = repoName, ownerName = repoOwnerName, pageNumber = lastPageToLoad)
                         tmpListUiStarDate.addAll(0, starredList)
-                        lastLoadPage--
-                        isLoadAllowed = lastLoadPage > 1
+                        lastPageToLoad--
+                        isLoadAllowed = lastPageToLoad > 1
                     }
                     tmpListBarChart.clear()
                     if (starredList.isNotEmpty()){
                         withContext(Dispatchers.Main) {
-                            tmpListBarChart.addAll(0, yearParser.compareYearsModel(tmpListUiStarDate))
+                            tmpListBarChart.addAll(0, yearParser.yearCreater(tmpListUiStarDate))
                             setLastListPage(tmpListBarChart)
-                            prepareListForChart(page = page)
+                            navigationInList(page = page)
                         }
                     } else {
                         withContext(Dispatchers.Main) {
@@ -77,10 +74,9 @@ class ChartPresenter
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun prepareListForChart(page: Int) {
-        this.page = page
+    fun navigationInList(page: Int) {
+        this.currentListPage = page
         val tmpList = mutableListOf<BarChartModel>()
-
         when (page) {
             1 -> {
                 tmpList.addAll(emptyList())
@@ -146,18 +142,18 @@ class ChartPresenter
 
     fun findLastLoadPage(starAmount: Int){
         if (starAmount == 0) {
-            lastLoadPage = 0
+            lastPageToLoad = 0
             return
         }
         val countHelper = (starAmount / 100)
         if (countHelper == 0 && starAmount != 0){
-            lastLoadPage = 1
+            lastPageToLoad = 1
             return
         } else if (countHelper >= 1 && (starAmount % 100) == 0){
-            lastLoadPage = countHelper
+            lastPageToLoad = countHelper
             return
         }
-        lastLoadPage = countHelper + 1
+        lastPageToLoad = countHelper + 1
     }
 
 

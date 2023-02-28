@@ -17,19 +17,19 @@ class RepositoryImpl @Inject constructor(
     override suspend fun getRepos(
         userName: String
     ): List<RemoteRepo> {
-        try {
+//        try {
             val repos = gitRetrofitService.getOwnerRepos(
                 userName = userName,
                 page = START_PAGE,
             )
-            if (repos.isSuccessful && repos.body()!= null) {
+//            if (repos.isSuccessful && repos.body()!= null) {
                 return repos.body()!!
-            } else {
-                throw NetworkState.InvalidData(empty = "No data on server")
-            }
-        } catch (e: Exception){
-            throw NetworkState.NetworkException(error = e)
-        }
+//            } else {
+//                throw NetworkState.InvalidData(empty = "No data on server")
+//            }
+//        } catch (e: Exception){
+//            throw NetworkState.NetworkException(error = e)
+//        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
