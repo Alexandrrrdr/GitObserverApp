@@ -90,7 +90,7 @@ class ChartFragment:
                 chartPresenter.getStargazersList(repoName = repoName, repoOwnerName = repoOwnerName, page = page)
             } else {
                 page++
-                chartPresenter.navigationInList(page = page)
+                chartPresenter.navigationHelper(page = page)
             }
         }
     }
@@ -99,7 +99,7 @@ class ChartFragment:
     private fun nextPageClick() {
         binding.nextPage.setOnClickListener {
             page--
-            chartPresenter.navigationInList(page = page)
+            chartPresenter.navigationHelper(page = page)
         }
     }
 

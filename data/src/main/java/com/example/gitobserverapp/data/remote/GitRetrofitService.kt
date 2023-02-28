@@ -14,10 +14,6 @@ interface GitRetrofitService {
     @GET("/users/{username}/repos")
     suspend fun getOwnerRepos(
         @Path("username") userName: String,
-//        @Query("type") type: String = "owner",
-//        @Query("sort") sort: String = "full_name",
-//        @Query("direction") direction: String = "asc",
-//        @Query("per_page") perPage: Int,    //max is 100
         @Query("page") page: Int
     ): Response<List<RemoteRepo>>
 

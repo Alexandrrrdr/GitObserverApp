@@ -1,7 +1,6 @@
 package com.example.gitobserverapp.domain.usecase
 
 import com.example.gitobserverapp.domain.model.Repo
-import com.example.gitobserverapp.domain.model.NetworkState
 import com.example.gitobserverapp.domain.repository.GetRepository
 import com.example.gitobserverapp.domain.usecase.base.BaseRepoUseCase
 import javax.inject.Inject

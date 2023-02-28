@@ -7,6 +7,10 @@ import com.example.gitobserverapp.ui.screens.barchart.model.BarChartModel
 import com.example.gitobserverapp.ui.screens.barchart.model.UiStarDate
 import com.example.gitobserverapp.ui.screens.barchart.model.UiStarUser
 import com.example.gitobserverapp.utils.Constants
+import com.example.gitobserverapp.utils.Constants.MAX_PER_PAGE
+import com.example.gitobserverapp.utils.Constants.ZERO_INDEX
+import com.example.gitobserverapp.utils.Constants.PERIOD
+import com.example.gitobserverapp.utils.Constants.START_PAGE
 import com.example.gitobserverapp.utils.Extensions.convertToLocalDate
 import com.example.gitobserverapp.utils.periods.years.YearParser
 import kotlinx.coroutines.*
@@ -24,18 +28,18 @@ class ChartPresenter
     private val tmpListBarChart = mutableListOf<BarChartModel>()
     private val tmpListUiStarDate = mutableListOf<UiStarDate>()
 
-    private var lastListPage = 1
-    private var currentListPage = 1
+    private var lastListPage = START_PAGE
+    private var currentListPage = START_PAGE
 
-    private var lastPageToLoad = 1
+    private var lastPageToLoad = START_PAGE
     private var isLoadAllowed = false
 
     //New version
     @RequiresApi(Build.VERSION_CODES.O)
     fun getStargazersList(repoName: String, repoOwnerName: String, page: Int) {
         this.currentListPage = page
-        isLoadAllowed = lastPageToLoad > 1
-        if (lastPageToLoad < 1){
+        isLoadAllowed = lastPageToLoad > START_PAGE
+        if (lastPageToLoad < START_PAGE){
             viewState.showErrorPage("No stars, check another project")
             return
         } else {
@@ -43,21 +47,21 @@ class ChartPresenter
             CoroutineScope(Dispatchers.IO).launch {
                 try {
                     var starredList = loadData(repoName = repoName, ownerName = repoOwnerName, pageNumber = lastPageToLoad)
-                    tmpListUiStarDate.addAll(0, starredList)
+                    tmpListUiStarDate.addAll(ZERO_INDEX, starredList)
                     lastPageToLoad--
 
-                    while (!dateRangeChecker(starredList) && lastPageToLoad >= 1){
+                    while (!dateRangeChecker(starredList) && lastPageToLoad >= START_PAGE){
                         starredList = loadData(repoName = repoName, ownerName = repoOwnerName, pageNumber = lastPageToLoad)
-                        tmpListUiStarDate.addAll(0, starredList)
+                        tmpListUiStarDate.addAll(ZERO_INDEX, starredList)
                         lastPageToLoad--
-                        isLoadAllowed = lastPageToLoad > 1
+                        isLoadAllowed = lastPageToLoad > START_PAGE
                     }
                     tmpListBarChart.clear()
                     if (starredList.isNotEmpty()){
                         withContext(Dispatchers.Main) {
-                            tmpListBarChart.addAll(0, yearParser.yearCreater(tmpListUiStarDate))
+                            tmpListBarChart.addAll(ZERO_INDEX, yearParser.yearCreater(tmpListUiStarDate))
                             setLastListPage(tmpListBarChart)
-                            navigationInList(page = page)
+                            navigationHelper(page = page)
                         }
                     } else {
                         withContext(Dispatchers.Main) {
@@ -73,50 +77,20 @@ class ChartPresenter
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun navigationInList(page: Int) {
-        this.currentListPage = page
+    fun navigationHelper(page: Int){
         val tmpList = mutableListOf<BarChartModel>()
-        when (page) {
-            1 -> {
-                tmpList.addAll(emptyList())
-                tmpList.addAll(tmpListBarChart.slice(0..4))
-                viewState.showSuccessPage(list = tmpList, lastPage = lastListPage, page = page, isLoadAllowed = isLoadAllowed)
-            }
-            2 -> {
-                tmpList.addAll(emptyList())
-                tmpList.addAll(tmpListBarChart.slice(5..9))
-                viewState.showSuccessPage(list = tmpList, lastPage = lastListPage, page = page, isLoadAllowed = isLoadAllowed)
-            }
-            3 -> {
-                tmpList.addAll(emptyList())
-                tmpList.addAll(tmpListBarChart.slice(10..14))
-                viewState.showSuccessPage(list = tmpList, lastPage = lastListPage, page = page, isLoadAllowed = isLoadAllowed)
-            }
-            4 -> {
-                tmpList.addAll(emptyList())
-                tmpList.addAll(tmpListBarChart.slice(15..19))
-                viewState.showSuccessPage(list = tmpList, lastPage = lastListPage, page = page, isLoadAllowed = isLoadAllowed)
-            }
-            5 -> {
-                tmpList.addAll(emptyList())
-                tmpList.addAll(tmpListBarChart.slice(20..24))
-                viewState.showSuccessPage(list = tmpList, lastPage = lastListPage, page = page, isLoadAllowed = isLoadAllowed)
-            }
-            6 -> {
-                tmpList.addAll(emptyList())
-                tmpList.addAll(tmpListBarChart.slice(25..29))
-                viewState.showSuccessPage(list = tmpList, lastPage = lastListPage, page = page, isLoadAllowed = isLoadAllowed)
-            }
-        }
+        val start = page * PERIOD - PERIOD
+        val end = page * PERIOD - START_PAGE
+        tmpList.addAll(tmpListBarChart.slice(start..end))
+        viewState.showSuccessPage(list = tmpList, lastPage = lastListPage, page = page, isLoadAllowed = isLoadAllowed)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun dateRangeChecker(list: List<UiStarDate>): Boolean{
+    private fun dateRangeChecker(list: List<UiStarDate>): Boolean{
         val endDateYear = list[list.lastIndex].date.convertToLocalDate()!!.year
         val startDateYear = list[Constants.ZERO_PAGE].date.convertToLocalDate()!!.year
-        val difference = (endDateYear - startDateYear) / 5
-        return difference >= 1
+        val difference = (endDateYear - startDateYear) / PERIOD
+        return difference >= START_PAGE
     }
 
     private suspend fun loadData(
@@ -132,81 +106,27 @@ class ChartPresenter
     }
 
     private fun setLastListPage(list: List<BarChartModel>) {
-        val lastItems = list.size % 5
-        lastListPage = if (lastItems == 0) {
-            list.size / 5
+        val lastItems = list.size % PERIOD
+        lastListPage = if (lastItems == ZERO_INDEX) {
+            list.size / PERIOD
         } else {
-            list.size / 5 + 1
+            list.size / PERIOD + START_PAGE
         }
     }
 
     fun findLastLoadPage(starAmount: Int){
-        if (starAmount == 0) {
-            lastPageToLoad = 0
+        if (starAmount == ZERO_INDEX) {
+            lastPageToLoad = ZERO_INDEX
             return
         }
-        val countHelper = (starAmount / 100)
-        if (countHelper == 0 && starAmount != 0){
-            lastPageToLoad = 1
+        val countHelper = (starAmount / MAX_PER_PAGE)
+        if (countHelper == ZERO_INDEX && starAmount != ZERO_INDEX){
+            lastPageToLoad = START_PAGE
             return
-        } else if (countHelper >= 1 && (starAmount % 100) == 0){
+        } else if (countHelper >= START_PAGE && (starAmount % MAX_PER_PAGE) == ZERO_INDEX){
             lastPageToLoad = countHelper
             return
         }
-        lastPageToLoad = countHelper + 1
+        lastPageToLoad = countHelper + START_PAGE
     }
-
-
-//        @RequiresApi(Build.VERSION_CODES.O)
-//    private fun dateInBanRange(
-//        list: List<UiStarDate>
-//    ): Boolean {
-//        val listOfBannedDates = listOf(2019, 2014, 2009, 2004, 1999, 1994, 1989)
-//        val lastDate = list[list.lastIndex].date.convertToLocalDate()!!.year
-//        return (lastDate in listOfBannedDates)
-//    }
-
-//        @RequiresApi(Build.VERSION_CODES.O)
-//    fun getStargazersList(repoName: String, repoOwnerName: String) {
-//
-//        val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
-//            throwable.printStackTrace()
-//        }
-//        tmpListBarChart.addAll(emptyList())
-//        page = START_PAGE
-//        viewState.showLoadPage()
-//        CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
-//            try {
-//                val starList = getStarGroupUseCase.getStarGroup(
-//                    repoName = repoName,
-//                    ownerName = repoOwnerName,
-//                    pageNumber = START_PAGE
-//                )
-//                if (starList.isNotEmpty()){
-//                    withContext(Dispatchers.Main) {
-//                        tmpListBarChart.addAll(yearParser.compareYearsModel(starList.map {
-//                            UiStarDate(
-//                                date = it.date,
-//                                user = UiStarUser(
-//                                    id = it.user.id,
-//                                    name = it.user.name,
-//                                    userUrl = it.user.userUrl
-//                                )
-//                            )
-//                        }))
-//                        setLastPage(tmpListBarChart)
-//                        prepareListForChart(START_PAGE)
-//                    }
-//                } else {
-//                    withContext(Dispatchers.Main) {
-//                        viewState.showErrorPage(error = "No server data")
-//                    }
-//                }
-//            } catch (e: Exception){
-//                withContext(Dispatchers.Main) {
-//                    viewState.showNetworkErrorPage(e.message.toString())
-//                }
-//            }
-//        }
-//    }
 }
