@@ -2,9 +2,7 @@ package com.example.gitobserverapp.ui.screens.search
 
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,17 +10,14 @@ import com.example.gitobserverapp.App
 import com.example.gitobserverapp.R
 import com.example.gitobserverapp.databinding.FragmentMainBinding
 import com.example.gitobserverapp.domain.usecase.GetReposUseCase
+import com.example.gitobserverapp.ui.screens.BaseFragment
 import com.example.gitobserverapp.ui.screens.search.model.UiRepo
 import com.example.gitobserverapp.utils.Extensions.hideKeyboard
-import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import javax.inject.Inject
 
-class SearchFragment: MvpAppCompatFragment(), SearchView, SearchAdapter.Listener {
-
-    private var _binding: FragmentMainBinding? = null
-    private val binding get() = _binding!!
+class SearchFragment: BaseFragment<FragmentMainBinding>(FragmentMainBinding::inflate), SearchView, SearchAdapter.Listener {
 
     private val searchAdapter: SearchAdapter by lazy {
         SearchAdapter(this)
@@ -41,14 +36,6 @@ class SearchFragment: MvpAppCompatFragment(), SearchView, SearchAdapter.Listener
     override fun onAttach(context: Context) {
         super.onAttach(context)
         (requireContext().applicationContext as App).appComponent.inject(this@SearchFragment)
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentMainBinding.inflate(inflater, container, false)
-        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -81,6 +68,7 @@ class SearchFragment: MvpAppCompatFragment(), SearchView, SearchAdapter.Listener
         binding.txtError.visibility = View.GONE
         binding.btnSearch.isEnabled = true
         binding.btnCheckAgain.isVisible = false
+        searchAdapter.setList(list = list)
         searchAdapter.differ.submitList(list)
     }
 

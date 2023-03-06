@@ -10,6 +10,6 @@ data class UiRepo(
     override val owner: UiRepoOwner,
     override val created: Date,
     override val starUserAmount: Int
-): Repo
+    ): Repo
 
 

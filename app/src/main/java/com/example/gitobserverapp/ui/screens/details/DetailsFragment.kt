@@ -14,27 +14,16 @@ import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
 
 
-class DetailsFragment : MvpAppCompatFragment(), DetailsView {
+class DetailsFragment : BaseFragment<FragmentDetailsBinding>(FragmentDetailsBinding::inflate), DetailsView {
 
     @InjectPresenter
     lateinit var detailsPresenter: DetailsPresenter
-
-    private var _binding: FragmentDetailsBinding? = null
-    private val binding get() = _binding!!
 
     private val detailsAdapter: DetailsAdapter by lazy {
         DetailsAdapter()
     }
 
     private val args: DetailsFragmentArgs by navArgs()
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentDetailsBinding.inflate(inflater, container, false)
-        return binding.root
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
