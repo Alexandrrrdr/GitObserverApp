@@ -13,6 +13,7 @@ import com.example.gitobserverapp.App
 import com.example.gitobserverapp.R
 import com.example.gitobserverapp.databinding.FragmentChartBinding
 import com.example.gitobserverapp.domain.usecase.GetStarUseCase
+import com.example.gitobserverapp.ui.screens.BaseFragment
 import com.example.gitobserverapp.ui.screens.barchart.helper.ChartHelper
 import com.example.gitobserverapp.ui.screens.barchart.model.BarChartModel
 import com.example.gitobserverapp.ui.screens.details.model.DetailsUser
@@ -26,7 +27,7 @@ import moxy.presenter.ProvidePresenter
 import javax.inject.Inject
 
 
-class ChartFragment: MvpAppCompatFragment(), ChartView, ChartHelper.Listener {
+class ChartFragment: BaseFragment<FragmentChartBinding>(FragmentChartBinding::inflate), ChartView, ChartHelper.Listener {
 
     private lateinit var chartHelper: ChartHelper
 
@@ -40,9 +41,6 @@ class ChartFragment: MvpAppCompatFragment(), ChartView, ChartHelper.Listener {
         return ChartPresenter(getStarGroupUseCase = getStarGroupUseCase, yearParser = yearParser)
     }
 
-    private var _binding: FragmentChartBinding? = null
-    private val binding get() = _binding!!
-
     //safeArgs from main fragment
     private val args: ChartFragmentArgs by navArgs()
     private var repoName = ""
@@ -55,14 +53,6 @@ class ChartFragment: MvpAppCompatFragment(), ChartView, ChartHelper.Listener {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         (requireContext().applicationContext as App).appComponent.inject(this@ChartFragment)
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentChartBinding.inflate(inflater, container, false)
-        return binding.root
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

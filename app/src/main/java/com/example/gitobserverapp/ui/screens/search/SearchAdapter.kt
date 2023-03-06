@@ -11,13 +11,26 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gitobserverapp.databinding.RecItemBinding
 import com.example.gitobserverapp.ui.screens.search.model.UiRepo
+import com.example.gitobserverapp.utils.Constants
 import com.example.gitobserverapp.utils.Extensions.convertToLocalDate
 
 class SearchAdapter(private val listener: Listener): RecyclerView.Adapter<SearchAdapter.ViewHolder>() {
 
+    private var reposList = listOf<UiRepo>()
+    private var isLoadAvailable = true
+    private var usefulPage = "https://www.digitalocean.com/community/tutorials/android-recyclerview-load-more-endless-scrolling"
+
+    fun setList(list: List<UiRepo>){
+        this.reposList = list
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = let { RecItemBinding.inflate(LayoutInflater.from(parent.context), parent, false) }
         return ViewHolder(binding)
+//        if (viewType == Constants.VIEW_TYPE_ITEM){
+//            val itemBinding = let { RecItemBinding.inflate(LayoutInflater.from(parent.context), parent, false) }
+//
+//        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

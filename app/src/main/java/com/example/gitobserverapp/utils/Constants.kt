@@ -10,4 +10,6 @@ object Constants {
     const val PERIOD = 5
     const val ZERO_INDEX = 0
     const val MAX_PER_PAGE = 100
+    const val VIEW_TYPE_ITEM = 0
+    const val VIEW_TYPE_LOADING = 1
 }
