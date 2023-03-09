@@ -1,4 +1,4 @@
-package com.example.gitobserverapp.ui
+package com.example.gitobserverapp.ui.screens
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

@@ -3,9 +3,7 @@ package com.example.gitobserverapp.ui.screens.barchart
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -18,10 +16,10 @@ import com.example.gitobserverapp.ui.screens.barchart.helper.ChartHelper
 import com.example.gitobserverapp.ui.screens.barchart.model.BarChartModel
 import com.example.gitobserverapp.ui.screens.details.model.DetailsUser
 import com.example.gitobserverapp.utils.Constants.START_PAGE
+import com.example.gitobserverapp.utils.Constants.ZERO_INDEX
 import com.example.gitobserverapp.utils.ErrorAlertDialog
 import com.example.gitobserverapp.utils.periods.years.YearParser
 import com.google.android.material.snackbar.Snackbar
-import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import javax.inject.Inject
@@ -45,9 +43,9 @@ class ChartFragment: BaseFragment<FragmentChartBinding>(FragmentChartBinding::in
     private val args: ChartFragmentArgs by navArgs()
     private var repoName = ""
     private var repoOwnerName = ""
-    private var starAmount = 0
-    private var page = 1
-    private var lastPage = 1
+    private var starAmount = ZERO_INDEX
+    private var page = START_PAGE
+    private var lastPage = START_PAGE
     private var isLoadAllowed = false
 
     override fun onAttach(context: Context) {
@@ -96,7 +94,7 @@ class ChartFragment: BaseFragment<FragmentChartBinding>(FragmentChartBinding::in
     private fun radioButtonClickListener() {
         binding.radioBtnYears.setOnClickListener {
             chartPresenter.findLastLoadPage(starAmount = starAmount)
-            chartPresenter.getStargazersList(repoName = repoName, repoOwnerName = repoOwnerName, page = 1)
+            chartPresenter.getStargazersList(repoName = repoName, repoOwnerName = repoOwnerName, page = page)
         }
         binding.radioBtnMonths.setOnClickListener{
             Snackbar.make(binding.root, "Months", Snackbar.LENGTH_LONG).show()

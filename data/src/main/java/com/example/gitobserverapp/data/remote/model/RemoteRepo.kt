@@ -4,7 +4,7 @@ import com.example.gitobserverapp.domain.model.Repo
 import com.squareup.moshi.Json
 import java.util.*
 
-class RemoteRepo(
+data class RemoteRepo(
     @Json(name = "id")
     override val id: Int = 0,
     @Json(name = "description")
