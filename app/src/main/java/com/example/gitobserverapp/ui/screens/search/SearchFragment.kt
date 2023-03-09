@@ -2,7 +2,9 @@ package com.example.gitobserverapp.ui.screens.search
 
 import android.content.Context
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,15 +23,14 @@ import javax.inject.Inject
 class SearchFragment : BaseFragment<FragmentMainBinding>(FragmentMainBinding::inflate), SearchView,
     SearchAdapter.ClickListener{
 
+    private var layoutManager: LinearLayoutManager? = null
+
     private val searchAdapter: SearchAdapter by lazy {
         SearchAdapter(clickListener = this)
     }
-
     @Inject lateinit var getReposUseCaseUseCase: GetReposUseCase
-
     @InjectPresenter
     lateinit var searchPresenter: SearchPresenter
-
     @ProvidePresenter
     fun provideMainSearchPresenter(): SearchPresenter {
         return SearchPresenter(getReposUseCase = getReposUseCaseUseCase)
@@ -43,6 +44,7 @@ class SearchFragment : BaseFragment<FragmentMainBinding>(FragmentMainBinding::in
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        layoutManager = LinearLayoutManager(requireContext())
         recyclerViewInit()
 
         binding.btnSearch.setOnClickListener {
@@ -103,7 +105,7 @@ class SearchFragment : BaseFragment<FragmentMainBinding>(FragmentMainBinding::in
 
 
     private fun recyclerViewInit() {
-        binding.recView.layoutManager = LinearLayoutManager(requireContext())
+        binding.recView.layoutManager = layoutManager
         binding.recView.setHasFixedSize(true)
         binding.recView.adapter = searchAdapter
     }

@@ -3,6 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/KotlinProjects/GitObserverApp/app/src/main/res/drawable/custom_input.xml" value="0.2525" />
+        <entry key="..\:/KotlinProjects/GitObserverApp/app/src/main/res/drawable/custom_input_dark.xml" value="0.2525" />
+        <entry key="..\:/KotlinProjects/GitObserverApp/app/src/main/res/drawable/custom_input_light.xml" value="0.2525" />
+        <entry key="..\:/KotlinProjects/GitObserverApp/app/src/main/res/drawable/ic_search.xml" value="0.2525" />
+        <entry key="..\:/KotlinProjects/GitObserverApp/app/src/main/res/drawable/round_style.xml" value="0.2525" />
         <entry key="..\:/KotlinProjects/GitObserverApp/app/src/main/res/layout/activity_main.xml" value="0.16799999999999998" />
         <entry key="..\:/KotlinProjects/GitObserverApp/app/src/main/res/layout/details_item.xml" value="0.25416666666666665" />
         <entry key="..\:/KotlinProjects/GitObserverApp/app/src/main/res/layout/errors.xml" value="0.253125" />

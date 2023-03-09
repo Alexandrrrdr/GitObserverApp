@@ -11,23 +11,10 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#B4E4EA"
+        style="@style/CHART_SCREENS"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
         android:paddingBottom="8dp">
-
-<!--        <TextView-->
-<!--            android:id="@+id/itemCounter"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:gravity="center_horizontal"-->
-<!--            app:layout_constraintBottom_toTopOf="@+id/repoNamePermanent"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="parent"-->
-<!--            android:textSize="18sp"-->
-<!--            android:textColor="@color/g_black"-->
-<!--            tools:text="Number 1" />-->
 
         <TextView
             android:id="@+id/repoNamePermanent"
@@ -35,8 +22,8 @@
             android:layout_height="wrap_content"
             android:text="@string/repository_name"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium.Inverse"
-            android:textColor="@color/g_black"
             android:textStyle="bold"
+            style="@style/TEXT"
             app:layout_constraintBottom_toBottomOf="@id/repoName"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/repoName" />
@@ -47,8 +34,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:gravity="center_horizontal"
+            style="@style/TEXT"
             android:textAppearance="@style/TextAppearance.AppCompat.Small.Inverse"
-            android:textColor="@color/g_black"
             app:layout_constraintBottom_toTopOf="@id/imgRepoRate"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/repoNamePermanent"
@@ -60,8 +47,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:text="@string/created"
+            style="@style/TEXT"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium.Inverse"
-            android:textColor="@color/g_black"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/repoNamePermanent" />
@@ -72,7 +59,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Small.Inverse"
-            android:textColor="@color/g_black"
+            style="@style/TEXT"
             app:layout_constraintBottom_toBottomOf="@id/repoDatePermanent"
             app:layout_constraintStart_toEndOf="@+id/repoDatePermanent"
             app:layout_constraintTop_toTopOf="@id/repoDatePermanent"
@@ -94,8 +81,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="10dp"
+            style="@style/TEXT"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium.Inverse"
-            android:textColor="@color/g_black"
             app:layout_constraintBottom_toBottomOf="@+id/imgRepoRate"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/imgRepoRate"
