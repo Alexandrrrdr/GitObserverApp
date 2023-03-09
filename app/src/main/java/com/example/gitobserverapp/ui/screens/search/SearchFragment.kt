@@ -8,6 +8,7 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gitobserverapp.App
 import com.example.gitobserverapp.R
+import com.example.gitobserverapp.data.utils.Constants.START_PAGE
 import com.example.gitobserverapp.databinding.FragmentMainBinding
 import com.example.gitobserverapp.domain.usecase.GetReposUseCase
 import com.example.gitobserverapp.ui.screens.BaseFragment
@@ -17,10 +18,11 @@ import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import javax.inject.Inject
 
-class SearchFragment: BaseFragment<FragmentMainBinding>(FragmentMainBinding::inflate), SearchView, SearchAdapter.Listener {
+class SearchFragment : BaseFragment<FragmentMainBinding>(FragmentMainBinding::inflate), SearchView,
+    SearchAdapter.ClickListener{
 
     private val searchAdapter: SearchAdapter by lazy {
-        SearchAdapter(this)
+        SearchAdapter(clickListener = this)
     }
 
     @Inject lateinit var getReposUseCaseUseCase: GetReposUseCase
@@ -44,12 +46,12 @@ class SearchFragment: BaseFragment<FragmentMainBinding>(FragmentMainBinding::inf
         recyclerViewInit()
 
         binding.btnSearch.setOnClickListener {
-            searchPresenter.loadData(userName = binding.edtTxtInput.text.toString())
+            searchPresenter.loadData(userName = binding.edtTxtInput.text.toString(), pageNumber = START_PAGE)
             hideKeyboard()
         }
 
         binding.btnCheckAgain.setOnClickListener {
-            searchPresenter.loadData(userName = binding.edtTxtInput.text.toString())
+            searchPresenter.loadData(userName = binding.edtTxtInput.text.toString(), pageNumber = START_PAGE)
         }
     }
 
@@ -59,7 +61,6 @@ class SearchFragment: BaseFragment<FragmentMainBinding>(FragmentMainBinding::inf
         binding.networkError.root.visibility = View.GONE
         binding.btnSearch.isEnabled = false
         binding.btnCheckAgain.isVisible = false
-        searchAdapter.differ.submitList(emptyList())
     }
 
     override fun showSuccess(list: List<UiRepo>) {
@@ -68,7 +69,6 @@ class SearchFragment: BaseFragment<FragmentMainBinding>(FragmentMainBinding::inf
         binding.txtError.visibility = View.GONE
         binding.btnSearch.isEnabled = true
         binding.btnCheckAgain.isVisible = false
-        searchAdapter.setList(list = list)
         searchAdapter.differ.submitList(list)
     }
 
@@ -100,8 +100,10 @@ class SearchFragment: BaseFragment<FragmentMainBinding>(FragmentMainBinding::inf
         requireActivity().findNavController(R.id.fragment_holder).navigate(directions = direction)
     }
 
+
+
     private fun recyclerViewInit() {
-        binding.recView.layoutManager = LinearLayoutManager(requireActivity())
+        binding.recView.layoutManager = LinearLayoutManager(requireContext())
         binding.recView.setHasFixedSize(true)
         binding.recView.adapter = searchAdapter
     }

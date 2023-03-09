@@ -4,7 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.example.gitobserverapp.data.remote.GitRetrofitService
 import com.example.gitobserverapp.data.remote.model.RemoteRepo
-import com.example.gitobserverapp.data.remote.model.RemoteSortedStars
+import com.example.gitobserverapp.data.remote.model.RemoteStarDateSorted
 import com.example.gitobserverapp.data.remote.model.RemoteStarDate
 import com.example.gitobserverapp.data.utils.Constants.PERIOD
 import com.example.gitobserverapp.data.utils.Constants.START_PAGE
@@ -20,12 +20,13 @@ class RepositoryImpl @Inject constructor(
 ) : GetRepository {
 
     override suspend fun getRepos(
-        userName: String
+        userName: String,
+        pageNumber: Int
     ): List<RemoteRepo> {
         try {
             val repos = gitRetrofitService.getOwnerRepos(
                 userName = userName,
-                page = START_PAGE,
+                page = pageNumber,
             )
             if (repos.isSuccessful && repos.body()!= null) {
                 return repos.body()!!
@@ -42,14 +43,14 @@ class RepositoryImpl @Inject constructor(
         repoName: String,
         ownerName: String,
         lastPage: Int
-    ): RemoteSortedStars {
+    ): RemoteStarDateSorted {
 
         val tmpStarList = mutableListOf<RemoteStarDate>()
         var lastLoadPage = lastPage
         var isLoadAllowed = lastLoadPage > START_PAGE
 
         try {
-            var starredList = loadData(
+            var starredList = loadNewStarPage(
                 repoName = repoName,
                 ownerName = ownerName,
                 lastPage = lastPage
@@ -58,13 +59,13 @@ class RepositoryImpl @Inject constructor(
                 tmpStarList.addAll(ZERO_INDEX, starredList.body()!!)
                 lastLoadPage --
 
-                while (!dateRangeChecker(starredList.body()!!) && lastLoadPage >= START_PAGE){
-                    starredList = loadData(repoName = repoName, ownerName = ownerName, lastPage = lastLoadPage)
+                while (!starRangeDateChecker(starredList.body()!!) && lastLoadPage >= START_PAGE){
+                    starredList = loadNewStarPage(repoName = repoName, ownerName = ownerName, lastPage = lastLoadPage)
                     tmpStarList.addAll(ZERO_INDEX, starredList.body()!!)
                     lastLoadPage --
                     isLoadAllowed = lastLoadPage > START_PAGE
                 }
-                return RemoteSortedStars(lastPage = lastLoadPage, isLoadAvailable = isLoadAllowed, list = tmpStarList)
+                return RemoteStarDateSorted(lastPage = lastLoadPage, isLoadAvailable = isLoadAllowed, list = tmpStarList)
             } else {
                 throw NetworkState.InvalidData(empty = "No data on server")
             }
@@ -73,7 +74,7 @@ class RepositoryImpl @Inject constructor(
         }
     }
 
-    private suspend fun loadData(
+    private suspend fun loadNewStarPage(
         repoName: String,
         ownerName: String,
         lastPage: Int
@@ -86,7 +87,7 @@ class RepositoryImpl @Inject constructor(
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun dateRangeChecker(list: List<RemoteStarDate>): Boolean{
+    private fun starRangeDateChecker(list: List<RemoteStarDate>): Boolean{
         val endDateYear = list[list.lastIndex].date.convertToLocalDate()!!.year
         val startDateYear = list[ZERO_INDEX].date.convertToLocalDate()!!.year
         val difference = (endDateYear - startDateYear) / PERIOD

@@ -14,7 +14,7 @@ class SearchPresenter @Inject constructor(
 ) : MvpPresenter<SearchView>() {
 
 
-    fun loadData(userName: String) {
+    fun loadData(userName: String, pageNumber: Int) {
 
         if (userName.isEmpty()) {
             viewState.showError("Search field is empty")
@@ -24,7 +24,7 @@ class SearchPresenter @Inject constructor(
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val result = getReposUseCase.getRepos(userName = userName)
+                val result = getReposUseCase.getRepos(repoName = userName, pageNumber = pageNumber)
                 if (result.isNotEmpty()){
                     withContext(Dispatchers.Main){
                         viewState.showSuccess(result.map { UiRepo(

@@ -5,52 +5,40 @@ import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gitobserverapp.databinding.RecItemBinding
 import com.example.gitobserverapp.ui.screens.search.model.UiRepo
-import com.example.gitobserverapp.utils.Constants
 import com.example.gitobserverapp.utils.Extensions.convertToLocalDate
 
-class SearchAdapter(private val listener: Listener): RecyclerView.Adapter<SearchAdapter.ViewHolder>() {
-
-    private var reposList = listOf<UiRepo>()
-    private var isLoadAvailable = true
-    private var usefulPage = "https://www.digitalocean.com/community/tutorials/android-recyclerview-load-more-endless-scrolling"
-
-    fun setList(list: List<UiRepo>){
-        this.reposList = list
-    }
+class SearchAdapter(private val clickListener: ClickListener): RecyclerView.Adapter<SearchAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = let { RecItemBinding.inflate(LayoutInflater.from(parent.context), parent, false) }
         return ViewHolder(binding)
-//        if (viewType == Constants.VIEW_TYPE_ITEM){
-//            val itemBinding = let { RecItemBinding.inflate(LayoutInflater.from(parent.context), parent, false) }
-//
-//        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(item = differ.currentList[position], listener = listener)
+        holder.bind(item = differ.currentList[position], clickListener = clickListener)
     }
 
     inner class ViewHolder(private val binding: RecItemBinding): RecyclerView.ViewHolder(binding.root) {
         @RequiresApi(Build.VERSION_CODES.O)
-        fun bind(item: UiRepo, listener: Listener){
+        fun bind(item: UiRepo, clickListener: ClickListener){
             binding.repoName.text = item.name
             binding.repoDate.text = item.created.convertToLocalDate().toString()
             binding.repoStarAmount.text = item.starUserAmount.toString()
             itemView.setOnClickListener {
-                listener.onClick(item = item)
+                clickListener.onClick(item = item)
             }
         }
     }
 
-    override fun getItemCount() = differ.currentList.size
+    override fun getItemCount(): Int {
+        return differ.currentList.size
+    }
 
     private val difUtil = object : DiffUtil.ItemCallback<UiRepo>(){
         override fun areItemsTheSame(oldItem: UiRepo, newItem: UiRepo): Boolean {
@@ -65,7 +53,7 @@ class SearchAdapter(private val listener: Listener): RecyclerView.Adapter<Search
 
     val differ = AsyncListDiffer(this, difUtil)
 
-    interface Listener{
+    interface ClickListener{
         fun onClick(item: UiRepo)
     }
 }
