@@ -6,7 +6,7 @@ import com.example.gitobserverapp.domain.usecase.GetStarUseCase
 import com.example.gitobserverapp.ui.screens.barchart.model.BarChartModel
 import com.example.gitobserverapp.ui.screens.barchart.model.UiStarDate
 import com.example.gitobserverapp.ui.screens.barchart.model.UiStarUser
-import com.example.gitobserverapp.utils.Constants.MAX_PER_PAGE
+import com.example.gitobserverapp.utils.Constants.MAX_STARS_PER_PAGE
 import com.example.gitobserverapp.utils.Constants.ZERO_INDEX
 import com.example.gitobserverapp.utils.Constants.PERIOD
 import com.example.gitobserverapp.utils.Constants.START_PAGE
@@ -98,11 +98,11 @@ class ChartPresenter
             lastPageToLoad = ZERO_INDEX
             return
         }
-        val countHelper = (starAmount / MAX_PER_PAGE)
+        val countHelper = (starAmount / MAX_STARS_PER_PAGE)
         if (countHelper == ZERO_INDEX && starAmount != ZERO_INDEX){
             lastPageToLoad = START_PAGE
             return
-        } else if (countHelper >= START_PAGE && (starAmount % MAX_PER_PAGE) == ZERO_INDEX){
+        } else if (countHelper >= START_PAGE && (starAmount % MAX_STARS_PER_PAGE) == ZERO_INDEX){
             lastPageToLoad = countHelper
             return
         }

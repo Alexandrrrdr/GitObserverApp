@@ -6,7 +6,7 @@
         <item name="colorPrimaryVariant">#1E1F22</item>
         <item name="colorOnPrimary">#DCDBDB</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/teal_200</item>
+        <item name="colorSecondary">@color/g_grey</item>
         <item name="colorSecondaryVariant">@color/teal_200</item>
         <item name="colorOnSecondary">#DCDBDB</item>
         <!-- Status bar color. -->
@@ -17,21 +17,18 @@
     <style name="CHART_SCREENS">
         <item name="android:background">#4A4F6C</item>
     </style>
-    <style name="REC_SCREENS">
-        <item name="android:background">#186FC5</item>
-    </style>
     <style name="SCREEN">
         <item name="android:background">#2C2F40</item>
     </style>
     <style name="TEXT">
-        <item name="android:textColor">#DCDBDB</item>
+        <item name="android:textColor">#ECECEC</item>
     </style>
     <style name="BUTTON">
         <item name="android:background">#06466A</item>
-        <item name="android:textColor">#DCDBDB</item>
+        <item name="android:textColor">#ECECEC</item>
     </style>
     <style name="EDIT">
         <item name="android:background">@drawable/custom_input_dark</item>
-        <item name="android:textColor">#DCDBDB</item>
+        <item name="android:textColor">#ECECEC</item>
     </style>
 </resources>

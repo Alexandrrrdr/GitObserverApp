@@ -1,4 +1,4 @@
-package com.example.gitobserverapp.ui.screens
+package com.example.gitobserverapp.ui.screens.base
 
 import android.os.Bundle
 import android.view.LayoutInflater

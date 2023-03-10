@@ -6,7 +6,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gitobserverapp.R
 import com.example.gitobserverapp.databinding.FragmentDetailsBinding
-import com.example.gitobserverapp.ui.screens.BaseFragment
+import com.example.gitobserverapp.ui.screens.base.BaseFragment
 import com.example.gitobserverapp.ui.screens.details.model.DetailsUser
 import moxy.presenter.InjectPresenter
 

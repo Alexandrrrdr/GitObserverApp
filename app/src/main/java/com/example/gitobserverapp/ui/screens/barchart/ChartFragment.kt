@@ -11,7 +11,7 @@ import com.example.gitobserverapp.App
 import com.example.gitobserverapp.R
 import com.example.gitobserverapp.databinding.FragmentChartBinding
 import com.example.gitobserverapp.domain.usecase.GetStarUseCase
-import com.example.gitobserverapp.ui.screens.BaseFragment
+import com.example.gitobserverapp.ui.screens.base.BaseFragment
 import com.example.gitobserverapp.ui.screens.barchart.helper.ChartHelper
 import com.example.gitobserverapp.ui.screens.barchart.model.BarChartModel
 import com.example.gitobserverapp.ui.screens.details.model.DetailsUser
