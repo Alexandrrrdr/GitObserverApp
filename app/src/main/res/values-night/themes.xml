@@ -10,24 +10,24 @@
         <item name="colorSecondaryVariant">@color/teal_200</item>
         <item name="colorOnSecondary">#DCDBDB</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">#1E1F22</item>
+        <item name="android:statusBarColor" >#1E1F22</item>
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="CHART_SCREENS">
+    <style name="chartScreens">
         <item name="android:background">#4A4F6C</item>
     </style>
-    <style name="SCREEN">
+    <style name="screens">
         <item name="android:background">#2C2F40</item>
     </style>
-    <style name="TEXT">
+    <style name="text">
         <item name="android:textColor">#ECECEC</item>
     </style>
-    <style name="BUTTON">
+    <style name="button">
         <item name="android:background">#06466A</item>
         <item name="android:textColor">#ECECEC</item>
     </style>
-    <style name="EDIT">
+    <style name="edit">
         <item name="android:background">@drawable/custom_input_dark</item>
         <item name="android:textColor">#ECECEC</item>
     </style>

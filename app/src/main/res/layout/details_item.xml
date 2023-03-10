@@ -12,7 +12,7 @@
         android:id="@+id/details_field"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        style="@style/CHART_SCREENS"
+        style="@style/chartScreens"
         android:padding="8dp">
 
         <ImageView
@@ -33,7 +33,7 @@
             android:layout_marginBottom="8dp"
             android:text="@string/user_name"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            style="@style/TEXT"
+            style="@style/text"
             app:layout_constraintStart_toEndOf="@+id/imgView_star"
             app:layout_constraintBottom_toTopOf="@+id/txtView_userId_header"
             app:layout_constraintTop_toTopOf="parent" />
@@ -42,7 +42,7 @@
             android:id="@+id/txtView_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/TEXT"
+            style="@style/text"
             android:layout_marginStart="20dp"
             app:layout_constraintBottom_toBottomOf="@+id/txtView_name_header"
             app:layout_constraintStart_toEndOf="@+id/txtView_name_header"
@@ -58,7 +58,7 @@
             android:layout_marginBottom="8dp"
             android:text="@string/user_id"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            style="@style/TEXT"
+            style="@style/text"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/imgView_star"
             app:layout_constraintTop_toBottomOf="@+id/txtView_name_header"/>
@@ -68,7 +68,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
-            style="@style/TEXT"
+            style="@style/text"
             app:layout_constraintBottom_toBottomOf="@+id/txtView_userId_header"
             app:layout_constraintStart_toEndOf="@+id/txtView_userId_header"
             app:layout_constraintTop_toTopOf="@+id/txtView_userId_header"

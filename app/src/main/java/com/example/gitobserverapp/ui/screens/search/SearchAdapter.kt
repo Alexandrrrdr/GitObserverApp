@@ -9,18 +9,16 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gitobserverapp.databinding.RecItemBinding
-import com.example.gitobserverapp.databinding.RecItemLoadingBinding
 import com.example.gitobserverapp.ui.screens.search.model.UiRepo
-import com.example.gitobserverapp.utils.Constants.VIEW_TYPE_ITEM
-import com.example.gitobserverapp.utils.Constants.VIEW_TYPE_LOADING
 import com.example.gitobserverapp.utils.Extensions.convertToLocalDate
 
-class SearchAdapter(private val clickListener: ClickListener): RecyclerView.Adapter<SearchAdapter.ViewHolder>() {
+class SearchAdapter(private val clickListener: ClickListener) :
+    RecyclerView.Adapter<SearchAdapter.ViewHolder>() {
 
     var adapterList = mutableListOf<UiRepo>()
 
-    fun setListAdapter(list: List<UiRepo>?, isNewList: Boolean){
-        if (isNewList){
+    fun setListAdapter(list: List<UiRepo>?, isNewList: Boolean) {
+        if (isNewList) {
             adapterList.clear()
             list?.let { adapterList.addAll(it) }
         } else {
@@ -29,23 +27,10 @@ class SearchAdapter(private val clickListener: ClickListener): RecyclerView.Adap
         differ.submitList(adapterList)
     }
 
-//    override fun getItemViewType(position: Int): Int {
-//        if (adapterList[position] == null){
-//            return VIEW_TYPE_LOADING
-//        } else {
-//            return VIEW_TYPE_ITEM
-//        }
-//    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchAdapter.ViewHolder {
-//        if (viewType == VIEW_TYPE_ITEM) {
-            val binding =
-                let { RecItemBinding.inflate(LayoutInflater.from(parent.context), parent, false) }
-            return ViewHolder(binding)
-//        } else {
-//            val loadBinding = let { RecItemLoadingBinding.inflate(LayoutInflater.from(parent.context), parent, false) }
-//            return LoadingViewHolder(loadBinding = loadBinding)
-//        }
+        val binding =
+            let { RecItemBinding.inflate(LayoutInflater.from(parent.context), parent, false) }
+        return ViewHolder(binding)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -53,17 +38,10 @@ class SearchAdapter(private val clickListener: ClickListener): RecyclerView.Adap
         holder.bind(item = differ.currentList[position], clickListener = clickListener)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun fillAdapter(viewHolder: ViewHolder, position: Int){
-        viewHolder.bind(item = differ.currentList[position], clickListener = clickListener)
-    }
-
-    inner class LoadingViewHolder(private val loadBinding: RecItemLoadingBinding): RecyclerView.ViewHolder(loadBinding.root){
-    }
-
-    inner class ViewHolder(private val binding: RecItemBinding): RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(private val binding: RecItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         @RequiresApi(Build.VERSION_CODES.O)
-        fun bind(item: UiRepo, clickListener: ClickListener){
+        fun bind(item: UiRepo, clickListener: ClickListener) {
             binding.repoName.text = item.name
             binding.repoDate.text = item.created.convertToLocalDate().toString()
             binding.repoStarAmount.text = item.starUserAmount.toString()
@@ -74,14 +52,10 @@ class SearchAdapter(private val clickListener: ClickListener): RecyclerView.Adap
     }
 
     override fun getItemCount(): Int {
-//        if (adapterList == null){
-//            return 0
-//        } else {
-            return differ.currentList.size
-//        }
+        return differ.currentList.size
     }
 
-    private val difUtil = object : DiffUtil.ItemCallback<UiRepo>(){
+    private val difUtil = object : DiffUtil.ItemCallback<UiRepo>() {
         override fun areItemsTheSame(oldItem: UiRepo, newItem: UiRepo): Boolean {
             return oldItem.id == newItem.id
         }
@@ -94,7 +68,7 @@ class SearchAdapter(private val clickListener: ClickListener): RecyclerView.Adap
 
     private val differ = AsyncListDiffer(this, difUtil)
 
-    interface ClickListener{
+    interface ClickListener {
         fun onClick(item: UiRepo)
     }
 }

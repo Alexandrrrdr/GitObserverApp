@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    style="@style/SCREEN"
+    style="@style/screens"
     tools:context=".ui.screens.search.SearchFragment">
 
     <com.google.android.material.textfield.TextInputLayout
@@ -27,7 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:maxLines="1"
-            style="@style/EDIT"/>
+            style="@style/edit"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -38,7 +38,7 @@
         android:layout_marginEnd="8dp"
         android:text="@string/main_submit_button"
         android:background="@drawable/round_style"
-        style="@style/BUTTON"
+        style="@style/button"
         app:layout_constraintBottom_toBottomOf="@+id/edtTxtLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/edtTxtLayout"

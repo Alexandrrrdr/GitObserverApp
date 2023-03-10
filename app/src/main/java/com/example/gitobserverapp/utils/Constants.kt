@@ -11,7 +11,4 @@ object Constants {
     const val ZERO_INDEX = 0
     const val MAX_STARS_PER_PAGE = 100
     const val MAX_REPOS_PER_PAGE = 30
-    const val VIEW_TYPE_ITEM = 0
-    const val VIEW_TYPE_LOADING = 1
-
 }

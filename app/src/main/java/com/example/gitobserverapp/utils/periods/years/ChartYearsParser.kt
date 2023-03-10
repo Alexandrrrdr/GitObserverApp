@@ -1,6 +1,7 @@
 package com.example.gitobserverapp.utils.periods.years
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import com.example.gitobserverapp.ui.screens.barchart.model.BarChartModel
 import com.example.gitobserverapp.ui.screens.barchart.model.UiStarDate
@@ -8,7 +9,7 @@ import com.example.gitobserverapp.utils.Constants
 import com.example.gitobserverapp.utils.Extensions.convertToLocalDate
 import java.time.LocalDate
 
-class YearParser() {
+class ChartYearsParser() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun yearCreater(list: List<UiStarDate>): List<BarChartModel> {
@@ -18,6 +19,7 @@ class YearParser() {
         var todayDateYear = LocalDate.now().year
         val matchedListForBarChartModel = mutableListOf<BarChartModel>()
 
+        Log.d("info", "${list[list.lastIndex].date.convertToLocalDate()!!.monthValue}")
         var amountOfDates = 0
         for (i in startDateYear..todayDateYear) {
             amountOfDates++

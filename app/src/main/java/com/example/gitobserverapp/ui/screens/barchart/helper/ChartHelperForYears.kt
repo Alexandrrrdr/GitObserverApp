@@ -19,7 +19,7 @@ import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.github.mikephil.charting.utils.ColorTemplate
 
-class ChartHelper(
+class ChartHelperForYears(
     private var barChart: BarChart,
     private val listener: Listener
 ) {

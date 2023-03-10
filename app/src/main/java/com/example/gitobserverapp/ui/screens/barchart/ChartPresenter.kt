@@ -10,7 +10,7 @@ import com.example.gitobserverapp.utils.Constants.MAX_STARS_PER_PAGE
 import com.example.gitobserverapp.utils.Constants.ZERO_INDEX
 import com.example.gitobserverapp.utils.Constants.PERIOD
 import com.example.gitobserverapp.utils.Constants.START_PAGE
-import com.example.gitobserverapp.utils.periods.years.YearParser
+import com.example.gitobserverapp.utils.periods.years.ChartYearsParser
 import kotlinx.coroutines.*
 import moxy.InjectViewState
 import moxy.MvpPresenter
@@ -20,7 +20,7 @@ import javax.inject.Inject
 class ChartPresenter
 @Inject constructor(
     private val getStarGroupUseCase: GetStarUseCase,
-    private val yearParser: YearParser
+    private val chartYearsParser: ChartYearsParser
     ) : MvpPresenter<ChartView>() {
 
     private val tmpListBarChart = mutableListOf<BarChartModel>()
@@ -32,7 +32,6 @@ class ChartPresenter
     private var lastPageToLoad = START_PAGE
     private var isLoadAllowed = false
 
-    //New version
     @RequiresApi(Build.VERSION_CODES.O)
     fun getStargazersList(repoName: String, repoOwnerName: String, page: Int) {
         this.currentListPage = page
@@ -44,21 +43,24 @@ class ChartPresenter
             viewState.showLoadPage()
             CoroutineScope(Dispatchers.IO).launch {
                 try {
-                   val sortedStarsData = getStarGroupUseCase.getStarGroup(
+                   val resultApi = getStarGroupUseCase.getStarGroup(
                         repoName = repoName,
                         ownerName = repoOwnerName,
                         lastPage = lastPageToLoad
                     )
-                    tmpListUiStarDate.addAll(ZERO_INDEX, sortedStarsData.list.map { UiStarDate(
+                    tmpListUiStarDate.addAll(ZERO_INDEX, resultApi.list.map { UiStarDate(
                         date = it.date, user = UiStarUser(
                         id = it.user.id, name = it.user.name, userUrl = it.user.userUrl)) })
 
                     tmpListBarChart.clear()
-                    if (sortedStarsData.list.isNotEmpty()){
+                    if (resultApi.list.isNotEmpty()){
                         withContext(Dispatchers.Main) {
-                            lastPageToLoad = sortedStarsData.lastPage
-                            isLoadAllowed = sortedStarsData.isLoadAvailable
-                            tmpListBarChart.addAll(ZERO_INDEX, yearParser.yearCreater(tmpListUiStarDate))
+                            lastPageToLoad = resultApi.lastPage
+                            isLoadAllowed = resultApi.isLoadAvailable
+
+                            //TODO put a condition of sorting(years, months, weeks)
+                            tmpListBarChart.addAll(ZERO_INDEX, chartYearsParser.yearCreater(tmpListUiStarDate))
+
                             setLastListPage(tmpListBarChart)
                             navigationHelper(page = page)
                         }

@@ -12,31 +12,31 @@ import com.example.gitobserverapp.R
 import com.example.gitobserverapp.databinding.FragmentChartBinding
 import com.example.gitobserverapp.domain.usecase.GetStarUseCase
 import com.example.gitobserverapp.ui.screens.base.BaseFragment
-import com.example.gitobserverapp.ui.screens.barchart.helper.ChartHelper
+import com.example.gitobserverapp.ui.screens.barchart.helper.ChartHelperForYears
 import com.example.gitobserverapp.ui.screens.barchart.model.BarChartModel
 import com.example.gitobserverapp.ui.screens.details.model.DetailsUser
 import com.example.gitobserverapp.utils.Constants.START_PAGE
 import com.example.gitobserverapp.utils.Constants.ZERO_INDEX
 import com.example.gitobserverapp.utils.ErrorAlertDialog
-import com.example.gitobserverapp.utils.periods.years.YearParser
+import com.example.gitobserverapp.utils.periods.years.ChartYearsParser
 import com.google.android.material.snackbar.Snackbar
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import javax.inject.Inject
 
 
-class ChartFragment: BaseFragment<FragmentChartBinding>(FragmentChartBinding::inflate), ChartView, ChartHelper.Listener {
+class ChartFragment: BaseFragment<FragmentChartBinding>(FragmentChartBinding::inflate), ChartView, ChartHelperForYears.Listener {
 
-    private lateinit var chartHelper: ChartHelper
+    private lateinit var chartHelperForYears: ChartHelperForYears
 
     @Inject lateinit var getStarGroupUseCase: GetStarUseCase
-    @Inject lateinit var yearParser: YearParser
+    @Inject lateinit var chartYearsParser: ChartYearsParser
     @InjectPresenter
     lateinit var chartPresenter: ChartPresenter
 
     @ProvidePresenter
     fun provideChartViewPresenter(): ChartPresenter {
-        return ChartPresenter(getStarGroupUseCase = getStarGroupUseCase, yearParser = yearParser)
+        return ChartPresenter(getStarGroupUseCase = getStarGroupUseCase, yearParser = chartYearsParser)
     }
 
     //safeArgs from main fragment
@@ -57,7 +57,7 @@ class ChartFragment: BaseFragment<FragmentChartBinding>(FragmentChartBinding::in
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        chartHelper = ChartHelper(binding.barChart, this)
+        chartHelperForYears = ChartHelperForYears(binding.barChart, this)
         starAmount = args.starAmount
         repoName = args.repoName
         repoOwnerName = args.repoOwnerName
@@ -123,7 +123,7 @@ class ChartFragment: BaseFragment<FragmentChartBinding>(FragmentChartBinding::in
         this.page = page
         this.isLoadAllowed = isLoadAllowed
         navigationButtonsController(lastPage = lastPage, page = page)
-        chartHelper.initBarChart(list = list)
+        chartHelperForYears.initBarChart(list = list)
     }
 
     override fun showErrorPage(error: String) {

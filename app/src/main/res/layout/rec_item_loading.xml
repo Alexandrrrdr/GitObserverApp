@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_margin="2dp"
     android:padding="6dp"
-    style="@style/SCREEN"
+    style="@style/screens"
     app:cardCornerRadius="10dp">
 
     <ProgressBar
