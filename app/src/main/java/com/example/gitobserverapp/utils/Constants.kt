@@ -9,7 +9,9 @@ object Constants {
     const val END_YOKEN = "rv1NpAnVKGGShT4XT6xQ"
     const val PERIOD = 5
     const val ZERO_INDEX = 0
-    const val MAX_PER_PAGE = 100
+    const val MAX_STARS_PER_PAGE = 100
+    const val MAX_REPOS_PER_PAGE = 30
     const val VIEW_TYPE_ITEM = 0
     const val VIEW_TYPE_LOADING = 1
+
 }

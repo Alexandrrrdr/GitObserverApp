@@ -6,12 +6,10 @@ import com.example.gitobserverapp.domain.usecase.GetStarUseCase
 import com.example.gitobserverapp.ui.screens.barchart.model.BarChartModel
 import com.example.gitobserverapp.ui.screens.barchart.model.UiStarDate
 import com.example.gitobserverapp.ui.screens.barchart.model.UiStarUser
-import com.example.gitobserverapp.utils.Constants
-import com.example.gitobserverapp.utils.Constants.MAX_PER_PAGE
+import com.example.gitobserverapp.utils.Constants.MAX_STARS_PER_PAGE
 import com.example.gitobserverapp.utils.Constants.ZERO_INDEX
 import com.example.gitobserverapp.utils.Constants.PERIOD
 import com.example.gitobserverapp.utils.Constants.START_PAGE
-import com.example.gitobserverapp.utils.Extensions.convertToLocalDate
 import com.example.gitobserverapp.utils.periods.years.YearParser
 import kotlinx.coroutines.*
 import moxy.InjectViewState
@@ -46,19 +44,20 @@ class ChartPresenter
             viewState.showLoadPage()
             CoroutineScope(Dispatchers.IO).launch {
                 try {
-                    var starredList = loadData(repoName = repoName, ownerName = repoOwnerName, pageNumber = lastPageToLoad)
-                    tmpListUiStarDate.addAll(ZERO_INDEX, starredList)
-                    lastPageToLoad--
+                   val sortedStarsData = getStarGroupUseCase.getStarGroup(
+                        repoName = repoName,
+                        ownerName = repoOwnerName,
+                        lastPage = lastPageToLoad
+                    )
+                    tmpListUiStarDate.addAll(ZERO_INDEX, sortedStarsData.list.map { UiStarDate(
+                        date = it.date, user = UiStarUser(
+                        id = it.user.id, name = it.user.name, userUrl = it.user.userUrl)) })
 
-                    while (!dateRangeChecker(starredList) && lastPageToLoad >= START_PAGE){
-                        starredList = loadData(repoName = repoName, ownerName = repoOwnerName, pageNumber = lastPageToLoad)
-                        tmpListUiStarDate.addAll(ZERO_INDEX, starredList)
-                        lastPageToLoad--
-                        isLoadAllowed = lastPageToLoad > START_PAGE
-                    }
                     tmpListBarChart.clear()
-                    if (starredList.isNotEmpty()){
+                    if (sortedStarsData.list.isNotEmpty()){
                         withContext(Dispatchers.Main) {
+                            lastPageToLoad = sortedStarsData.lastPage
+                            isLoadAllowed = sortedStarsData.isLoadAvailable
                             tmpListBarChart.addAll(ZERO_INDEX, yearParser.yearCreater(tmpListUiStarDate))
                             setLastListPage(tmpListBarChart)
                             navigationHelper(page = page)
@@ -85,26 +84,6 @@ class ChartPresenter
         viewState.showSuccessPage(list = tmpList, lastPage = lastListPage, page = page, isLoadAllowed = isLoadAllowed)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun dateRangeChecker(list: List<UiStarDate>): Boolean{
-        val endDateYear = list[list.lastIndex].date.convertToLocalDate()!!.year
-        val startDateYear = list[Constants.ZERO_PAGE].date.convertToLocalDate()!!.year
-        val difference = (endDateYear - startDateYear) / PERIOD
-        return difference >= START_PAGE
-    }
-
-    private suspend fun loadData(
-        repoName: String,
-        ownerName: String,
-        pageNumber: Int
-    ): List<UiStarDate> {
-        return getStarGroupUseCase.getStarGroup(
-            repoName = repoName,
-            ownerName = ownerName,
-            pageNumber = pageNumber
-        ).map { UiStarDate(date = it.date, user = UiStarUser(id = it.user.id, name = it.user.name, userUrl = it.user.userUrl)) }
-    }
-
     private fun setLastListPage(list: List<BarChartModel>) {
         val lastItems = list.size % PERIOD
         lastListPage = if (lastItems == ZERO_INDEX) {
@@ -119,11 +98,11 @@ class ChartPresenter
             lastPageToLoad = ZERO_INDEX
             return
         }
-        val countHelper = (starAmount / MAX_PER_PAGE)
+        val countHelper = (starAmount / MAX_STARS_PER_PAGE)
         if (countHelper == ZERO_INDEX && starAmount != ZERO_INDEX){
             lastPageToLoad = START_PAGE
             return
-        } else if (countHelper >= START_PAGE && (starAmount % MAX_PER_PAGE) == ZERO_INDEX){
+        } else if (countHelper >= START_PAGE && (starAmount % MAX_STARS_PER_PAGE) == ZERO_INDEX){
             lastPageToLoad = countHelper
             return
         }

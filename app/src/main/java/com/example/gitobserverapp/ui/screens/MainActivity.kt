@@ -1,4 +1,4 @@
-package com.example.gitobserverapp.ui
+package com.example.gitobserverapp.ui.screens
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -12,5 +12,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+    }
+
+    override fun onDestroy() {
+        _binding = null
+        super.onDestroy()
     }
 }

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#FFE57F"
+    style="@style/SCREEN"
     tools:context=".ui.screens.details.DetailsFragment">
 
     <TextView
@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-        android:textColor="@color/g_black"
+        style="@style/TEXT"
         android:textStyle="bold"
         android:layout_margin="6dp"
         tools:text="Starred for some year"
@@ -28,14 +28,12 @@
         tools:text="Amount of users who starred it is: "
         android:layout_gravity="center_horizontal"
         android:textStyle="bold"
-        android:textColor="@color/g_black"/>
+        style="@style/TEXT"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recView_details"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="2dp"
-        android:background="#FFE57F"
-        android:padding="8dp" />
+        android:layout_margin="2dp"/>
 
 </LinearLayout>

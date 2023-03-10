@@ -7,9 +7,9 @@ import javax.inject.Inject
 
 class GetReposUseCase @Inject constructor(
     private val getRepository: GetRepository,
-): BaseRepoUseCase<String, List<Repo>> {
+): BaseRepoUseCase<String, Int, List<Repo>> {
 
-    override suspend fun getRepos(userName: String): List<Repo> {
-        return getRepository.getRepos(userName = userName)
+    override suspend fun getRepos(repoName: String, pageNumber: Int): List<Repo> {
+        return getRepository.getRepos(userName = repoName, pageNumber = pageNumber)
     }
 }

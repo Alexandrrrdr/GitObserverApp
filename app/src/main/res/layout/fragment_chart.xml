@@ -4,8 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="2dp"
-    android:background="#FFFFE57F"
+    android:padding="4dp"
+    style="@style/SCREEN"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.screens.barchart.ChartFragment">
 
@@ -13,7 +13,7 @@
         android:id="@+id/repoName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/indigo"
+        style="@style/TEXT"
         tools:text="Repository's name"
         android:textAppearance="@style/TextAppearance.Material3.HeadlineLarge"
         android:textStyle="bold"
@@ -28,7 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="20sp"
-        android:textColor="@color/g_black"
+        style="@style/TEXT"
         android:id="@+id/txtChartInfoChoose"
         android:text="Choose a period of data below"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
@@ -53,7 +53,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:textColor="@color/indigo"
+                style="@style/TEXT"
                 android:text="@string/for_years"
                 android:layout_weight="0.33"/>
 
@@ -62,7 +62,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:textColor="@color/indigo"
+                style="@style/TEXT"
                 android:text="@string/for_months"
                 android:layout_weight="0.33"/>
 
@@ -71,7 +71,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:textColor="@color/indigo"
+                style="@style/TEXT"
                 android:text="@string/for_weeks"
                 android:layout_weight="0.33"/>
 
@@ -82,6 +82,10 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="5dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        style="@style/CHART_SCREENS"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/radioButtonGroup"
@@ -103,6 +107,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/prevPage"
         android:text="@string/previous"
+        android:background="@drawable/round_style"
+        style="@style/BUTTON"
         android:layout_marginStart="10dp"
         app:layout_constraintTop_toBottomOf="@+id/barChart"
         app:layout_constraintBottom_toTopOf="@+id/txtNetworkStatus"
@@ -114,6 +120,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/nextPage"
         android:text="@string/next"
+        android:background="@drawable/round_style"
+        style="@style/BUTTON"
         android:layout_marginEnd="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/barChart"
